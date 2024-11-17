@@ -45,7 +45,7 @@ export const GameLibrary: React.FC = () => {
     },
     {
       id: '2',
-      title: '少女理论及其之后的周边',
+      title: 'xxxxxxxxxx1',
       coverImage: '/api/placeholder/300/400',
       developer: 'Example Studio',
       releaseDate: '2023-01-15',

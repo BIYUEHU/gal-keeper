@@ -6,7 +6,7 @@ interface GameCardProps {
 
 export const GameCard: React.FC<GameCardProps> = ({ game }) => {
   return (
-    <div className="relative group cursor-pointer">
+    <div className="relative cursor-pointer">
       <div className="w-full aspect-[3/4] rounded-lg overflow-hidden bg-gray-100">
         <img
           src={game.coverImage}
