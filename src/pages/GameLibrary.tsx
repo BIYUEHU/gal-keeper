@@ -6,7 +6,7 @@ import { Game } from '../types/types';
 
 export const GameLibrary: React.FC = () => {
   const [searchText, setSearchText] = useState('');
-  
+
   const commandItems: ICommandBarItemProps[] = [
     {
       key: 'add',
@@ -36,7 +36,7 @@ export const GameLibrary: React.FC = () => {
   const games: Game[] = [
     {
       id: '1',
-      title: 'リアル妹がいる大泉くんのばあい',
+      title: 'はつゆきさくら',
       coverImage: '/api/placeholder/300/400',
       developer: 'ALcot',
       releaseDate: '2010-05-28',
