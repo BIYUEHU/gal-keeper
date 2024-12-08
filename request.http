@@ -1,0 +1,18 @@
+@QUERY = narcissu
+
+### VNDB
+
+POST https://api.vndb.org/kana/vn HTTP/1.1
+Content-Type: application/json
+
+{
+    "filters": ["search", "=", "{{QUERY}}"],
+    "fields": "id, title, image.url, released, titles.title, length_minutes, rating, screenshots.url, tags.name, developers.name, description, tags.rating, extlinks.name, extlinks.url"
+}
+
+
+### Bangumi
+
+GET https://api.bgm.tv/search/subject/{{QUERY}} HTTP/1.1
+User-Agent: czy0729/Bangumi/6.4.0 (Android) (http://github.com/czy0729/Bangumi)
+
