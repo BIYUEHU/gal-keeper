@@ -1,5 +1,5 @@
 {
-  "name": "visual-novel-manager",
+  "name": "gal-keeper",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -11,6 +11,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@fluentui/font-icons-mdl2": "^8.5.57",
     "@fluentui/react": "^8.121.8",
     "@fluentui/react-components": "^9.55.1",
     "@fluentui/react-icons": "^2.0.264",

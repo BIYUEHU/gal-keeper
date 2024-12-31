@@ -1,15 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { RouterProvider } from 'react-router-dom'
-import { FluentProvider, webLightTheme } from '@fluentui/react-components'
-import { router } from '@/routes'
+import { initializeIcons } from '@fluentui/font-icons-mdl2'
 import '@/index.css'
 import 'virtual:uno.css'
+import App from '@/App'
+
+initializeIcons()
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <FluentProvider theme={webLightTheme}>
-      <RouterProvider router={router} />
-    </FluentProvider>
+    <App />
   </React.StrictMode>
 )

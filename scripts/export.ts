@@ -34,6 +34,8 @@ async function main() {
 
       return {
         id: index + 1,
+        vndbId: data.id,
+        bgmId: data.id,
         title: data.title,
         alias: data.titles.map((title) => title.title),
         cover: data.image?.url,
@@ -43,9 +45,11 @@ async function main() {
           .sort((a, b) => b.rating - a.rating)
           .map((tag) => tag.name),
         playMinutes: data.length_minutes ?? 0,
-        releaseDate: data.released,
-        rating: data.rating,
-        developers: data.developers.map((developer) => developer.name),
+        lastPlay: Date.now() - Math.random(),
+        createDate: Date.now() - Math.random(),
+        releaseDate: new Date(data.released).getTime(),
+        rating: data.rating / 10,
+        developer: data.developers[0]?.name ?? '',
         images: data.screenshots.map((screenshot) => screenshot.url),
         links: data.extlinks
       }
@@ -53,7 +57,7 @@ async function main() {
   )
   const filtered = result.filter((game) => game)
   console.log(`Found ${filtered.length} games, not found: ${list.length - filtered.length}`)
-  writeFileSync(join(__dirname, 'games.json'), JSON.stringify(result, null, 2))
+  writeFileSync(join(process.cwd(), 'games.json'), JSON.stringify(result, null, 2))
 }
 
 main()

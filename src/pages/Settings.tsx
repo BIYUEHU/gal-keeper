@@ -1,10 +1,8 @@
-import { Stack, TextField, ChoiceGroup, Toggle, DefaultButton } from '@fluentui/react';
+import { Stack, TextField, ChoiceGroup, Toggle, DefaultButton } from '@fluentui/react'
 
 export const Settings: React.FC = () => {
   return (
-    <div className="p-6 max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">设置</h1>
-      
+    <div>
       <Stack tokens={{ childrenGap: 24 }}>
         <section>
           <h2 className="text-lg font-semibold mb-4">账户设置</h2>
@@ -23,7 +21,7 @@ export const Settings: React.FC = () => {
               options={[
                 { key: 'light', text: '浅色' },
                 { key: 'dark', text: '深色' },
-                { key: 'system', text: '跟随系统' },
+                { key: 'system', text: '跟随系统' }
               ]}
               defaultSelectedKey="light"
             />
@@ -39,7 +37,7 @@ export const Settings: React.FC = () => {
               label="默认启动位置"
               options={[
                 { key: 'local', text: '本地' },
-                { key: 'cloud', text: '云端' },
+                { key: 'cloud', text: '云端' }
               ]}
               defaultSelectedKey="local"
             />
@@ -47,5 +45,5 @@ export const Settings: React.FC = () => {
         </section>
       </Stack>
     </div>
-  );
-};
+  )
+}
