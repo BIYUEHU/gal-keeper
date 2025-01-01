@@ -3,13 +3,11 @@ import { Stack } from '@fluentui/react/lib/Stack'
 import { Icon } from '@fluentui/react/lib/Icon'
 import routes from '@/routes'
 import { useLocation, useNavigate } from 'react-router-dom'
+import useStore from '@/store'
 
-interface SidebarProps {
-  isCollapsed: boolean
-  toggleSidebar: () => void
-}
-
-export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
+export const Sidebar: React.FC = () => {
+  const sidebar = useStore((state) => state.sidebar)
+  const toggleSidebar = useStore((state) => state.toggleSidebar)
   const navigate = useNavigate()
   const location = useLocation()
   const [selectedKey, setSelectedKey] = useState(location.pathname)
@@ -19,7 +17,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) 
   }
 
   return (
-    <Stack className={`h-screen bg-gray-50 ${isCollapsed ? 'w-13' : 'w-64'}`}>
+    <Stack className={`h-screen bg-gray-50 ${sidebar ? 'w-64' : 'w-13'}`}>
       <div className="space-y-1">
         <div
           className="mt-2 w-7 h-7 flex items-center mx-1 p-2 cursor-pointer hover:bg-gray-200"
@@ -36,7 +34,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) 
               onClick={() => handleNavigation(item.path)}
             >
               <Icon iconName={item.icon} className="ml-2 scale-120" />
-              {isCollapsed || <span className="ml-2">{item.title}</span>}
+              {sidebar && <span className="ml-2">{item.title}</span>}
             </div>
           ))}
       </div>

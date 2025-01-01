@@ -12,9 +12,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "style": {
-        "useImportType": "off"
-      },
+      "style": {},
       "a11y": {
         "useKeyWithClickEvents": "off"
       }

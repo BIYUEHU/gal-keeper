@@ -12,15 +12,20 @@ license = "BAN-CHINAMAN-USING"
 # The `_lib` suffix may seem redundant but it is necessary
 # to make the lib name unique and wouldn't conflict with the bin name.
 # This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
-name = "visual_novel_manager_lib"
+name = "gal_keeper_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [] }
-tauri-plugin-shell = "2"
+tauri = { version = "2.1.1", features = [] }
+tauri-plugin-shell = "2.2.0"
+tauri-plugin-fs = "2.2.0"
+tauri-plugin-dialog = "2.2.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-pe-parser = "0.6.0"
+reqwest = "0.12.12"
+base64 = "0.22.1"
+winapi = { version = "0.3.9", features = ["winuser"] }
+sysinfo = "0.33.1"

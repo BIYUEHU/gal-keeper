@@ -44,7 +44,8 @@ async function main() {
           .filter((tag) => tag.rating >= 2)
           .sort((a, b) => b.rating - a.rating)
           .map((tag) => tag.name),
-        playMinutes: data.length_minutes ?? 0,
+        playMinutes: Math.floor(Math.random() * 100) + 100,
+        expectedPlayMinutes: data.length_minutes ?? 0,
         lastPlay: Date.now() - Math.random(),
         createDate: Date.now() - Math.random(),
         releaseDate: new Date(data.released).getTime(),
@@ -57,7 +58,7 @@ async function main() {
   )
   const filtered = result.filter((game) => game)
   console.log(`Found ${filtered.length} games, not found: ${list.length - filtered.length}`)
-  writeFileSync(join(process.cwd(), 'games.json'), JSON.stringify(result, null, 2))
+  writeFileSync(join(process.cwd(), 'src/data/games.json'), JSON.stringify(result, null, 2))
 }
 
 main()

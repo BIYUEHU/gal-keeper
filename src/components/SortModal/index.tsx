@@ -4,26 +4,19 @@ import { Dropdown } from '@fluentui/react/lib/Dropdown'
 import { Toggle } from '@fluentui/react/lib/Toggle'
 import { Text } from '@fluentui/react/lib/Text'
 import { PrimaryButton } from '@fluentui/react'
+import useStore from '@/store'
 
 export type SortKeys = 'Title' | 'CreateDate' | 'LastPlay' | 'Developer' | 'Rating' | 'ReleaseDate'
 
 interface SortModalProps {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
-  primaryKey: SortKeys
-  setPrimaryKey: (key: SortKeys) => void
-  isPrimaryDescending: boolean
-  setIsPrimaryDescending: (value: boolean) => void
 }
 
-export const SortModal: React.FC<SortModalProps> = ({
-  isOpen,
-  setIsOpen,
-  primaryKey,
-  setPrimaryKey,
-  isPrimaryDescending,
-  setIsPrimaryDescending
-}) => {
+export const SortModal: React.FC<SortModalProps> = ({ isOpen, setIsOpen }) => {
+  const primaryKey = useStore((state) => state.sort.primaryKey)
+  const isPrimaryDescending = useStore((state) => state.sort.isPrimaryDescending)
+  const setSort = useStore((state) => state.setSort)
   const dropdownOptions: { key: SortKeys; text: string }[] = [
     { key: 'CreateDate', text: '创建时间' },
     { key: 'Title', text: '标题' },
@@ -50,14 +43,14 @@ export const SortModal: React.FC<SortModalProps> = ({
             <Dropdown
               options={dropdownOptions}
               selectedKey={primaryKey}
-              onChange={(_, option) => setPrimaryKey(option?.key as SortKeys)}
+              onChange={(_, option) => setSort({ primaryKey: (option?.key || 'Title') as SortKeys })}
             />
             <Toggle
               label="降序/升序"
               checked={isPrimaryDescending}
               onText="降序"
               offText="升序"
-              onChange={(_, checked) => setIsPrimaryDescending(checked || false)}
+              onChange={(_, checked) => setSort({ isPrimaryDescending: checked })}
             />
           </Stack>
         </Stack>

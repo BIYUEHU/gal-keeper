@@ -1,97 +1,85 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { SearchBox } from '@fluentui/react/lib/SearchBox'
-import { CommandBar, ICommandBarItemProps } from '@fluentui/react/lib/CommandBar'
-import games from '@/data/games.json'
-import { SortKeys, SortModal } from '@/components/SortModal'
+import { CommandBar, type ICommandBarItemProps } from '@fluentui/react/lib/CommandBar'
+import { SortModal } from '@/components/SortModal'
+import useStore, { useSharedState } from '@/store'
+import { FilterModal } from '@/components/FilterModal'
+import { AddModal } from '@/components/AddModal'
 
 export const Library: React.FC = () => {
+  const [isOpenSortModal, setIsOpenSortModal] = useState(false)
+  const [isOpenFilterModal, setIsOpenFilterModal] = useState(false)
+  const [isOpenAddModal, setIsOpenAddModal] = useState(false)
+
+  const primaryKey = useStore((state) => state.sort.primaryKey)
+  const isPrimaryDescending = useStore((state) => state.sort.isPrimaryDescending)
+  const onlyDisplayLocal = useStore((state) => state.filter.onlyDisplayLocal)
   const [searchText, setSearchText] = useState('')
-  const data = games.sort((a, b) => b.id - a.id)
-  const [visibleData, setVisibleData] = useState(data)
-  const [sortModalIsOpen, setSortModalIsOpen] = useState(false)
-  const [primaryKey, setPrimaryKey] = useState<SortKeys>('CreateDate')
-  const [isPrimaryDescending, setIsPrimaryDescending] = useState(true)
+  const games = useSharedState((state) => state.getAllData)()
 
-  useEffect(() =>
-    setVisibleData(
-      data.filter((game) => {
-        const target = searchText.toLocaleLowerCase()
-        return [game.title, game.developer].map((str) => str.toLocaleLowerCase().includes(target)).some((bool) => bool)
-      })
+  const filteredData = useMemo(() => {
+    const target = searchText.toLocaleLowerCase()
+    return games.filter(
+      (game) =>
+        [game.title, game.developer].some((field) => field.toLocaleLowerCase().includes(target)) &&
+        (game.local || !onlyDisplayLocal)
     )
-  )
+  }, [searchText, games, onlyDisplayLocal])
 
-  useEffect(() => {
+  const sortedData = useMemo(() => {
+    const sorted = [...filteredData]
     switch (primaryKey) {
       case 'Title':
-        setVisibleData(
-          visibleData.sort((a, b) =>
-            isPrimaryDescending ? b.title.localeCompare(a.title) : a.title.localeCompare(b.title)
-          )
-        )
+        sorted.sort((a, b) => (isPrimaryDescending ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title)))
         break
       case 'Developer':
-        setVisibleData(
-          visibleData.sort((a, b) =>
-            isPrimaryDescending ? b.developer.localeCompare(a.developer) : a.developer.localeCompare(b.developer)
-          )
+        sorted.sort((a, b) =>
+          isPrimaryDescending ? b.developer.localeCompare(a.developer) : a.developer.localeCompare(b.developer)
         )
         break
       case 'LastPlay':
-        setVisibleData(
-          visibleData.sort((a, b) => (isPrimaryDescending ? b.lastPlay - a.lastPlay : a.lastPlay - b.lastPlay))
-        )
+        sorted.sort((a, b) => (isPrimaryDescending ? b.lastPlay - a.lastPlay : a.lastPlay - b.lastPlay))
         break
       case 'Rating':
-        setVisibleData(visibleData.sort((a, b) => (isPrimaryDescending ? b.rating - a.rating : a.rating - b.rating)))
+        sorted.sort((a, b) => (isPrimaryDescending ? b.rating - a.rating : a.rating - b.rating))
         break
       case 'ReleaseDate':
-        setVisibleData(
-          visibleData.sort((a, b) =>
-            isPrimaryDescending ? b.releaseDate - a.releaseDate : a.releaseDate - b.releaseDate
-          )
-        )
+        sorted.sort((a, b) => (isPrimaryDescending ? b.releaseDate - a.releaseDate : a.releaseDate - b.releaseDate))
         break
       case 'CreateDate':
-        setVisibleData(
-          visibleData.sort((a, b) => (isPrimaryDescending ? b.createDate - a.createDate : a.createDate - b.createDate))
-        )
+        sorted.sort((a, b) => (isPrimaryDescending ? b.createDate - a.createDate : a.createDate - b.createDate))
+        break
     }
-  }, [visibleData, primaryKey, isPrimaryDescending])
+    return sorted
+  }, [filteredData, primaryKey, isPrimaryDescending])
 
   const commandItems: ICommandBarItemProps[] = [
     {
       key: 'add',
       text: '添加游戏',
       iconProps: { iconName: 'Add' },
-      onClick: () => {
-        /* 实现添加游戏逻辑 */
-      }
+      onClick: () => setIsOpenAddModal(true)
     },
     {
       key: 'sort',
       text: '排序',
       iconProps: { iconName: 'Sort' },
-      onClick: () => setSortModalIsOpen(true)
+      onClick: () => setIsOpenSortModal(true)
     },
     {
       key: 'filter',
       text: '筛选',
-      iconProps: { iconName: 'Filter' }
+      iconProps: { iconName: 'Filter' },
+      onClick: () => setIsOpenFilterModal(true)
     }
   ]
 
   return (
     <React.Fragment>
-      <SortModal
-        isOpen={sortModalIsOpen}
-        setIsOpen={setSortModalIsOpen}
-        primaryKey={primaryKey}
-        setPrimaryKey={setPrimaryKey}
-        isPrimaryDescending={isPrimaryDescending}
-        setIsPrimaryDescending={setIsPrimaryDescending}
-      />
+      <AddModal isOpen={isOpenAddModal} setIsOpen={setIsOpenAddModal} />
+      <SortModal isOpen={isOpenSortModal} setIsOpen={setIsOpenSortModal} />
+      <FilterModal isOpen={isOpenFilterModal} setIsOpen={setIsOpenFilterModal} />
       <div className="border-b">
         <div className="flex items-center justify-between mb-5">
           <SearchBox
@@ -103,28 +91,21 @@ export const Library: React.FC = () => {
           <CommandBar className="relative" items={commandItems} />
         </div>
       </div>
-      <div className="overflow-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-9 gap-6">
-        {visibleData.map((game) => (
+      <div className="overflow-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-9">
+        {sortedData.map((game) => (
           <Link
             key={game.id}
             to={`/details/${game.id}`}
-            className="no-underline p-1 hover:border-solid hover:border-lg hover:border-2 hover:border-gray-100"
+            className="my-2 max-w-40 no-underline p-1 border-transparent box-border hover:border-solid hover:border-2 hover:border-gray-200 hover:bg-gray-100 hover:scale-105"
           >
             <div className="cursor-pointer">
-              <div className="w-full aspect-[3/4] rounded-lg overflow-hidden bg-gray-100">
-                <img
-                  src={game.cover}
-                  alt={game.title}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                />
+              <div className="aspect-[3/4] rounded-lg overflow-hidden bg-gray-100">
+                <img src={game.cover} alt={game.title} className="w-full h-full object-cover transition-transform" />
               </div>
-              <div className="">
-                <h3 className="text-sm font-medium text-gray-900">{game.title}</h3>
-              </div>
+              <h3 className="text-sm font-medium text-gray-900">{game.title}</h3>
             </div>
           </Link>
         ))}
-        fdi
       </div>
     </React.Fragment>
   )

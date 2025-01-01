@@ -31,9 +31,10 @@
       "Only Younger Heroines",
       "Reiwa Era"
     ],
-    "playMinutes": 485,
-    "lastPlay": 1735659512084.8906,
-    "createDate": 1735659512084.4602,
+    "playMinutes": 192,
+    "expectedPlayMinutes": 485,
+    "lastPlay": 1735698921300.6292,
+    "createDate": 1735698921300.1362,
     "releaseDate": 1609286400000,
     "rating": 8.01,
     "developer": "Shiratamaco",
@@ -47,16 +48,16 @@
     ],
     "links": [
       {
-        "name": "wikidata",
-        "url": "https://www.wikidata.org/wiki/Q106859276"
+        "url": "https://www.wikidata.org/wiki/Q106859276",
+        "name": "wikidata"
       },
       {
-        "name": "howlongtobeat",
-        "url": "http://howlongtobeat.com/game.php?id=113785"
+        "url": "http://howlongtobeat.com/game.php?id=113785",
+        "name": "howlongtobeat"
       },
       {
-        "url": "https://www.igdb.com/games/hoshizora-testudou-to-shiro-no-tabi",
-        "name": "igdb_game"
+        "name": "igdb_game",
+        "url": "https://www.igdb.com/games/hoshizora-testudou-to-shiro-no-tabi"
       },
       {
         "name": "lutris",
@@ -141,9 +142,10 @@
       "Quickie Fix Position",
       "Astronomy"
     ],
-    "playMinutes": 1200,
-    "lastPlay": 1735659511978.8047,
-    "createDate": 1735659511978.7837,
+    "playMinutes": 193,
+    "expectedPlayMinutes": 1200,
+    "lastPlay": 1735698921429.585,
+    "createDate": 1735698921429.2896,
     "releaseDate": 1495756800000,
     "rating": 7.359999999999999,
     "developer": "Laplacian",
@@ -161,28 +163,28 @@
     ],
     "links": [
       {
-        "url": "https://ja.wikipedia.org/wiki/ニュートンと林檎の樹",
-        "name": "jawiki"
+        "name": "jawiki",
+        "url": "https://ja.wikipedia.org/wiki/ニュートンと林檎の樹"
       },
       {
-        "name": "wikidata",
-        "url": "https://www.wikidata.org/wiki/Q41889827"
+        "url": "https://www.wikidata.org/wiki/Q41889827",
+        "name": "wikidata"
       },
       {
-        "name": "mobygames",
-        "url": "https://www.mobygames.com/game/newton-and-the-apple-tree"
+        "url": "https://www.mobygames.com/game/newton-and-the-apple-tree",
+        "name": "mobygames"
       },
       {
         "url": "https://gamefaqs.gamespot.com/-/239420-",
         "name": "gamefaqs_game"
       },
       {
-        "url": "http://howlongtobeat.com/game.php?id=60140",
-        "name": "howlongtobeat"
+        "name": "howlongtobeat",
+        "url": "http://howlongtobeat.com/game.php?id=60140"
       },
       {
-        "name": "pcgamingwiki",
-        "url": "https://www.pcgamingwiki.com/wiki/Newton_and_the_Apple_Tree"
+        "url": "https://www.pcgamingwiki.com/wiki/Newton_and_the_Apple_Tree",
+        "name": "pcgamingwiki"
       }
     ]
   },
@@ -249,11 +251,12 @@
       "Heroine with Big Breasts",
       "Jump to Unread"
     ],
-    "playMinutes": 770,
-    "lastPlay": 1735659512131.519,
-    "createDate": 1735659512131.045,
+    "playMinutes": 131,
+    "expectedPlayMinutes": 770,
+    "lastPlay": 1735698921564.0955,
+    "createDate": 1735698921564.1626,
     "releaseDate": 1480032000000,
-    "rating": 7.65,
+    "rating": 7.640000000000001,
     "developer": "Sweet & Tea",
     "images": [
       "https://t.vndb.org/sf/96/102496.jpg",
@@ -269,12 +272,12 @@
     ],
     "links": [
       {
-        "name": "jawiki",
-        "url": "https://ja.wikipedia.org/wiki/枯れない世界と終わる花"
+        "url": "https://ja.wikipedia.org/wiki/枯れない世界と終わる花",
+        "name": "jawiki"
       },
       {
-        "name": "wikidata",
-        "url": "https://www.wikidata.org/wiki/Q30931595"
+        "url": "https://www.wikidata.org/wiki/Q30931595",
+        "name": "wikidata"
       }
     ]
   },
@@ -435,9 +438,10 @@
       "Imaginary Friend as a Heroine",
       "Sex Scene Recollection"
     ],
-    "playMinutes": 3000,
-    "lastPlay": 1735659512802.0884,
-    "createDate": 1735659512802.6797,
+    "playMinutes": 170,
+    "expectedPlayMinutes": 3000,
+    "lastPlay": 1735698921457.1938,
+    "createDate": 1735698921457.108,
     "releaseDate": 1269561600000,
     "rating": 8.690000000000001,
     "developer": "KeroQ",
@@ -459,8 +463,8 @@
         "url": "https://en.wikipedia.org/wiki/Wonderful_Everyday"
       },
       {
-        "name": "jawiki",
-        "url": "https://ja.wikipedia.org/wiki/素晴らしき日々_〜不連続存在〜"
+        "url": "https://ja.wikipedia.org/wiki/素晴らしき日々_〜不連続存在〜",
+        "name": "jawiki"
       },
       {
         "name": "wikidata",
@@ -471,8 +475,8 @@
         "url": "https://www.mobygames.com/game/wonderful-everyday-diskontinuierliches-dasein"
       },
       {
-        "url": "http://howlongtobeat.com/game.php?id=48655",
-        "name": "howlongtobeat"
+        "name": "howlongtobeat",
+        "url": "http://howlongtobeat.com/game.php?id=48655"
       },
       {
         "name": "igdb_game",
@@ -554,9 +558,10 @@
       "Perverted Heroine",
       "Ladder Structure"
     ],
-    "playMinutes": 2064,
-    "lastPlay": 1735659512327.2437,
-    "createDate": 1735659512327.3682,
+    "playMinutes": 174,
+    "expectedPlayMinutes": 2064,
+    "lastPlay": 173569921637.5244,
+    "createDate": 1735698921637.583,
     "releaseDate": 1418947200000,
     "rating": 8.120000000000001,
     "developer": "Uguisu Kagura",
@@ -660,9 +665,10 @@
       "Sex with Protagonist Only",
       "Has Window Transparency Setting"
     ],
-    "playMinutes": 3641,
-    "lastPlay": 1735659511827.621,
-    "createDate": 1735659511827.4612,
+    "playMinutes": 170,
+    "expectedPlayMinutes": 3641,
+    "lastPlay": 1735698921587.645,
+    "createDate": 1735698921587.2917,
     "releaseDate": 1548892800000,
     "rating": 8.57,
     "developer": "FAVORITE",
@@ -692,8 +698,8 @@
         "name": "gamefaqs_game"
       },
       {
-        "url": "https://www.igdb.com/games/sakura-moyu-dot-as-the-nights-reincarnation",
-        "name": "igdb_game"
+        "name": "igdb_game",
+        "url": "https://www.igdb.com/games/sakura-moyu-dot-as-the-nights-reincarnation"
       },
       {
         "name": "lutris",
@@ -749,9 +755,10 @@
       "Achievements",
       "Laid-back Heroine"
     ],
-    "playMinutes": 172,
-    "lastPlay": 1735659512249.7134,
-    "createDate": 1735659512249.8892,
+    "playMinutes": 149,
+    "expectedPlayMinutes": 172,
+    "lastPlay": 1735698921494.438,
+    "createDate": 1735698921494.4155,
     "releaseDate": 1122940800000,
     "rating": 7.49,
     "developer": "Stage-nana",
@@ -769,40 +776,40 @@
     ],
     "links": [
       {
-        "name": "enwiki",
-        "url": "https://en.wikipedia.org/wiki/Narcissu"
+        "url": "https://en.wikipedia.org/wiki/Narcissu",
+        "name": "enwiki"
       },
       {
-        "name": "jawiki",
-        "url": "https://ja.wikipedia.org/wiki/ナルキッソス_(ゲーム)"
+        "url": "https://ja.wikipedia.org/wiki/ナルキッソス_(ゲーム)",
+        "name": "jawiki"
       },
       {
-        "url": "https://www.wikidata.org/wiki/Q306348",
-        "name": "wikidata"
+        "name": "wikidata",
+        "url": "https://www.wikidata.org/wiki/Q306348"
       },
       {
         "url": "https://www.mobygames.com/game/narcissu",
         "name": "mobygames"
       },
       {
-        "name": "indiedb_game",
-        "url": "https://www.indiedb.com/games/narcissu-1st-2nd"
+        "url": "https://www.indiedb.com/games/narcissu-1st-2nd",
+        "name": "indiedb_game"
       },
       {
         "name": "howlongtobeat",
         "url": "http://howlongtobeat.com/game.php?id=23314"
       },
       {
-        "url": "https://www.igdb.com/games/narcissu-1st-and-2nd",
-        "name": "igdb_game"
+        "name": "igdb_game",
+        "url": "https://www.igdb.com/games/narcissu-1st-and-2nd"
       },
       {
         "name": "pcgamingwiki",
         "url": "https://www.pcgamingwiki.com/wiki/Narcissu"
       },
       {
-        "url": "https://lutris.net/games/narcissu-1st-and-2nd",
-        "name": "lutris"
+        "name": "lutris",
+        "url": "https://lutris.net/games/narcissu-1st-and-2nd"
       }
     ]
   },
@@ -883,9 +890,10 @@
       "Single Footjob",
       "High School Student Heroine"
     ],
-    "playMinutes": 1725,
-    "lastPlay": 1735659512001.788,
-    "createDate": 1735659512001.698,
+    "playMinutes": 129,
+    "expectedPlayMinutes": 1725,
+    "lastPlay": 1735698921465.0916,
+    "createDate": 1735698921465.7307,
     "releaseDate": 1446163200000,
     "rating": 7.540000000000001,
     "developer": "Us:track",
@@ -985,11 +993,12 @@
       "High School Student Heroine",
       "Heroine with Big Breasts"
     ],
-    "playMinutes": 3936,
-    "lastPlay": 1735659511778.8616,
-    "createDate": 1735659511778.1396,
+    "playMinutes": 183,
+    "expectedPlayMinutes": 3936,
+    "lastPlay": 1735698921347.9485,
+    "createDate": 1735698921347.6436,
     "releaseDate": 1445558400000,
-    "rating": 8.74,
+    "rating": 8.75,
     "developer": "Makura",
     "images": [
       "https://t.vndb.org/sf/29/37029.jpg",
@@ -1009,12 +1018,12 @@
         "name": "enwiki"
       },
       {
-        "name": "jawiki",
-        "url": "https://ja.wikipedia.org/wiki/サクラノ詩"
+        "url": "https://ja.wikipedia.org/wiki/サクラノ詩",
+        "name": "jawiki"
       },
       {
-        "name": "wikidata",
-        "url": "https://www.wikidata.org/wiki/Q11304518"
+        "url": "https://www.wikidata.org/wiki/Q11304518",
+        "name": "wikidata"
       }
     ]
   },
@@ -1058,9 +1067,10 @@
       "Only Blood-related Heroines",
       "Unoriginal Graphics"
     ],
-    "playMinutes": 420,
-    "lastPlay": 1735659511627.5017,
-    "createDate": 1735659511627.8357,
+    "playMinutes": 134,
+    "expectedPlayMinutes": 420,
+    "lastPlay": 1735698921514.2732,
+    "createDate": 1735698921514.109,
     "releaseDate": 1315008000000,
     "rating": 5.41,
     "developer": "NANACAN",
@@ -1135,9 +1145,10 @@
       "High School Student Heroine",
       "Sex with Protagonist Only"
     ],
-    "playMinutes": 1821,
-    "lastPlay": 1735659512226.639,
-    "createDate": 1735659512226.365,
+    "playMinutes": 164,
+    "expectedPlayMinutes": 1821,
+    "lastPlay": 1735698921386.9158,
+    "createDate": 1735698921386.2932,
     "releaseDate": 1195689600000,
     "rating": 7.55,
     "developer": "OVERDRIVE",
@@ -1155,20 +1166,20 @@
     ],
     "links": [
       {
-        "name": "enwiki",
-        "url": "https://en.wikipedia.org/wiki/Kirakira_(video_game)"
+        "url": "https://en.wikipedia.org/wiki/Kirakira_(video_game)",
+        "name": "enwiki"
       },
       {
-        "name": "jawiki",
-        "url": "https://ja.wikipedia.org/wiki/キラ☆キラ"
+        "url": "https://ja.wikipedia.org/wiki/キラ☆キラ",
+        "name": "jawiki"
       },
       {
-        "name": "wikidata",
-        "url": "https://www.wikidata.org/wiki/Q1988097"
+        "url": "https://www.wikidata.org/wiki/Q1988097",
+        "name": "wikidata"
       },
       {
-        "name": "wine",
-        "url": "https://appdb.winehq.org/appview.php?iAppId=10260"
+        "url": "https://appdb.winehq.org/appview.php?iAppId=10260",
+        "name": "wine"
       }
     ]
   },
@@ -1246,9 +1257,10 @@
       "Hate Sex (Consensual)",
       "Single Boobjob"
     ],
-    "playMinutes": 1800,
-    "lastPlay": 1735659511698.5396,
-    "createDate": 1735659511698.6501,
+    "playMinutes": 146,
+    "expectedPlayMinutes": 1800,
+    "lastPlay": 1735698921399.7024,
+    "createDate": 1735698921399.2866,
     "releaseDate": 1469750400000,
     "rating": 7.779999999999999,
     "developer": "Purple software",
@@ -1270,8 +1282,8 @@
         "name": "jawiki"
       },
       {
-        "url": "https://www.wikidata.org/wiki/Q38276352",
-        "name": "wikidata"
+        "name": "wikidata",
+        "url": "https://www.wikidata.org/wiki/Q38276352"
       },
       {
         "url": "https://gamefaqs.gamespot.com/-/188240-",
@@ -1286,8 +1298,8 @@
         "url": "https://www.igdb.com/games/amatsutsumi"
       },
       {
-        "name": "pcgamingwiki",
-        "url": "https://www.pcgamingwiki.com/wiki/Amatsutsumi"
+        "url": "https://www.pcgamingwiki.com/wiki/Amatsutsumi",
+        "name": "pcgamingwiki"
       },
       {
         "name": "lutris",
@@ -1351,9 +1363,10 @@
       "Mourning",
       "Family Drama"
     ],
-    "playMinutes": 2580,
-    "lastPlay": 1735659513121.4568,
-    "createDate": 1735659513121.224,
+    "playMinutes": 119,
+    "expectedPlayMinutes": 2580,
+    "lastPlay": 1735698921548.6506,
+    "createDate": 1735698921548.223,
     "releaseDate": 1677196800000,
     "rating": 8.68,
     "developer": "Makura",
@@ -1457,11 +1470,12 @@
       "Heroine with Big Breasts",
       "Heroine with Small Breasts (Non-Loli)"
     ],
-    "playMinutes": 1080,
-    "lastPlay": 1735659511853.5105,
-    "createDate": 1735659511853.4023,
+    "playMinutes": 170,
+    "expectedPlayMinutes": 1080,
+    "lastPlay": 1735698921614.903,
+    "createDate": 1735698921614.834,
     "releaseDate": 1604016000000,
-    "rating": 6.94,
+    "rating": 6.93,
     "developer": "GLOVETY",
     "images": [
       "https://t.vndb.org/sf/63/142063.jpg",
@@ -1557,9 +1571,10 @@
       "Vaginal Fingering",
       "Has Window Transparency Setting"
     ],
-    "playMinutes": 1652,
-    "lastPlay": 1735659511779.359,
-    "createDate": 1735659511779.6316,
+    "playMinutes": 158,
+    "expectedPlayMinutes": 1652,
+    "lastPlay": 1735698921509.9656,
+    "createDate": 1735698921509.8845,
     "releaseDate": 1330041600000,
     "rating": 8.17,
     "developer": "SAGA PLANETS",
@@ -1577,8 +1592,8 @@
     ],
     "links": [
       {
-        "url": "https://en.wikipedia.org/wiki/Hatsuyuki_Sakura",
-        "name": "enwiki"
+        "name": "enwiki",
+        "url": "https://en.wikipedia.org/wiki/Hatsuyuki_Sakura"
       },
       {
         "name": "jawiki",
@@ -1593,8 +1608,8 @@
         "name": "gamefaqs_game"
       },
       {
-        "name": "igdb_game",
-        "url": "https://www.igdb.com/games/hatsuyuki-sakura"
+        "url": "https://www.igdb.com/games/hatsuyuki-sakura",
+        "name": "igdb_game"
       }
     ]
   },
@@ -1687,9 +1702,10 @@
       "Heroine with Big Breasts",
       "Heroine with Small Breasts (Non-Loli)"
     ],
-    "playMinutes": 1731,
-    "lastPlay": 1735659512099.9214,
-    "createDate": 1735659512099.6614,
+    "playMinutes": 125,
+    "expectedPlayMinutes": 1731,
+    "lastPlay": 1735698921323.9646,
+    "createDate": 1735698921323.8757,
     "releaseDate": 1401408000000,
     "rating": 7.2299999999999995,
     "developer": "Qoobrand",
@@ -1707,24 +1723,24 @@
     ],
     "links": [
       {
-        "name": "jawiki",
-        "url": "https://ja.wikipedia.org/wiki/魔女こいにっき"
+        "url": "https://ja.wikipedia.org/wiki/魔女こいにっき",
+        "name": "jawiki"
       },
       {
-        "name": "wikidata",
-        "url": "https://www.wikidata.org/wiki/Q22131512"
+        "url": "https://www.wikidata.org/wiki/Q22131512",
+        "name": "wikidata"
       },
       {
         "url": "http://howlongtobeat.com/game.php?id=69418",
         "name": "howlongtobeat"
       },
       {
-        "url": "https://www.igdb.com/games/the-witchs-love-diary",
-        "name": "igdb_game"
+        "name": "igdb_game",
+        "url": "https://www.igdb.com/games/the-witchs-love-diary"
       },
       {
-        "name": "pcgamingwiki",
-        "url": "https://www.pcgamingwiki.com/wiki/The_Witch's_Love_Diary"
+        "url": "https://www.pcgamingwiki.com/wiki/The_Witch's_Love_Diary",
+        "name": "pcgamingwiki"
       },
       {
         "name": "lutris",

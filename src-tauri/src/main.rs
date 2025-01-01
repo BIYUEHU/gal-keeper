@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    visual_novel_manager_lib::run()
+    gal_keeper_lib::run()
 }

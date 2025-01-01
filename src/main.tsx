@@ -7,6 +7,17 @@ import App from '@/App'
 
 initializeIcons()
 
+document.addEventListener('contextmenu', (e) => e.preventDefault())
+document.addEventListener('keydown', (e) => {
+  if (['F3', 'F5', 'F7'].includes(e.key.toUpperCase())) {
+    e.preventDefault()
+  }
+
+  if (e.ctrlKey && ['r', 'u', 'p', 'l', 'j', 'g', 'f', 's'].includes(e.key.toLowerCase())) {
+    e.preventDefault()
+  }
+})
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <App />

@@ -3,6 +3,7 @@ import { Settings } from '@/pages/Settings'
 import { Detail } from '@/pages/Detail'
 import { Home } from '@/pages/Home'
 import { Category } from '@/pages/Category'
+import { Edit } from '@/pages/Edit'
 
 export interface RouteConfig {
   path: string
@@ -27,6 +28,11 @@ const routes: RouteConfig[] = [
   {
     path: '/details/:id',
     component: <Detail />,
+    title: '游戏'
+  },
+  {
+    path: '/edit/:id',
+    component: <Edit />,
     title: '游戏'
   },
   {
