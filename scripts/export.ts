@@ -33,7 +33,10 @@ async function main() {
       }
 
       return {
-        id: index + 1,
+        id: 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+          const r = (Math.random() * 16) | 0
+          return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
+        }),
         vndbId: data.id,
         bgmId: data.id,
         title: data.title,
@@ -44,8 +47,9 @@ async function main() {
           .filter((tag) => tag.rating >= 2)
           .sort((a, b) => b.rating - a.rating)
           .map((tag) => tag.name),
-        playMinutes: Math.floor(Math.random() * 100) + 100,
-        expectedPlayMinutes: data.length_minutes ?? 0,
+        // playMinutes: Math.floor(Math.random() * 100) + 100,
+        palyTimelines: [],
+        expectedPlayHours: Number((data.length_minutes / 60).toFixed(1)),
         lastPlay: Date.now() - Math.random(),
         createDate: Date.now() - Math.random(),
         releaseDate: new Date(data.released).getTime(),

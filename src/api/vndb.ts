@@ -1,6 +1,5 @@
+import type { FetchGameData } from '@/types'
 import axios from 'axios'
-import type { GameData } from '@/types'
-import { useSharedState } from '@/store'
 
 const VNDB_URL = 'https://api.vndb.org/kana/vn'
 
@@ -19,27 +18,23 @@ function generateVNDBBody(name: string) {
   }
 }
 
-export async function fetchFromVndb(name: string): Promise<GameData | null> {
+export async function fetchFromVndb(name: string): Promise<FetchGameData | null> {
   const data = (await axios.post(VNDB_URL, generateVNDBBody(name), VNDB_HEADER)).data.results[0]
+  if (!data) return null
 
   return {
-    id: useSharedState().getNewId(),
-    vndbId: data.id,
-    bgmId: data.id,
+    vndbId: String(data.id),
     title: data.title,
     alias: data.titles.map((title: { title: string }) => title.title),
-    cover: data.image?.url,
+    cover: data.image?.url ?? '',
     description: data.description ?? '',
-    tags:( data.tags as {rating: number, name: string}[])
+    tags: (data.tags as { rating: number; name: string }[])
       .filter((tag) => tag.rating >= 2)
       .sort((a, b) => b.rating - a.rating)
       .map((tag) => tag.name),
-    playMinutes: Math.floor(Math.random() * 100) + 100,
-    expectedPlayMinutes: data.length_minutes ?? 0,
-    lastPlay: Date.now() - Math.random(),
-    createDate: Date.now() - Math.random(),
+    expectedPlayHours: Number((data.length_minutes / 60).toFixed(1)),
     releaseDate: new Date(data.released).getTime(),
-    rating: data.rating / 10,
+    rating: Number((data.rating / 10).toFixed(1)),
     developer: data.developers[0]?.name ?? '',
     images: data.screenshots.map((screenshot: { url: string }) => screenshot.url),
     links: data.extlinks

@@ -1,33 +1,43 @@
 use std::path::Path;
 use std::process::Command;
 use std::thread;
-use std::time::{Duration, Instant};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use sysinfo::{Pid, ProcessesToUpdate, System};
 use tauri::{AppHandle, Emitter};
 use winapi::um::winuser::{GetForegroundWindow, GetWindowThreadProcessId};
 
+fn get_unix_timestamp() -> u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs()
+}
+
 #[tauri::command]
-pub fn launch_and_monitor(app_handle: AppHandle, file_path: &str) -> Result<(), String> {
-    let pid = Command::new(file_path)
-        .current_dir(Path::new(file_path).join(".."))
+pub fn launch_and_monitor(app_handle: AppHandle, filepath: &str) -> Result<(), String> {
+    let pid = Command::new(filepath)
+        .current_dir(Path::new(filepath).join(".."))
         .spawn()
         .map_err(|e| format!("Failed to launch program: {}", e))?
         .id();
     println!("Process ID: {}", pid);
 
-    let file_path = file_path.to_string();
+    let filepath = filepath.to_string();
     thread::spawn(move || {
-        let start_time = Instant::now();
+        let start_time = get_unix_timestamp();
         let active_time = monitor_process(Pid::from_u32(pid), false).unwrap();
+        let stop_time = get_unix_timestamp();
 
-        let total_time = start_time.elapsed().as_secs();
         println!(
-            "Monitoring finished. Total time: {} seconds, Active time: {} seconds.",
-            total_time, active_time
+            "Monitoring finished. Start time: {}, Stop time: {}, Total active time: {} seconds.",
+            start_time, stop_time, active_time
         );
 
         app_handle
-            .emit("finished", (file_path, total_time, active_time))
+            .emit(
+                "finished",
+                (filepath, start_time, stop_time, active_time * 1000),
+            )
             .unwrap();
     });
 

@@ -29,3 +29,5 @@ reqwest = "0.12.12"
 base64 = "0.22.1"
 winapi = { version = "0.3.9", features = ["winuser"] }
 sysinfo = "0.33.1"
+uuid = "1.11.0"
+sled = "0.34.7"

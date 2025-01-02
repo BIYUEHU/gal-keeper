@@ -3,20 +3,22 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Stack } from '@fluentui/react/lib/Stack'
 import { Text } from '@fluentui/react/lib/Text'
 import { Separator } from '@fluentui/react/lib/Separator'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react'
 import { openUrl } from '@/utils'
 import { IS_TAURI } from '@/constant'
 import { type Event, listen } from '@tauri-apps/api/event'
-import type { GameWithLocalData } from '@/types'
-import { useSharedState } from '@/store'
+import type { GameWithLocalData, LocalData } from '@/types'
+import useStore, { useSharedStore } from '@/store'
+import { SyncModal } from '@/components/SyncModal'
+import { ConfirmBox } from '@/components/ConfirmBox'
 
 interface InfoOption {
   text: string
-  value: string | ((g: GameWithLocalData) => string)
+  value: keyof GameWithLocalData | ((g: GameWithLocalData) => string)
 }
 
-const timestampToDate = (time: number) => new Date(time).toLocaleDateString()
+const timestampToDate = (time: number) => new Date(time).toLocaleString()
 
 const infoOptions: InfoOption[] = [
   {
@@ -28,32 +30,27 @@ const infoOptions: InfoOption[] = [
     value: (g) => timestampToDate(g.releaseDate)
   },
   {
-    text: '存档位置',
-    value: () => 'F:\\Galgame'
-  },
-  {
     text: '创建日期',
     value: (g) => timestampToDate(g.createDate)
   },
 
   {
     text: '预计时长',
-    value: (g) => {
-      const hours = Math.floor(g.expectedPlayMinutes / 60)
-      return `${g.expectedPlayMinutes % 60 > 30 ? hours + 1 : hours}h`
-    }
+    value: (g) => `${g.expectedPlayHours}h`
   },
   {
     text: '游玩时长',
+
     value: (g) => {
-      const hours = Math.floor(g.playMinutes / 60)
-      const minutes = g.playMinutes % 60
+      const playMinutes = g.palyTimelines.reduce((acc, cur) => acc + cur[2], 0) / 1000 / 60
+      const hours = Math.floor(playMinutes / 60)
+      const minutes = Math.floor(playMinutes % 60)
       return hours === 0 ? `${minutes}m` : `${hours}h${minutes}m`
     }
   },
   {
     text: '游玩次数',
-    value: () => Math.floor(Math.random() * 10).toString()
+    value: (g) => `${g.palyTimelines.length} 次`
   },
   {
     text: '上次游玩',
@@ -65,8 +62,13 @@ export const Detail: React.FC = () => {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const games = useSharedState((state) => state.getAllData)()
-  const game = games.find((game) => game.id.toString() === id)
+  const [isOpenSyncModal, setIsOpenSyncModal] = useState(false)
+  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false)
+  const [isOpenDelete2Modal, setIsOpenDelete2Modal] = useState(false)
+
+  const { setRunning, isRunning } = useStore((state) => state)
+  const { getData, getDataByProgramFile, updateData, removeData, addPlayTimeline } = useSharedStore((state) => state)
+  const [game, setGame] = useState(getData(id ?? ''))
 
   if (!game) {
     return <div>游戏不存在</div>
@@ -77,20 +79,33 @@ export const Detail: React.FC = () => {
       key: 'sync',
       text: '同步游戏',
       iconProps: { iconName: 'Link12' },
-      onClick: () => {}
+      onClick: () => setIsOpenSyncModal(true)
     },
     {
       key: 'start',
       text: '开始游戏',
       iconProps: { iconName: 'Play' },
-      canCheck: false,
-      onClick: async () => {
-        await invoke('launch_and_monitor', { filePath: 'F:\\樱花，萌放 v1.08\\樱花，萌放\\SakuraChs.exe' })
-        console.log('Start successfully')
-        listen('finished', (data: Event<[string, number, number]>) => {
-          console.log(
-            `Finished\nProcess name: ${data.payload[0]}\nCost time: ${data.payload[1]}\nPlay time: ${data.payload[2]}`
-          )
+      disabled: !game.local?.programFile,
+      onClick: () => {
+        if (isRunning((game.local as LocalData).programFile)) return
+        invoke('launch_and_monitor', { filepath: game.local?.programFile }).then(() => {
+          console.log('Start successfully', game.title, '\n', id)
+          setRunning((game.local as LocalData).programFile, game.id, true)
+          updateData({ ...game, lastPlay: Date.now() })
+          setGame(getData(id as string))
+
+          listen('finished', (data: Event<[string, number, number, number]>) => {
+            const gameHandled = getDataByProgramFile(data.payload[0])
+            if (!gameHandled) return
+
+            console.log(
+              `Finished\nProcess name: ${data.payload[0]}\nStart time: ${data.payload[1]}\nStop time: ${data.payload[2]}\n Active time: ${data.payload[3]}\n`,
+              '\n'
+            )
+            setRunning((game.local as LocalData).programFile, game.id, false)
+            addPlayTimeline(gameHandled.id, data.payload.slice(1) as [number, number, number])
+            if (id === gameHandled.id) setGame(getData(gameHandled.id as string))
+          })
         })
       }
     },
@@ -104,18 +119,16 @@ export const Detail: React.FC = () => {
       key: 'guide',
       text: '查看攻略',
       iconProps: { iconName: 'ReadingMode' },
-      canCheck: IS_TAURI,
-
-      onClick: async () => {
-        await invoke('open_with_notepad', { filePath: 'F:\\爱因斯坦携爱敬上\\请读我.txt' })
+      disabled: !game.local?.guideFile,
+      onClick: () => {
+        invoke('open_with_notepad', { filepath: game.local?.guideFile })
       }
     },
     {
       key: 'backup',
       text: '备份存档',
       iconProps: { iconName: 'CloudUpload' },
-      canCheck: IS_TAURI,
-
+      disabled: !game.local?.savePath,
       onClick: () => {
         // invoke('backup', )
       }
@@ -130,24 +143,27 @@ export const Detail: React.FC = () => {
             key: 'explorer',
             text: '打开游戏目录',
             iconProps: { iconName: 'OpenFolderHorizontal' },
-            onClick: async () => {
-              await invoke('open_with_explorer', { directory: 'F:\\樱花，萌放 v1.08\\樱花，萌放' })
+            disabled: !game.local?.programFile,
+            onClick: () => {
+              invoke('open_with_explorer', {
+                directory: game.local?.programFile.split(/[/\\]/).slice(0, -1).join('\\')
+              })
             }
           },
           {
             key: 'save',
             text: '打开存档目录',
             iconProps: { iconName: 'Save' },
-
-            onClick: async () => {
-              await invoke('open_with_explorer', { directory: 'F:\\樱花，萌放 v1.08\\樱花，萌放\\extra' })
+            disabled: !game.local?.savePath,
+            onClick: () => {
+              invoke('open_with_explorer', { directory: game.local?.savePath })
             }
           },
           {
             key: 'vndb',
             text: '查看 Vndb 页面',
             iconProps: { iconName: 'Go' },
-            canCheck: !!game.vndbId,
+            disabled: !game.vndbId,
             onClick: () => {
               openUrl(`https://vndb.org/${game.vndbId}`)
             }
@@ -156,16 +172,23 @@ export const Detail: React.FC = () => {
             key: 'bangumi',
             text: '查看 Bangumi 页面',
             iconProps: { iconName: 'Go' },
-            canCheck: false,
+            disabled: !game.bgmId,
             onClick: () => {
               openUrl(`https://bgm.tv/subject/${game.bgmId}`)
             }
           },
           {
             key: 'delete',
+            text: '删除本地同步',
+            iconProps: { iconName: 'Delete' },
+            disabled: !game.local,
+            onClick: () => setIsOpenDeleteModal(true)
+          },
+          {
+            key: 'delete2',
             text: '删除游戏',
             iconProps: { iconName: 'Delete' },
-            onClick: () => {}
+            onClick: () => setIsOpenDelete2Modal(true)
           }
         ]
       }
@@ -174,25 +197,9 @@ export const Detail: React.FC = () => {
   const handledCommandItems = useMemo(
     () =>
       commandItems.filter((item) => {
-        if (item.key === 'more') {
-          // biome-ignore lint:
-          const newItem = item as any
-          newItem.subMenuProps.items = (newItem.subMenuProps.items as ICommandBarItemProps[]).filter(({ key }) => {
-            switch (key) {
-              case 'vndb':
-                return !!game.vndbId
-              case 'bangumi':
-                return !!game.bgmId
-              case 'explorer':
-                return IS_TAURI && !!game.local?.programFile
-              case 'save':
-                return IS_TAURI && !!game.local?.savePath
-            }
-            return true
-          })
-          return true
-        }
-        return IS_TAURI ? !!game.local || ['sync', 'edit'].includes(item.key) : item.key === 'edit'
+        if (['edit', 'more'].includes(item.key)) return true
+        if (IS_TAURI) return !game.local ? item.key === 'sync' : item.key !== 'sync'
+        return false
       }),
     // biome-ignore lint:
     [commandItems, game]
@@ -200,25 +207,36 @@ export const Detail: React.FC = () => {
 
   return (
     <React.Fragment>
-      <CommandBar className="border-b ml-auto" items={handledCommandItems} />
+      <SyncModal data={game} isOpen={isOpenSyncModal} setIsOpen={setIsOpenSyncModal} />
+      <ConfirmBox
+        isOpen={isOpenDeleteModal}
+        setIsOpen={setIsOpenDeleteModal}
+        text="删除本地同步后需重新设置游戏启动程序，但不会删除本地游戏文件，是否继续？"
+        onConfirm={() => removeData(id as string, true)}
+      />
+      <ConfirmBox
+        isOpen={isOpenDelete2Modal}
+        setIsOpen={setIsOpenDelete2Modal}
+        text="该操作会删除游戏数据与云端存档备份，但不会删除本地游戏文件，是否继续？"
+        onConfirm={() => {
+          setTimeout(() => {
+            removeData(id as string, false)
+            navigate('/library')
+          }, 0)
+        }}
+      />
+      <CommandBar className="border-b w-full flex justify-end overflow-visible" items={handledCommandItems} />
       <div className="overflow-auto">
         <Stack horizontal horizontalAlign="stretch" tokens={{ childrenGap: 16 }}>
           <Stack tokens={{ childrenGap: 2 }} className="mt-4">
             <img src={game.cover} alt={game.title} className="max-h-65 max-w-40 lg:max-w-80 rounded-lg shadow-lg" />
-
-            {/*           <PrimaryButton text="开始游戏" className="w-full" />
-          <DefaultButton text="编辑信息" className="w-full" />
-          <Stack horizontal tokens={{ childrenGap: 8 }} className="w-full">
-            <DefaultButton text="游玩状态" className="flex-grow" />
-            <DefaultButton text="打开文本" className="flex-grow" />
-          </Stack> */}
           </Stack>
           <Stack className="flex-grow" tokens={{ childrenGap: 12 }}>
             <Text variant="xxLargePlus" className="font-semibold line-height-normal">
               {game.title}
             </Text>
             <Stack horizontal verticalAlign="center" className="max-w-60vw">
-              <Stack className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Stack className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-x-18">
                 {infoOptions.map((option) => (
                   <Text key={option.text} variant="medium">
                     <strong>{option.text}</strong>
@@ -227,7 +245,7 @@ export const Detail: React.FC = () => {
                   </Text>
                 ))}
               </Stack>
-              <Text variant="mega" className="ml-24 font-semibold">
+              <Text variant="mega" className="ml-auto mr-4 font-semibold">
                 {game.rating.toFixed(1)}
               </Text>
             </Stack>

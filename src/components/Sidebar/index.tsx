@@ -11,6 +11,7 @@ export const Sidebar: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [selectedKey, setSelectedKey] = useState(location.pathname)
+
   const handleNavigation = (key: string) => {
     setSelectedKey(key)
     navigate(key)

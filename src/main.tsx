@@ -4,8 +4,10 @@ import { initializeIcons } from '@fluentui/font-icons-mdl2'
 import '@/index.css'
 import 'virtual:uno.css'
 import App from '@/App'
+import { useSharedStore } from './store'
 
 initializeIcons()
+useSharedStore.getState().initialize()
 
 document.addEventListener('contextmenu', (e) => e.preventDefault())
 document.addEventListener('keydown', (e) => {

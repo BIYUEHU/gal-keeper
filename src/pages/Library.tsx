@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { SearchBox } from '@fluentui/react/lib/SearchBox'
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react/lib/CommandBar'
 import { SortModal } from '@/components/SortModal'
-import useStore, { useSharedState } from '@/store'
+import useStore, { useSharedStore } from '@/store'
 import { FilterModal } from '@/components/FilterModal'
 import { AddModal } from '@/components/AddModal'
 
@@ -12,11 +12,10 @@ export const Library: React.FC = () => {
   const [isOpenFilterModal, setIsOpenFilterModal] = useState(false)
   const [isOpenAddModal, setIsOpenAddModal] = useState(false)
 
-  const primaryKey = useStore((state) => state.sort.primaryKey)
-  const isPrimaryDescending = useStore((state) => state.sort.isPrimaryDescending)
-  const onlyDisplayLocal = useStore((state) => state.filter.onlyDisplayLocal)
+  const { primaryKey, isPrimaryDescending } = useStore((state) => state.sort)
+  const { onlyDisplayLocal } = useStore((state) => state.filter)
   const [searchText, setSearchText] = useState('')
-  const games = useSharedState((state) => state.getAllData)()
+  const [games, setGames] = useState(useSharedStore((state) => state.getAllData)())
 
   const filteredData = useMemo(() => {
     const target = searchText.toLocaleLowerCase()
@@ -77,7 +76,7 @@ export const Library: React.FC = () => {
 
   return (
     <React.Fragment>
-      <AddModal isOpen={isOpenAddModal} setIsOpen={setIsOpenAddModal} />
+      <AddModal isOpen={isOpenAddModal} setIsOpen={setIsOpenAddModal} data={games} setData={setGames} />
       <SortModal isOpen={isOpenSortModal} setIsOpen={setIsOpenSortModal} />
       <FilterModal isOpen={isOpenFilterModal} setIsOpen={setIsOpenFilterModal} />
       <div className="border-b">
@@ -96,13 +95,21 @@ export const Library: React.FC = () => {
           <Link
             key={game.id}
             to={`/details/${game.id}`}
-            className="my-2 max-w-40 no-underline p-1 border-transparent box-border hover:border-solid hover:border-2 hover:border-gray-200 hover:bg-gray-100 hover:scale-105"
+            className="ml-1 relative my-2 max-w-40 no-underline p-1 border-transparent box-border hover:border-solid hover:border-2 hover:border-gray-200 hover:bg-gray-50 hover:scale-105"
           >
-            <div className="cursor-pointer">
-              <div className="aspect-[3/4] rounded-lg overflow-hidden bg-gray-100">
-                <img src={game.cover} alt={game.title} className="w-full h-full object-cover transition-transform" />
+            <div className="cursor-pointer relative">
+              <div className="aspect-[3/4] rounded-lg overflow-hidden bg-gray-100 relative">
+                {/* blue: cloud */}
+                {!game.local && (
+                  <div className="absolute border-t-solid border-t-20 border-t-sky border-r-solid border-r-20 border-r-transparent" />
+                )}
+                <img
+                  src={game.cover || '/assets/cover.png'}
+                  alt=""
+                  className="w-full h-full object-cover transition-transform"
+                />
               </div>
-              <h3 className="text-sm font-medium text-gray-900">{game.title}</h3>
+              <h3 className="text-sm font-medium text-gray-900 mt-1 truncate">{game.title}</h3>
             </div>
           </Link>
         ))}

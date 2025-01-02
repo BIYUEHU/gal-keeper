@@ -1,14 +1,15 @@
 export interface GameData {
-  id: number
-  vndbId: string
-  bgmId: string
+  id: string
+  vndbId?: string
+  bgmId?: string
   title: string
   alias: string[]
   cover: string
   description: string
   tags: string[]
-  playMinutes: number
-  expectedPlayMinutes: number
+  // playMinutes: number
+  palyTimelines: [number, number, number][]
+  expectedPlayHours: number
   lastPlay: number
   createDate: number
   releaseDate: number
@@ -22,12 +23,23 @@ export interface GameData {
 }
 
 export interface LocalData {
-  id: number
-  savePath: string
+  id: string
   programFile: string
-  guideFile: string
+  savePath?: string
+  guideFile?: string
 }
 
 export interface GameWithLocalData extends GameData {
   local?: LocalData
 }
+
+export type FetchGameData = Omit<GameData, 'id' | 'local' | 'palyTimelines' | 'lastPlay' | 'createDate'>
+
+export type SortKeys = 'Title' | 'CreateDate' | 'LastPlay' | 'Developer' | 'Rating' | 'ReleaseDate'
+
+export type FetchMethods = 'mixed' | 'vndb' | 'bgm'
+
+export type Timeline = [number, number, number]
+
+// biome-ignore lint:
+export type Obj = { [key: string]: any }

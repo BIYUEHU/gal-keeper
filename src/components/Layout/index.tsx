@@ -1,6 +1,8 @@
 import { Stack } from '@fluentui/react/lib/Stack'
 import { Sidebar } from '../Sidebar'
 import useStore from '@/store'
+import { AlertBox } from '../AlertBox'
+import { Spinner } from '@fluentui/react-components'
 
 interface LayoutProps {
   title: string
@@ -8,10 +10,17 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ title, outlet }) => {
-  const sidebar = useStore((state) => state.sidebar)
+  const { sidebar } = useStore((state) => state)
+  const { fullLoadingIsOpen } = useStore((state) => state.temps)
 
   return (
     <Stack horizontal className="h-screen w-screen">
+      <AlertBox />
+      {fullLoadingIsOpen && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/50 shadow-lg">
+          <Spinner size="extra-large" />
+        </div>
+      )}
       <Stack.Item className="max-w-0">
         <Sidebar />
       </Stack.Item>

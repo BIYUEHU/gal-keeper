@@ -1,6 +1,6 @@
 [
   {
-    "id": 1,
+    "id": "16712e43-c88a-4507-b2cc-a097c66de851",
     "vndbId": "v28297",
     "bgmId": "v28297",
     "title": "Hoshizora Tetsudou to Shiro no Tabi",
@@ -31,10 +31,10 @@
       "Only Younger Heroines",
       "Reiwa Era"
     ],
-    "playMinutes": 192,
-    "expectedPlayMinutes": 485,
-    "lastPlay": 1735698921300.6292,
-    "createDate": 1735698921300.1362,
+    "palyTimelines": [],
+    "expectedPlayHours": 8.1,
+    "lastPlay": 1735808636522.8044,
+    "createDate": 1735808636522.2954,
     "releaseDate": 1609286400000,
     "rating": 8.01,
     "developer": "Shiratamaco",
@@ -48,25 +48,25 @@
     ],
     "links": [
       {
-        "url": "https://www.wikidata.org/wiki/Q106859276",
-        "name": "wikidata"
+        "name": "wikidata",
+        "url": "https://www.wikidata.org/wiki/Q106859276"
       },
       {
-        "url": "http://howlongtobeat.com/game.php?id=113785",
-        "name": "howlongtobeat"
+        "name": "howlongtobeat",
+        "url": "http://howlongtobeat.com/game.php?id=113785"
       },
       {
         "name": "igdb_game",
         "url": "https://www.igdb.com/games/hoshizora-testudou-to-shiro-no-tabi"
       },
       {
-        "name": "lutris",
-        "url": "https://lutris.net/games/hoshizora-testudou-to-shiro-no-tabi"
+        "url": "https://lutris.net/games/hoshizora-testudou-to-shiro-no-tabi",
+        "name": "lutris"
       }
     ]
   },
   {
-    "id": 2,
+    "id": "0ac3b5be-0afb-48f9-833c-893f3235d937",
     "vndbId": "v20330",
     "bgmId": "v20330",
     "title": "Newton to Ringo no Ki",
@@ -142,10 +142,10 @@
       "Quickie Fix Position",
       "Astronomy"
     ],
-    "playMinutes": 193,
-    "expectedPlayMinutes": 1200,
-    "lastPlay": 1735698921429.585,
-    "createDate": 1735698921429.2896,
+    "palyTimelines": [],
+    "expectedPlayHours": 20,
+    "lastPlay": 1735808636493.6377,
+    "createDate": 1735808636493.3577,
     "releaseDate": 1495756800000,
     "rating": 7.359999999999999,
     "developer": "Laplacian",
@@ -189,7 +189,7 @@
     ]
   },
   {
-    "id": 3,
+    "id": "118ddfcc-70f9-44cf-8223-f35f9e5d7fb3",
     "vndbId": "v19658",
     "bgmId": "v19658",
     "title": "Karenai Sekai to Owaru Hana",
@@ -251,10 +251,10 @@
       "Heroine with Big Breasts",
       "Jump to Unread"
     ],
-    "playMinutes": 131,
-    "expectedPlayMinutes": 770,
-    "lastPlay": 1735698921564.0955,
-    "createDate": 1735698921564.1626,
+    "palyTimelines": [],
+    "expectedPlayHours": 12.8,
+    "lastPlay": 1735808636339.077,
+    "createDate": 1735808636339.2446,
     "releaseDate": 1480032000000,
     "rating": 7.640000000000001,
     "developer": "Sweet & Tea",
@@ -272,8 +272,8 @@
     ],
     "links": [
       {
-        "url": "https://ja.wikipedia.org/wiki/枯れない世界と終わる花",
-        "name": "jawiki"
+        "name": "jawiki",
+        "url": "https://ja.wikipedia.org/wiki/枯れない世界と終わる花"
       },
       {
         "url": "https://www.wikidata.org/wiki/Q30931595",
@@ -282,7 +282,7 @@
     ]
   },
   {
-    "id": 4,
+    "id": "035de0e7-d5be-44fe-be94-89fab0d02711",
     "vndbId": "v3144",
     "bgmId": "v3144",
     "title": "Subarashiki Hibi ~Furenzoku Sonzai~",
@@ -438,10 +438,10 @@
       "Imaginary Friend as a Heroine",
       "Sex Scene Recollection"
     ],
-    "playMinutes": 170,
-    "expectedPlayMinutes": 3000,
-    "lastPlay": 1735698921457.1938,
-    "createDate": 1735698921457.108,
+    "palyTimelines": [],
+    "expectedPlayHours": 50,
+    "lastPlay": 1735808641586.3328,
+    "createDate": 1735808641586.4768,
     "releaseDate": 1269561600000,
     "rating": 8.690000000000001,
     "developer": "KeroQ",
@@ -459,41 +459,41 @@
     ],
     "links": [
       {
-        "name": "enwiki",
-        "url": "https://en.wikipedia.org/wiki/Wonderful_Everyday"
+        "url": "https://en.wikipedia.org/wiki/Wonderful_Everyday",
+        "name": "enwiki"
       },
       {
         "url": "https://ja.wikipedia.org/wiki/素晴らしき日々_〜不連続存在〜",
         "name": "jawiki"
       },
       {
-        "name": "wikidata",
-        "url": "https://www.wikidata.org/wiki/Q1529879"
+        "url": "https://www.wikidata.org/wiki/Q1529879",
+        "name": "wikidata"
       },
       {
-        "name": "mobygames",
-        "url": "https://www.mobygames.com/game/wonderful-everyday-diskontinuierliches-dasein"
+        "url": "https://www.mobygames.com/game/wonderful-everyday-diskontinuierliches-dasein",
+        "name": "mobygames"
       },
       {
-        "name": "howlongtobeat",
-        "url": "http://howlongtobeat.com/game.php?id=48655"
+        "url": "http://howlongtobeat.com/game.php?id=48655",
+        "name": "howlongtobeat"
       },
       {
-        "name": "igdb_game",
-        "url": "https://www.igdb.com/games/wonderful-everyday-down-the-rabbit-hole"
+        "url": "https://www.igdb.com/games/wonderful-everyday-down-the-rabbit-hole",
+        "name": "igdb_game"
       },
       {
         "name": "pcgamingwiki",
         "url": "https://www.pcgamingwiki.com/wiki/Wonderful_Everyday_Down_the_Rabbit-Hole"
       },
       {
-        "name": "lutris",
-        "url": "https://lutris.net/games/wonderful-everyday-down-the-rabbit-hole"
+        "url": "https://lutris.net/games/wonderful-everyday-down-the-rabbit-hole",
+        "name": "lutris"
       }
     ]
   },
   {
-    "id": 5,
+    "id": "02d10b7a-0813-4dc4-818b-58f8df19ca5b",
     "vndbId": "v15871",
     "bgmId": "v15871",
     "title": "Kami no Ue no Mahoutsukai",
@@ -558,12 +558,12 @@
       "Perverted Heroine",
       "Ladder Structure"
     ],
-    "playMinutes": 174,
-    "expectedPlayMinutes": 2064,
-    "lastPlay": 173569921637.5244,
-    "createDate": 1735698921637.583,
+    "palyTimelines": [],
+    "expectedPlayHours": 34.4,
+    "lastPlay": 1735808636377.3196,
+    "createDate": 1735808636377.2085,
     "releaseDate": 1418947200000,
-    "rating": 8.120000000000001,
+    "rating": 8.129999999999999,
     "developer": "Uguisu Kagura",
     "images": [
       "https://t.vndb.org/sf/89/75989.jpg",
@@ -587,7 +587,7 @@
     ]
   },
   {
-    "id": 6,
+    "id": "0b06c84f-9405-417d-b7b7-cfef8971044c",
     "vndbId": "v22313",
     "bgmId": "v22313",
     "title": "Sakura, Moyu. -as the Night's, Reincarnation-",
@@ -665,10 +665,10 @@
       "Sex with Protagonist Only",
       "Has Window Transparency Setting"
     ],
-    "playMinutes": 170,
-    "expectedPlayMinutes": 3641,
-    "lastPlay": 1735698921587.645,
-    "createDate": 1735698921587.2917,
+    "palyTimelines": [],
+    "expectedPlayHours": 60.7,
+    "lastPlay": 1735808636332.1096,
+    "createDate": 1735808636332.0576,
     "releaseDate": 1548892800000,
     "rating": 8.57,
     "developer": "FAVORITE",
@@ -690,25 +690,25 @@
         "url": "https://ja.wikipedia.org/wiki/さくら、もゆ。-as_the_Night's,_Reincarnation-"
       },
       {
-        "name": "wikidata",
-        "url": "https://www.wikidata.org/wiki/Q54932232"
+        "url": "https://www.wikidata.org/wiki/Q54932232",
+        "name": "wikidata"
       },
       {
-        "url": "https://gamefaqs.gamespot.com/-/235806-",
-        "name": "gamefaqs_game"
+        "name": "gamefaqs_game",
+        "url": "https://gamefaqs.gamespot.com/-/235806-"
       },
       {
-        "name": "igdb_game",
-        "url": "https://www.igdb.com/games/sakura-moyu-dot-as-the-nights-reincarnation"
+        "url": "https://www.igdb.com/games/sakura-moyu-dot-as-the-nights-reincarnation",
+        "name": "igdb_game"
       },
       {
-        "name": "lutris",
-        "url": "https://lutris.net/games/sakura-moyu-dot-as-the-nights-reincarnation"
+        "url": "https://lutris.net/games/sakura-moyu-dot-as-the-nights-reincarnation",
+        "name": "lutris"
       }
     ]
   },
   {
-    "id": 7,
+    "id": "95d2ad2c-73ac-4d18-8fc7-48e97eb82d1e",
     "vndbId": "v10",
     "bgmId": "v10",
     "title": "narcissu",
@@ -755,10 +755,10 @@
       "Achievements",
       "Laid-back Heroine"
     ],
-    "playMinutes": 149,
-    "expectedPlayMinutes": 172,
-    "lastPlay": 1735698921494.438,
-    "createDate": 1735698921494.4155,
+    "palyTimelines": [],
+    "expectedPlayHours": 2.9,
+    "lastPlay": 1735808637285.4302,
+    "createDate": 1735808637285.1492,
     "releaseDate": 1122940800000,
     "rating": 7.49,
     "developer": "Stage-nana",
@@ -776,45 +776,45 @@
     ],
     "links": [
       {
-        "url": "https://en.wikipedia.org/wiki/Narcissu",
-        "name": "enwiki"
+        "name": "enwiki",
+        "url": "https://en.wikipedia.org/wiki/Narcissu"
       },
       {
         "url": "https://ja.wikipedia.org/wiki/ナルキッソス_(ゲーム)",
         "name": "jawiki"
       },
       {
-        "name": "wikidata",
-        "url": "https://www.wikidata.org/wiki/Q306348"
+        "url": "https://www.wikidata.org/wiki/Q306348",
+        "name": "wikidata"
       },
       {
         "url": "https://www.mobygames.com/game/narcissu",
         "name": "mobygames"
       },
       {
-        "url": "https://www.indiedb.com/games/narcissu-1st-2nd",
-        "name": "indiedb_game"
+        "name": "indiedb_game",
+        "url": "https://www.indiedb.com/games/narcissu-1st-2nd"
       },
       {
-        "name": "howlongtobeat",
-        "url": "http://howlongtobeat.com/game.php?id=23314"
+        "url": "http://howlongtobeat.com/game.php?id=23314",
+        "name": "howlongtobeat"
       },
       {
         "name": "igdb_game",
         "url": "https://www.igdb.com/games/narcissu-1st-and-2nd"
       },
       {
-        "name": "pcgamingwiki",
-        "url": "https://www.pcgamingwiki.com/wiki/Narcissu"
+        "url": "https://www.pcgamingwiki.com/wiki/Narcissu",
+        "name": "pcgamingwiki"
       },
       {
-        "name": "lutris",
-        "url": "https://lutris.net/games/narcissu-1st-and-2nd"
+        "url": "https://lutris.net/games/narcissu-1st-and-2nd",
+        "name": "lutris"
       }
     ]
   },
   {
-    "id": 8,
+    "id": "7786f8cc-00d4-42ff-b04d-46a390e2fc95",
     "vndbId": "v17516",
     "bgmId": "v17516",
     "title": "Koi x Shin Ai Kanojo",
@@ -890,10 +890,10 @@
       "Single Footjob",
       "High School Student Heroine"
     ],
-    "playMinutes": 129,
-    "expectedPlayMinutes": 1725,
-    "lastPlay": 1735698921465.0916,
-    "createDate": 1735698921465.7307,
+    "palyTimelines": [],
+    "expectedPlayHours": 28.8,
+    "lastPlay": 1735808636357.6208,
+    "createDate": 1735808636357.4885,
     "releaseDate": 1446163200000,
     "rating": 7.540000000000001,
     "developer": "Us:track",
@@ -911,8 +911,8 @@
     ],
     "links": [
       {
-        "name": "jawiki",
-        "url": "https://ja.wikipedia.org/wiki/恋×シンアイ彼女"
+        "url": "https://ja.wikipedia.org/wiki/恋×シンアイ彼女",
+        "name": "jawiki"
       },
       {
         "name": "wikidata",
@@ -921,7 +921,7 @@
     ]
   },
   {
-    "id": 9,
+    "id": "e3932b84-10db-42ae-b8f8-3ca17b8797a9",
     "vndbId": "v562",
     "bgmId": "v562",
     "title": "Sakura no Uta -Sakura no Mori no Ue o Mau-",
@@ -993,10 +993,10 @@
       "High School Student Heroine",
       "Heroine with Big Breasts"
     ],
-    "playMinutes": 183,
-    "expectedPlayMinutes": 3936,
-    "lastPlay": 1735698921347.9485,
-    "createDate": 1735698921347.6436,
+    "palyTimelines": [],
+    "expectedPlayHours": 65.6,
+    "lastPlay": 1735808636430.0535,
+    "createDate": 1735808636430.9766,
     "releaseDate": 1445558400000,
     "rating": 8.75,
     "developer": "Makura",
@@ -1022,13 +1022,13 @@
         "name": "jawiki"
       },
       {
-        "url": "https://www.wikidata.org/wiki/Q11304518",
-        "name": "wikidata"
+        "name": "wikidata",
+        "url": "https://www.wikidata.org/wiki/Q11304518"
       }
     ]
   },
   {
-    "id": 10,
+    "id": "2154f902-4971-4ec1-828c-23f7041d6a7a",
     "vndbId": "v9303",
     "bgmId": "v9303",
     "title": "Imouto Choukyou Nikki ~Konna Tsundere ga Ore no Imouto na Wakenai!~",
@@ -1067,10 +1067,10 @@
       "Only Blood-related Heroines",
       "Unoriginal Graphics"
     ],
-    "playMinutes": 134,
-    "expectedPlayMinutes": 420,
-    "lastPlay": 1735698921514.2732,
-    "createDate": 1735698921514.109,
+    "palyTimelines": [],
+    "expectedPlayHours": 7,
+    "lastPlay": 1735808636538.8022,
+    "createDate": 1735808636538.2136,
     "releaseDate": 1315008000000,
     "rating": 5.41,
     "developer": "NANACAN",
@@ -1092,7 +1092,7 @@
     ]
   },
   {
-    "id": 11,
+    "id": "e4106b79-a673-42c0-8a2d-fcfd8f654385",
     "vndbId": "v414",
     "bgmId": "v414",
     "title": "KIRA☆KIRA",
@@ -1145,10 +1145,10 @@
       "High School Student Heroine",
       "Sex with Protagonist Only"
     ],
-    "playMinutes": 164,
-    "expectedPlayMinutes": 1821,
-    "lastPlay": 1735698921386.9158,
-    "createDate": 1735698921386.2932,
+    "palyTimelines": [],
+    "expectedPlayHours": 30.4,
+    "lastPlay": 1735808636400.0615,
+    "createDate": 1735808636400.4202,
     "releaseDate": 1195689600000,
     "rating": 7.55,
     "developer": "OVERDRIVE",
@@ -1170,8 +1170,8 @@
         "name": "enwiki"
       },
       {
-        "url": "https://ja.wikipedia.org/wiki/キラ☆キラ",
-        "name": "jawiki"
+        "name": "jawiki",
+        "url": "https://ja.wikipedia.org/wiki/キラ☆キラ"
       },
       {
         "url": "https://www.wikidata.org/wiki/Q1988097",
@@ -1184,7 +1184,7 @@
     ]
   },
   {
-    "id": 12,
+    "id": "d6a005a5-2ca7-4d90-84ce-fefc82aa7014",
     "vndbId": "v18852",
     "bgmId": "v18852",
     "title": "Amatsutsumi",
@@ -1257,10 +1257,10 @@
       "Hate Sex (Consensual)",
       "Single Boobjob"
     ],
-    "playMinutes": 146,
-    "expectedPlayMinutes": 1800,
-    "lastPlay": 1735698921399.7024,
-    "createDate": 1735698921399.2866,
+    "palyTimelines": [],
+    "expectedPlayHours": 30,
+    "lastPlay": 1735808636487.2732,
+    "createDate": 1735808636487.1636,
     "releaseDate": 1469750400000,
     "rating": 7.779999999999999,
     "developer": "Purple software",
@@ -1278,28 +1278,28 @@
     ],
     "links": [
       {
-        "url": "https://ja.wikipedia.org/wiki/アマツツミ",
-        "name": "jawiki"
+        "name": "jawiki",
+        "url": "https://ja.wikipedia.org/wiki/アマツツミ"
       },
       {
-        "name": "wikidata",
-        "url": "https://www.wikidata.org/wiki/Q38276352"
+        "url": "https://www.wikidata.org/wiki/Q38276352",
+        "name": "wikidata"
       },
       {
         "url": "https://gamefaqs.gamespot.com/-/188240-",
         "name": "gamefaqs_game"
       },
       {
-        "name": "acdb_source",
-        "url": "https://www.animecharactersdatabase.com/source.php?id=104807"
+        "url": "https://www.animecharactersdatabase.com/source.php?id=104807",
+        "name": "acdb_source"
       },
       {
         "name": "igdb_game",
         "url": "https://www.igdb.com/games/amatsutsumi"
       },
       {
-        "url": "https://www.pcgamingwiki.com/wiki/Amatsutsumi",
-        "name": "pcgamingwiki"
+        "name": "pcgamingwiki",
+        "url": "https://www.pcgamingwiki.com/wiki/Amatsutsumi"
       },
       {
         "name": "lutris",
@@ -1308,7 +1308,7 @@
     ]
   },
   {
-    "id": 13,
+    "id": "5da1b584-c319-4fe8-a2b0-b9276a7365bf",
     "vndbId": "v20431",
     "bgmId": "v20431",
     "title": "Sakura no Toki -Sakura no Mori no Shita o Ayumu-",
@@ -1363,10 +1363,10 @@
       "Mourning",
       "Family Drama"
     ],
-    "playMinutes": 119,
-    "expectedPlayMinutes": 2580,
-    "lastPlay": 1735698921548.6506,
-    "createDate": 1735698921548.223,
+    "palyTimelines": [],
+    "expectedPlayHours": 43,
+    "lastPlay": 1735808638232.127,
+    "createDate": 1735808638232.1406,
     "releaseDate": 1677196800000,
     "rating": 8.68,
     "developer": "Makura",
@@ -1381,13 +1381,13 @@
     ],
     "links": [
       {
-        "url": "https://www.wikidata.org/wiki/Q117413661",
-        "name": "wikidata"
+        "name": "wikidata",
+        "url": "https://www.wikidata.org/wiki/Q117413661"
       }
     ]
   },
   {
-    "id": 14,
+    "id": "f9c6f443-6c71-46f3-9995-7e2fc8ee438b",
     "vndbId": "v24987",
     "bgmId": "v24987",
     "title": "Einstein Yori Ai o Komete",
@@ -1470,10 +1470,10 @@
       "Heroine with Big Breasts",
       "Heroine with Small Breasts (Non-Loli)"
     ],
-    "playMinutes": 170,
-    "expectedPlayMinutes": 1080,
-    "lastPlay": 1735698921614.903,
-    "createDate": 1735698921614.834,
+    "palyTimelines": [],
+    "expectedPlayHours": 18,
+    "lastPlay": 1735808636454.0696,
+    "createDate": 1735808636454.3464,
     "releaseDate": 1604016000000,
     "rating": 6.93,
     "developer": "GLOVETY",
@@ -1496,7 +1496,7 @@
     ]
   },
   {
-    "id": 15,
+    "id": "832e7dba-190c-44ac-9323-2e8390f88b93",
     "vndbId": "v7302",
     "bgmId": "v7302",
     "title": "Hatsuyuki Sakura",
@@ -1507,7 +1507,7 @@
       "初雪樱",
       "初雪櫻"
     ],
-    "cover": "https://t.vndb.org/cv/43/89943.jpg",
+    "cover": "https://t.vndb.org/cv/09/97609.jpg",
     "description": "Kawano Hatsuyuki is a third-year student, one of the rare delinquents at Shirosaki Gakuen. He reluctantly shows up in order to fulfill his graduation requirements.\n\nIt's December, and the first snow of the year has fallen. In one lot of the old town, Hatsuyuki encounters a beautiful girl wearing a white dress. She's wandering the streets under the falling snow, in search of her rabbit. A few days later, the girl in the dress, Sakura, transfers into his school, in order to take Hatsuyuki along towards the last winter.\n\nWith the turn of the four seasons, 1095 days come to an end. Soon winter will pass, and spring will arrive. Embracing memories of snow that never accumulated, the youth stands perfectly still.\n\nFrom the first snow (Hatsuyuki) to cherry blossoms (Sakura), congratulations on your graduation.",
     "tags": [
       "Slice of Life",
@@ -1571,10 +1571,10 @@
       "Vaginal Fingering",
       "Has Window Transparency Setting"
     ],
-    "playMinutes": 158,
-    "expectedPlayMinutes": 1652,
-    "lastPlay": 1735698921509.9656,
-    "createDate": 1735698921509.8845,
+    "palyTimelines": [],
+    "expectedPlayHours": 27.5,
+    "lastPlay": 1735808638667.4565,
+    "createDate": 1735808638667.5283,
     "releaseDate": 1330041600000,
     "rating": 8.17,
     "developer": "SAGA PLANETS",
@@ -1592,20 +1592,20 @@
     ],
     "links": [
       {
-        "name": "enwiki",
-        "url": "https://en.wikipedia.org/wiki/Hatsuyuki_Sakura"
+        "url": "https://en.wikipedia.org/wiki/Hatsuyuki_Sakura",
+        "name": "enwiki"
       },
       {
-        "name": "jawiki",
-        "url": "https://ja.wikipedia.org/wiki/はつゆきさくら"
+        "url": "https://ja.wikipedia.org/wiki/はつゆきさくら",
+        "name": "jawiki"
       },
       {
         "url": "https://www.wikidata.org/wiki/Q167003",
         "name": "wikidata"
       },
       {
-        "url": "https://gamefaqs.gamespot.com/-/652316-",
-        "name": "gamefaqs_game"
+        "name": "gamefaqs_game",
+        "url": "https://gamefaqs.gamespot.com/-/652316-"
       },
       {
         "url": "https://www.igdb.com/games/hatsuyuki-sakura",
@@ -1614,7 +1614,7 @@
     ]
   },
   {
-    "id": 16,
+    "id": "250cd413-6158-4f90-afaf-0301bbd384e2",
     "vndbId": "v14062",
     "bgmId": "v14062",
     "title": "Majo Koi Nikki",
@@ -1623,7 +1623,7 @@
       "魔女こいにっき",
       "魔女恋爱日记"
     ],
-    "cover": "https://t.vndb.org/cv/35/76835.jpg",
+    "cover": "https://t.vndb.org/cv/84/79784.jpg",
     "description": "Alice attends Hekihou Academy with her friends Yakko and Keiko, where she's a member of the photography club. She lives alone except for her pet dog Qoo, and she holds down a part-time job as a waitress at Dragon Burger. Her life is busy and content, but sometimes she feels like there's something she's forgetting, something she left undone. Maybe even something important.\n\nOne day Alice and her friends visit the clock tower. There, an unusual book falls into Alice's lap: the diary of a mysterious and rather perverted young man. Why do all the girls Alice meets show up in the diary? Why does nobody remember the events in the diary? And why does Alice feel so strongly that she wants to meet that young man?",
     "tags": [
       "Unlockable Routes",
@@ -1702,10 +1702,10 @@
       "Heroine with Big Breasts",
       "Heroine with Small Breasts (Non-Loli)"
     ],
-    "playMinutes": 125,
-    "expectedPlayMinutes": 1731,
-    "lastPlay": 1735698921323.9646,
-    "createDate": 1735698921323.8757,
+    "palyTimelines": [],
+    "expectedPlayHours": 28.9,
+    "lastPlay": 1735808637993.8044,
+    "createDate": 1735808637993.9832,
     "releaseDate": 1401408000000,
     "rating": 7.2299999999999995,
     "developer": "Qoobrand",
@@ -1727,16 +1727,16 @@
         "name": "jawiki"
       },
       {
-        "url": "https://www.wikidata.org/wiki/Q22131512",
-        "name": "wikidata"
+        "name": "wikidata",
+        "url": "https://www.wikidata.org/wiki/Q22131512"
       },
       {
-        "url": "http://howlongtobeat.com/game.php?id=69418",
-        "name": "howlongtobeat"
+        "name": "howlongtobeat",
+        "url": "http://howlongtobeat.com/game.php?id=69418"
       },
       {
-        "name": "igdb_game",
-        "url": "https://www.igdb.com/games/the-witchs-love-diary"
+        "url": "https://www.igdb.com/games/the-witchs-love-diary",
+        "name": "igdb_game"
       },
       {
         "url": "https://www.pcgamingwiki.com/wiki/The_Witch's_Love_Diary",

@@ -11,8 +11,8 @@ interface FilterModalProps {
 }
 
 export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, setIsOpen }) => {
-  const onlyDisplayLocal = useStore((state) => state.filter.onlyDisplayLocal)
-  const setFilter = useStore((state) => state.setFilter)
+  const { onlyDisplayLocal } = useStore((state) => state.filter)
+  const { setFilter } = useStore((state) => state)
 
   return (
     <Modal

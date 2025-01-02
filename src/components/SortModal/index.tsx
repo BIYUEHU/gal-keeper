@@ -5,26 +5,26 @@ import { Toggle } from '@fluentui/react/lib/Toggle'
 import { Text } from '@fluentui/react/lib/Text'
 import { PrimaryButton } from '@fluentui/react'
 import useStore from '@/store'
-
-export type SortKeys = 'Title' | 'CreateDate' | 'LastPlay' | 'Developer' | 'Rating' | 'ReleaseDate'
+import type { SortKeys } from '@/types'
 
 interface SortModalProps {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
 }
 
+const dropdownOptions: { key: SortKeys; text: string }[] = [
+  { key: 'CreateDate', text: '创建时间' },
+  { key: 'Title', text: '标题' },
+  { key: 'LastPlay', text: '最近玩过' },
+  { key: 'Developer', text: '开发商' },
+  { key: 'Rating', text: '评分' },
+  { key: 'ReleaseDate', text: '发行时间' }
+]
+
 export const SortModal: React.FC<SortModalProps> = ({ isOpen, setIsOpen }) => {
   const primaryKey = useStore((state) => state.sort.primaryKey)
   const isPrimaryDescending = useStore((state) => state.sort.isPrimaryDescending)
   const setSort = useStore((state) => state.setSort)
-  const dropdownOptions: { key: SortKeys; text: string }[] = [
-    { key: 'CreateDate', text: '创建时间' },
-    { key: 'Title', text: '标题' },
-    { key: 'LastPlay', text: '最近玩过' },
-    { key: 'Developer', text: '开发商' },
-    { key: 'Rating', text: '评分' },
-    { key: 'ReleaseDate', text: '发行时间' }
-  ]
 
   return (
     <Modal

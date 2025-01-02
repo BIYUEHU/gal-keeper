@@ -1,7 +1,8 @@
 use utils::as_crypt::{as_decrypt, as_encrypt};
-use utils::common::{initialize_directory, open_with_explorer, open_with_notepad};
+use utils::common::{open_with_explorer, open_with_notepad, search_nearby_files_and_saves};
+use utils::database::{db_read_value, db_write_value};
 use utils::launch::launch_and_monitor;
-use utils::request::{send_http_request, url_to_base64};
+use utils::request::{download_image, send_http_request, url_to_base64};
 
 mod utils;
 
@@ -12,14 +13,18 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
-            initialize_directory,
+            // initialize_directory,
+            db_read_value,
+            db_write_value,
             open_with_explorer,
             open_with_notepad,
             launch_and_monitor,
             as_decrypt,
             as_encrypt,
             send_http_request,
-            url_to_base64
+            download_image,
+            url_to_base64,
+            search_nearby_files_and_saves
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

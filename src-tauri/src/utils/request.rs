@@ -1,6 +1,10 @@
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
+use std::fs;
+use std::io::Write;
+use std::path::Path;
+use uuid::Uuid;
 
 #[derive(Debug, Deserialize)]
 pub struct HttpRequestConfig {
@@ -73,8 +77,41 @@ pub async fn url_to_base64(url: &str) -> Result<String, String> {
 
     let bytes = response.bytes().await.unwrap_or_default();
 
-    let mime_type = "image/png"; // 你可以动态检查 MIME 类型（如从头部获取）
+    let mime_type = "image/png";
     let base64_string = format!("data:{};base64,{}", mime_type, STANDARD.encode(&bytes));
 
     Ok(base64_string)
+}
+
+#[tauri::command]
+pub async fn download_image(url: String, directory: String) -> Result<String, String> {
+    let response = reqwest::get(&url)
+        .await
+        .map_err(|err| format!("Failed to fetch URL: {}", err))?;
+
+    if !response.status().is_success() {
+        return Err(format!("Failed to download image: {}", response.status()));
+    }
+
+    let path = Path::new(&directory);
+    if !path.exists() {
+        fs::create_dir_all(&path).map_err(|err| format!("Failed to create directory: {}", err))?;
+    }
+
+    let save_path = path.join(format!(
+        "{}.{}",
+        Uuid::new_v4().to_string(),
+        if let Some(extension) = url.split('.').last() {
+            extension.to_lowercase()
+        } else {
+            "jpg".to_string()
+        }
+    ));
+
+    let mut file =
+        fs::File::create(&save_path).map_err(|err| format!("Failed to create file: {}", err))?;
+    file.write_all(&response.bytes().await.unwrap_or_default())
+        .map_err(|err| format!("Failed to write file: {}", err))?;
+
+    Ok(save_path.to_string_lossy().to_string())
 }
