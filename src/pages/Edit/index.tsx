@@ -7,6 +7,8 @@ import { open } from '@tauri-apps/plugin-dialog'
 import { Dropdown } from '@fluentui/react/lib/Dropdown'
 import { Spinner } from '@fluentui/react-components'
 import { fetchGameData } from '@/api'
+import { IS_TAURI } from '@/constant'
+import { cacheImage } from '@/utils'
 
 const dropdownOptions: { key: FetchMethods; text: string }[] = [
   { key: 'mixed', text: '聚合搜索' },
@@ -22,7 +24,7 @@ export const Edit = () => {
     return <div>游戏不存在</div>
   }
 
-  const getSettingsField = useStore((state) => state.getSettingsField)
+  const { getSettingsField } = useStore((state) => state)
   const [fetchMethod, setFetchMethod] = useState<FetchMethods>(getSettingsField('fetchMethods'))
   const navigate = useNavigate()
   const updateData = useSharedStore((state) => state.updateData)
@@ -50,17 +52,26 @@ export const Edit = () => {
     } as GameWithLocalData)
   }
 
-  const handleSave = (data: GameWithLocalData) => {
-    updateData(data)
+  const handleSave = async (data: GameWithLocalData) => {
+    setIsLoading(true)
+    updateData({
+      ...data,
+      ...{
+        cover:
+          data.cover && IS_TAURI && getSettingsField('autoCacheGameCover') ? await cacheImage(data.cover) : data.cover
+      }
+    })
+    setIsLoading(false)
     navigate(-1)
   }
 
   const handleFetchData = async () => {
     setIsLoading(true)
-
+    const fetchData = await fetchGameData(fetchMethod, editedGame.title)
     setEditedGame({
       ...editedGame,
-      ...((await fetchGameData(fetchMethod, editedGame.title)) ?? {})
+      ...fetchData,
+      ...{ title: fetchData && getSettingsField('autoSetGameTitle') ? fetchData.title : editedGame.title }
     })
     setIsLoading(false)
   }

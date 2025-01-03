@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 import { IS_TAURI, StoreKey } from '@/constant'
 import type { GameData, GameWithLocalData, Timeline } from '@/types'
 import { getStorage } from '@/utils'
-import useStore, { initialized } from './main'
+import useStore from './main'
 
 export interface SharedState {
   data: GameData[]
@@ -22,14 +22,13 @@ export const useSharedStore = create(
     (set, get): SharedState => ({
       data: [],
       initialize: () => {
-        const idList = get().data.map((item) => item.id)
-        const clear = <T extends { id: string } & M, M extends object>({ id }: T) => idList.includes(id)
-
-        useStore.setState((state) => ({
-          temps: initialized.temps,
-          local: state.local.filter(clear),
-          settings: { ...state.settings, autoCacheGameCover: false }
-        }))
+        // const idList = get().data.map((item) => item.id)
+        // const clear = <T extends { id: string } & M, M extends object>({ id }: T) => idList.includes(id)
+        // useStore.setState((state) => ({
+        //   ...state,
+        //   temps: initialized.temps,
+        //   local: state.local.filter(clear)
+        // }))
       },
       addPlayTimeline: (id, data) => {
         set((state) => ({

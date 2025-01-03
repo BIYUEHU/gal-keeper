@@ -1,6 +1,6 @@
 import useStore, { type AppState, useSharedStore } from '@/store'
 import { createHttp } from './http'
-import type { GameData, Timeline } from '@/types'
+import type { GameData, GameWithLocalData, Timeline } from '@/types'
 import { SHARED_JSON_FILE } from '@/constant'
 import axios, { AxiosError } from 'axios'
 import { base64Decode, base64Encode } from '@/utils'
@@ -88,22 +88,25 @@ export async function syncToGithub() {
     ...cloudData
       // Remove deleted data
       .filter((item) => !localRemoveIds.includes(item.id))
-      .map((item): GameData => {
-        // Update information of data (Exclude `palyTimelines`)
-        if (localUpdateIds.includes(item.id)) {
-          return { ...(data.find((local) => local.id === item.id) as GameData), palyTimelines: item.palyTimelines }
-        }
-
+      .map(
+        (item): GameData =>
+          // Update information of data (Exclude `palyTimelines`)
+          localUpdateIds.includes(item.id)
+            ? { ...(data.find((local) => local.id === item.id) as GameData), palyTimelines: item.palyTimelines }
+            : item
+      )
+      .map((item) =>
         // Add timelines to data
-        if (localTimelinesIds.includes(item.id)) {
-          return {
-            ...item,
-            palyTimelines: [...item.palyTimelines, ...(data.find(({ id }) => id === item.id)?.palyTimelines || [])]
-          }
-        }
-
-        return item
-      }),
+        localTimelinesIds.includes(item.id)
+          ? {
+              ...item,
+              palyTimelines: [
+                ...item.palyTimelines,
+                ...(useSharedStore.getState().getData(item.id) as Required<GameWithLocalData>).palyTimelines
+              ]
+            }
+          : item
+      ),
     // Add new data
     ...data.filter(({ id }) => localAddIds.includes(id))
   ]
