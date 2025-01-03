@@ -33,12 +33,11 @@ export interface AppState {
     alertText: string
     alertTitle: string
     fullLoadingIsOpen: boolean
-    fullLoadingText: string
     runningPrograms: Record<string, string | undefined>
   }
   openAlert: (text: string, title?: string) => void
   closeAlert: () => void
-  openFullLoading: (text: string) => () => void
+  openFullLoading: () => () => void
   isRunning: (program: string) => boolean
   setRunning: (program: string, id: string, state: boolean) => void
   settings: {
@@ -81,7 +80,6 @@ export const initialized = {
     alertText: '',
     alertTitle: '',
     fullLoadingIsOpen: false,
-    fullLoadingText: '',
     runningPrograms: {}
   },
   settings: {
@@ -122,8 +120,8 @@ const useStore = create(
       openAlert: (text, title = '提示') =>
         set((state) => ({ temps: { ...state.temps, alertIsOpen: true, alertText: text, alertTitle: title } })),
       closeAlert: () => set((state) => ({ temps: { ...state.temps, alertIsOpen: false } })),
-      openFullLoading: (text) => {
-        set((state) => ({ temps: { ...state.temps, fullLoadingIsOpen: true, fullLoadingText: text } }))
+      openFullLoading: () => {
+        set((state) => ({ temps: { ...state.temps, fullLoadingIsOpen: true } }))
 
         return () => {
           set((state) => ({ temps: { ...state.temps, fullLoadingIsOpen: false } }))

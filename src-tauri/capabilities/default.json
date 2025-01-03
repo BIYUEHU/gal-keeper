@@ -12,40 +12,6 @@
     "fs:allow-write",
     "fs:allow-app-read",
     "fs:allow-app-write",
-    "dialog:default",
-    {
-      "identifier": "fs:allow-app-read",
-      "allow": [
-        {
-          "path": "$APPDATA/databases/*"
-        },
-        {
-          "path": "$APPDATA/*"
-        },
-        {
-          "path": "$APPDATA/**/*"
-        },
-        {
-          "path": "**/*"
-        }
-      ]
-    },
-    {
-      "identifier": "fs:allow-read",
-      "allow": [
-        {
-          "path": "$APPDATA/databases/*"
-        },
-        {
-          "path": "$APPDATA/*"
-        },
-        {
-          "path": "$APPDATA/**/*"
-        },
-        {
-          "path": "**/*"
-        }
-      ]
-    }
+    "dialog:default"
   ]
 }

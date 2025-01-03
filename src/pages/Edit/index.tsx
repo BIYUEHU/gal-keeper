@@ -31,6 +31,7 @@ export const Edit = () => {
   const [editedGame, setEditedGame] = useState(game)
 
   const [isLoading, setIsLoading] = useState(false)
+  const { openFullLoading } = useStore((state) => state)
 
   const updateField = <T extends Exclude<keyof GameWithLocalData, 'id' | 'local'>>(
     key: T,
@@ -53,15 +54,16 @@ export const Edit = () => {
   }
 
   const handleSave = async (data: GameWithLocalData) => {
-    setIsLoading(true)
+    const close = openFullLoading()
     updateData({
       ...data,
       ...{
         cover:
-          data.cover && IS_TAURI && getSettingsField('autoCacheGameCover') ? await cacheImage(data.cover) : data.cover
+          data.cover && IS_TAURI && getSettingsField('autoCacheGameCover')
+            ? await cacheImage(data.cover).finally(close)
+            : data.cover
       }
     })
-    setIsLoading(false)
     navigate(-1)
   }
 
