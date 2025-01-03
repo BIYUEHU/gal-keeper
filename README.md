@@ -35,9 +35,9 @@ The project is licensed under the [BCU](https://github.com/ICEAGENB/ban-chinaman
 
 <div style="margin:auto;width:910px;max-width:80%">
 
-![](https://pic1.imgdb.cn/item/6777f2a8d0e0a243d4eebe51.png)
-![](https://pic1.imgdb.cn/item/6777f2a9d0e0a243d4eebe52.png)
-![](https://pic1.imgdb.cn/item/6777f2aad0e0a243d4eebe53.png)
+![](screenshots/1.png)
+![](screenshots/2.png)
+![](screenshots/3.png)
 
 </div>
 
