@@ -48,7 +48,7 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
 
   const handleSubmit = async () => {
     if (gameName) {
-      const close = openFullLoading('正在获取游戏数据...')
+      const close = openFullLoading()
       setIsOpen(false)
 
       const id = generateUuid()
