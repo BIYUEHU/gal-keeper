@@ -1,17 +1,17 @@
-import { invoke } from '@tauri-apps/api/core'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Stack } from '@fluentui/react/lib/Stack'
 import { Text } from '@fluentui/react/lib/Text'
 import { Separator } from '@fluentui/react/lib/Separator'
 import React, { useMemo, useState } from 'react'
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react'
-import { openUrl } from '@/utils'
+import { invokeSafe, openUrl } from '@/utils'
 import { IS_TAURI } from '@/constant'
 import { type Event, listen } from '@tauri-apps/api/event'
 import type { GameWithLocalData, LocalData } from '@/types'
 import useStore, { useSharedStore } from '@/store'
 import { SyncModal } from '@/components/SyncModal'
 import { ConfirmBox } from '@/components/ConfirmBox'
+import { logger } from '@/utils/logger'
 
 interface InfoOption {
   text: string
@@ -88,8 +88,8 @@ export const Detail: React.FC = () => {
       disabled: !game.local?.programFile,
       onClick: () => {
         if (isRunning((game.local as LocalData).programFile)) return
-        invoke('launch_and_monitor', { filepath: game.local?.programFile }).then(() => {
-          console.log('Start successfully', game.title, '\n', id)
+        invokeSafe('launch_and_monitor', { filepath: game.local?.programFile }).then(() => {
+          logger.record('Start successfully', game.title, '\n', id)
           setRunning((game.local as LocalData).programFile, game.id, true)
           updateData({ ...game, lastPlay: Date.now() })
           setGame(getData(id as string))
@@ -98,7 +98,7 @@ export const Detail: React.FC = () => {
             const gameHandled = getDataByProgramFile(data.payload[0])
             if (!gameHandled) return
 
-            console.log(
+            logger.record(
               `Finished\nProcess name: ${data.payload[0]}\nStart time: ${data.payload[1]}\nStop time: ${data.payload[2]}\n Active time: ${data.payload[3]}\n`,
               '\n'
             )
@@ -121,7 +121,7 @@ export const Detail: React.FC = () => {
       iconProps: { iconName: 'ReadingMode' },
       disabled: !game.local?.guideFile,
       onClick: () => {
-        invoke('open_with_notepad', { filepath: game.local?.guideFile })
+        invokeSafe('open_with_explorer', { directory: game.local?.guideFile })
       }
     },
     {
@@ -130,7 +130,7 @@ export const Detail: React.FC = () => {
       iconProps: { iconName: 'CloudUpload' },
       disabled: !game.local?.savePath,
       onClick: () => {
-        // invoke('backup', )
+        // invokeSafe('backup', )
       }
     },
     {
@@ -145,7 +145,7 @@ export const Detail: React.FC = () => {
             iconProps: { iconName: 'OpenFolderHorizontal' },
             disabled: !game.local?.programFile,
             onClick: () => {
-              invoke('open_with_explorer', {
+              invokeSafe('open_with_explorer', {
                 directory: game.local?.programFile.split(/[/\\]/).slice(0, -1).join('\\')
               })
             }
@@ -156,7 +156,7 @@ export const Detail: React.FC = () => {
             iconProps: { iconName: 'Save' },
             disabled: !game.local?.savePath,
             onClick: () => {
-              invoke('open_with_explorer', { directory: game.local?.savePath })
+              invokeSafe('open_with_explorer', { directory: game.local?.savePath })
             }
           },
           {

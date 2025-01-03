@@ -65,6 +65,7 @@ export const SyncModal: React.FC<SyncModalProps> = ({ isOpen, setIsOpen, data })
             readOnly
             onClick={handleSelectExe}
             placeholder="选择一个可执行文件"
+            autoComplete="off"
             required
           />
           <PrimaryButton text="选择文件" onClick={handleSelectExe} />

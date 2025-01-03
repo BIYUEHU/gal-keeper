@@ -41,5 +41,18 @@ export type FetchMethods = 'mixed' | 'vndb' | 'bgm'
 
 export type Timeline = [number, number, number]
 
-// biome-ignore lint:
-export type Obj = { [key: string]: any }
+export type LocalChanges = { id: string } & (
+  | {
+      type: 'add' | 'update' | 'remove'
+    }
+  | {
+      type: 'timelines'
+      data: Timeline
+    }
+)
+
+export type CloudChanges = {
+  title: string[]
+  type: 'add' | 'remove'
+  time: number
+}

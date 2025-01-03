@@ -14,7 +14,7 @@ export async function fetchGameData(method: FetchMethods, name: string): Promise
   }
 
   if (!data) {
-    useStore.getState().openAlert('自动获取数据失败，未找到相关游戏')
+    useStore.getState().openAlert('自动获取数据失败，未找到相关游戏', '错误')
     return null
   }
 

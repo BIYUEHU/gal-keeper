@@ -15,7 +15,7 @@ export const Library: React.FC = () => {
   const { primaryKey, isPrimaryDescending } = useStore((state) => state.sort)
   const { onlyDisplayLocal } = useStore((state) => state.filter)
   const [searchText, setSearchText] = useState('')
-  const [games, setGames] = useState(useSharedStore((state) => state.getAllData)())
+  const [games, setGames] = useState(useSharedStore((state) => state.getAllData)(false))
 
   const filteredData = useMemo(() => {
     const target = searchText.toLocaleLowerCase()

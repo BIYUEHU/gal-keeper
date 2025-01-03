@@ -1,5 +1,5 @@
 import type { FetchGameData } from '@/types'
-import axios from 'axios'
+import http from './http'
 
 const VNDB_URL = 'https://api.vndb.org/kana/vn'
 
@@ -19,7 +19,7 @@ function generateVNDBBody(name: string) {
 }
 
 export async function fetchFromVndb(name: string): Promise<FetchGameData | null> {
-  const data = (await axios.post(VNDB_URL, generateVNDBBody(name), VNDB_HEADER)).data.results[0]
+  const data = (await http.post(VNDB_URL, generateVNDBBody(name), VNDB_HEADER)).data.results[0]
   if (!data) return null
 
   return {

@@ -10,7 +10,6 @@ import useStore, { useSharedStore } from '@/store'
 import { fetchGameData } from '@/api'
 import { generateUuid } from '@/utils'
 import type { GameWithLocalData } from '@/types'
-// import { invoke } from '@tauri-apps/api/core'
 
 interface AddModalProps {
   isOpen: boolean
@@ -69,12 +68,14 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
         developer: '',
         images: [],
         links: [],
-        local: {
-          id,
-          // TODO: auto find save and guide file
-          // ...(await invoke('search_nearby_files_and_saves')),
-          programFile
-        },
+        local: programFile
+          ? {
+              id,
+              // TODO: auto find save and guide file
+              // ...(await invoke('search_nearby_files_and_saves')),
+              programFile
+            }
+          : undefined,
         ...((await fetchGameData(getSettingsField('fetchMethods'), gameName)) ?? {})
       }
       addData(game)
@@ -105,7 +106,13 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
             placeholder="选择一个可执行文件"
           />
           <PrimaryButton disabled={!IS_TAURI} text="选择文件" onClick={handleSelectProgram} />
-          <TextField label="游戏名字" value={gameName} onChange={(_, value) => setGameName(value || '')} required />
+          <TextField
+            label="游戏名字"
+            value={gameName}
+            onChange={(_, value) => setGameName(value || '')}
+            required
+            autoComplete="off"
+          />
         </Stack>
         <Stack horizontal tokens={{ childrenGap: 16 }} horizontalAlign="end" className="mt-4">
           <DefaultButton text="取消" onClick={() => setIsOpen(false)} />

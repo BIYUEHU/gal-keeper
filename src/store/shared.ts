@@ -13,7 +13,7 @@ export interface SharedState {
   updateData: (data: GameWithLocalData) => void
   removeData: (id: string, onlyLocal: boolean) => void
   getData(id: string): GameWithLocalData | undefined
-  getAllData: () => GameWithLocalData[]
+  getAllData: <T extends boolean>(isPure: T) => (true extends T ? GameData : GameWithLocalData)[]
   getDataByProgramFile: (programFile: string) => GameWithLocalData | undefined
 }
 
@@ -28,8 +28,7 @@ export const useSharedStore = create(
         useStore.setState((state) => ({
           temps: initialized.temps,
           local: state.local.filter(clear),
-          settings: { ...state.settings, autoCacheGameCover: false },
-          playTimelines: state.playTimelines.filter(clear)
+          settings: { ...state.settings, autoCacheGameCover: false }
         }))
       },
       addPlayTimeline: (id, data) => {
@@ -38,11 +37,13 @@ export const useSharedStore = create(
             item.id === id ? { ...item, palyTimelines: [...item.palyTimelines, data] } : item
           )
         }))
-        useStore.setState((state) => ({ playTimelines: [...state.playTimelines, { id, data }] }))
+        useStore.getState().addLocalChange({ id, type: 'timelines', data })
       },
       addData: (data) => {
         const { local, ...game } = data
         set((state) => ({ data: [...state.data, game] }))
+
+        useStore.getState().addLocalChange({ id: data.id, type: 'add' })
 
         if (local && IS_TAURI) {
           useStore.setState((state) => ({ local: [...state.local, local] }))
@@ -51,6 +52,8 @@ export const useSharedStore = create(
       updateData: (data) => {
         const { local, ...game } = data
         set((state) => ({ data: state.data.map((item) => (item.id === data.id ? game : item)) }))
+
+        useStore.getState().addLocalChange({ id: data.id, type: 'update' })
 
         if (local && IS_TAURI) {
           if (useStore.getState().local.some((item) => item.id === data.id)) {
@@ -63,7 +66,11 @@ export const useSharedStore = create(
         }
       },
       removeData: (id, onlyLocal) => {
-        if (!onlyLocal) set((state) => ({ data: state.data.filter((item) => item.id !== id) }))
+        if (!onlyLocal) {
+          set((state) => ({ data: state.data.filter((item) => item.id !== id) }))
+          useStore.getState().addLocalChange({ id, type: 'remove' })
+        }
+
         if (IS_TAURI) useStore.setState((state) => ({ local: state.local.filter((item) => item.id !== id) }))
       },
       getData: (id) => {
@@ -78,10 +85,15 @@ export const useSharedStore = create(
         }
         return undefined
       },
-      getAllData: () => {
+      getAllData: (isPure) => {
+        const { data } = get()
+        if (isPure) {
+          return data
+        }
+
         const localData = useStore.getState().local
 
-        return get().data.map(
+        return data.map(
           (item): GameWithLocalData => ({
             ...item,
             local: localData.find((local) => local.id === item.id)

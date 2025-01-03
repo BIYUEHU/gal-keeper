@@ -20,6 +20,12 @@ importers:
       '@fluentui/react-icons':
         specifier: ^2.0.264
         version: 2.0.264(react@18.3.1)
+      '@kotori-bot/i18n':
+        specifier: ^1.3.2
+        version: 1.3.2
+      '@kotori-bot/logger':
+        specifier: ^1.3.2
+        version: 1.3.2
       '@tauri-apps/api':
         specifier: ^2.1.1
         version: 2.1.1
@@ -1134,6 +1140,9 @@ packages:
   '@griffel/style-types@1.3.0':
     resolution: {integrity: sha512-bHwD3sUE84Xwv4dH011gOKe1jul77M1S6ZFN9Tnq8pvZ48UMdY//vtES6fv7GRS5wXYT4iqxQPBluAiYAfkpmw==}
 
+  '@iarna/toml@2.2.5':
+    resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
+
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
 
@@ -1157,6 +1166,15 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
+
+  '@kotori-bot/i18n@1.3.2':
+    resolution: {integrity: sha512-K88BZN4YixZWQ+0iZyxCf+aDratKV7ZzadTmFAvol4DDD5OKyUSk48Ph/SRzLQtaWwT0h1Na6Knxp9w5IZEtSQ==}
+
+  '@kotori-bot/logger@1.3.2':
+    resolution: {integrity: sha512-lGbA85C0hgMceH74Iyf599NRgO9AGs+tX4T5xCXNgWxzyun6eMPD0DNbZ3gjqk+du8KmqyNH6y/24tvhVBntyA==}
+
+  '@kotori-bot/tools@1.5.1':
+    resolution: {integrity: sha512-pO6L9GcyKIH+L50N9WgF4ueQAJQZbgS/KuOWrw4Y2+8/QVC9fn+vlbwuCXzw7p1bdaeCUUGgmbHifnqHm7mUfw==}
 
   '@microsoft/load-themed-styles@1.10.295':
     resolution: {integrity: sha512-W+IzEBw8a6LOOfRJM02dTT7BDZijxm+Z7lhtOAz1+y9vQm1Kdz9jlAO+qCEKsfxtUOmKilW8DIRqFw2aUgKeGg==}
@@ -1581,6 +1599,9 @@ packages:
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
 
+  dayjs@1.11.13:
+    resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
+
   debug@4.3.7:
     resolution: {integrity: sha512-Er2nc/H7RrMXZBFCEim6TCmMk02Z8vLC2Rbi1KEBggpo0fS6l0S1nnapwmIi3yW/+GOJap1Krg4w0Hg80oCqgQ==}
     engines: {node: '>=6.0'}
@@ -1642,6 +1663,9 @@ packages:
 
   estree-walker@2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
+
+  fast-safe-stringify@2.1.1:
+    resolution: {integrity: sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==}
 
   fdir@6.4.2:
     resolution: {integrity: sha512-KnhMXsKSPZlAhp7+IjUkRZKPb4fUyccpDrdFXbi4QL1qkmFh9kVY09Yox+n4MaOb3lHZ1Tv829C3oaaXoMYPDQ==}
@@ -2053,6 +2077,11 @@ packages:
 
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
+
+  yaml@2.7.0:
+    resolution: {integrity: sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==}
+    engines: {node: '>= 14'}
+    hasBin: true
 
   zustand@5.0.2:
     resolution: {integrity: sha512-8qNdnJVJlHlrKXi50LDqqUNmUbuBjoKLrYQBnoChIbVph7vni+sY+YpvdjXG9YLd/Bxr6scMcR+rm5H3aSqPaw==}
@@ -3641,6 +3670,8 @@ snapshots:
     dependencies:
       csstype: 3.1.3
 
+  '@iarna/toml@2.2.5': {}
+
   '@iconify/types@2.0.0': {}
 
   '@iconify/utils@2.1.33':
@@ -3671,6 +3702,24 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  '@kotori-bot/i18n@1.3.2': {}
+
+  '@kotori-bot/logger@1.3.2':
+    dependencies:
+      '@kotori-bot/tools': 1.5.1
+      dayjs: 1.11.13
+      fast-safe-stringify: 2.1.1
+    transitivePeerDependencies:
+      - debug
+
+  '@kotori-bot/tools@1.5.1':
+    dependencies:
+      '@iarna/toml': 2.2.5
+      axios: 1.7.9
+      yaml: 2.7.0
+    transitivePeerDependencies:
+      - debug
 
   '@microsoft/load-themed-styles@1.10.295': {}
 
@@ -4137,6 +4186,8 @@ snapshots:
 
   csstype@3.1.3: {}
 
+  dayjs@1.11.13: {}
+
   debug@4.3.7:
     dependencies:
       ms: 2.1.3
@@ -4224,6 +4275,8 @@ snapshots:
   escalade@3.2.0: {}
 
   estree-walker@2.0.2: {}
+
+  fast-safe-stringify@2.1.1: {}
 
   fdir@6.4.2(picomatch@4.0.2):
     optionalDependencies:
@@ -4604,6 +4657,8 @@ snapshots:
       typescript: 5.6.3
 
   yallist@3.1.1: {}
+
+  yaml@2.7.0: {}
 
   zustand@5.0.2(@types/react@18.3.12)(react@18.3.1)(use-sync-external-store@1.2.2(react@18.3.1)):
     optionalDependencies:

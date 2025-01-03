@@ -1,25 +1,22 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { StoreKey } from '@/constant'
-import type { FetchGameData, FetchMethods, LocalData, SortKeys, Timeline } from '@/types'
+import type { CloudChanges, FetchMethods, LocalChanges, LocalData, SortKeys } from '@/types'
 import { getStorage } from '@/utils'
-
-export type OperationRecord = {
-  id: number
-  type: 'add' | 'remove'
-} & {
-  id: number
-  type: 'update'
-  data: Partial<FetchGameData>
-} & {
-  id: number
-  type: 'timelines'
-  data: Timeline
-}
 
 export interface AppState {
   local: LocalData[]
-  playTimelines: { id: string; data: Timeline }[]
+  sync: {
+    time: number
+    localChanges: LocalChanges[]
+    cloudChanges: CloudChanges[]
+    size: number
+    visibility: string
+    username: string
+    avatar: string
+  }
+  addLocalChange: (change: LocalChanges) => void
+  addCloudChange: (change: CloudChanges) => void
   sidebar: boolean
   toggleSidebar: () => void
   sort: {
@@ -45,10 +42,10 @@ export interface AppState {
   isRunning: (program: string) => boolean
   setRunning: (program: string, id: string, state: boolean) => void
   settings: {
-    githubToken?: string
-    githubUsername?: string
-    githubRepo?: string
-    githubBranch?: string
+    githubToken: string
+    githubRepo: string
+    githubPath: string
+    autoSyncMinutes: number
     theme: 'light' | 'dark'
     language: 'en_US' | 'zh_CN' | 'ja_JP' | 'zh_TW'
     fetchMethods: FetchMethods
@@ -62,7 +59,15 @@ export interface AppState {
 
 export const initialized = {
   local: [],
-  playTimelines: [],
+  sync: {
+    time: 0,
+    localChanges: [],
+    cloudChanges: [],
+    size: 0,
+    visibility: '',
+    username: '',
+    avatar: ''
+  },
   sidebar: true,
   sort: {
     primaryKey: 'CreateDate' as const,
@@ -80,13 +85,16 @@ export const initialized = {
     runningPrograms: {}
   },
   settings: {
+    githubToken: '',
+    githubRepo: '',
+    githubPath: 'gal-keeper-data/',
+    autoSyncMinutes: 10,
     theme: 'light' as const,
     language: 'zh_CN' as const,
     fetchMethods: 'vndb' as const,
     onlyRecordActiveTime: true,
     autoSetGameTitle: true,
-    // TODO: fix this
-    autoCacheGameCover: false
+    autoCacheGameCover: true
   }
 }
 
@@ -94,10 +102,24 @@ const useStore = create(
   persist<AppState>(
     (set, get): AppState => ({
       ...initialized,
+      addLocalChange: (change) =>
+        set((state) => ({
+          sync: {
+            ...state.sync,
+            localChanges: [...state.sync.localChanges, change]
+          }
+        })),
+      addCloudChange: (change) =>
+        set((state) => ({
+          sync: {
+            ...state.sync,
+            cloudChanges: [...state.sync.cloudChanges, change]
+          }
+        })),
       toggleSidebar: () => set((state) => ({ sidebar: !state.sidebar })),
       setSort: (sort) => set((state) => ({ sort: { ...state.sort, ...sort } })),
       setFilter: (filter) => set((state) => ({ filter: { ...state.filter, ...filter } })),
-      openAlert: (text, title = '') =>
+      openAlert: (text, title = '提示') =>
         set((state) => ({ temps: { ...state.temps, alertIsOpen: true, alertText: text, alertTitle: title } })),
       closeAlert: () => set((state) => ({ temps: { ...state.temps, alertIsOpen: false } })),
       openFullLoading: (text) => {

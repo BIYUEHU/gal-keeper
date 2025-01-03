@@ -92,7 +92,12 @@ export const Edit = () => {
       directory: false,
       canCreateDirectories: false,
       multiple: false,
-      filters: [{ name: '文本文件', extensions: ['txt', 'md', 'html'] }]
+      filters: [
+        {
+          name: '文本文件',
+          extensions: ['txt', 'md', 'html', 'htm', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx']
+        }
+      ]
     })
     if (guideFile) updateLocalDataField('guideFile', guideFile)
   }
@@ -101,8 +106,10 @@ export const Edit = () => {
     <React.Fragment>
       <h2 className="text-2xl font-semibold">{game.title}</h2>
       <div className="overflow-auto px-4 children:children:children:my-1">
-        <Stack tokens={{ childrenGap: 16 }}>
-          <h2 className="text-lg font-semibold">基本信息</h2>
+        <Stack tokens={{ childrenGap: 8 }}>
+          <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
+            <h2 className="text-lg font-semibold">基本信息</h2>
+          </Stack>
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
             <h3 className="font-semibold w-13">数据源</h3>
             <Dropdown
@@ -121,6 +128,7 @@ export const Edit = () => {
               onChange={(_, value) => updateField('title', value || '')}
               required
               className="flex-grow-1"
+              autoComplete="off"
             />
           </Stack>
 
@@ -130,6 +138,7 @@ export const Edit = () => {
               value={editedGame.developer}
               onChange={(_, value) => updateField('developer', value || '')}
               className="flex-grow-1"
+              autoComplete="off"
             />
           </Stack>
 
@@ -141,6 +150,7 @@ export const Edit = () => {
               rows={14}
               onChange={(_, value) => updateField('description', value || '')}
               className="flex-grow-1"
+              autoComplete="off"
             />
           </Stack>
 
@@ -156,6 +166,7 @@ export const Edit = () => {
               }
               placeholder="用逗号分隔多个标签"
               className="flex-grow-1"
+              autoComplete="off"
             />
           </Stack>
 
@@ -165,6 +176,7 @@ export const Edit = () => {
               value={editedGame.cover}
               onChange={(_, value) => updateField('cover', value || '')}
               className="flex-grow-1"
+              autoComplete="off"
             />
           </Stack>
 
@@ -176,6 +188,7 @@ export const Edit = () => {
                 value={editedGame.expectedPlayHours.toString()}
                 onChange={(_, value) => updateField('expectedPlayHours', Number(value ?? '0'))}
                 className="flex-grow-1"
+                autoComplete="off"
               />
             </Stack>
 
@@ -186,6 +199,7 @@ export const Edit = () => {
                 value={editedGame.rating.toString()}
                 onChange={(_, value) => updateField('rating', Number(value ?? '0'))}
                 className="flex-grow-1"
+                autoComplete="off"
               />
             </Stack>
 
@@ -196,13 +210,16 @@ export const Edit = () => {
                 value={new Date(editedGame.releaseDate).toISOString().split('T')[0]}
                 onChange={(_, value) => updateField('releaseDate', new Date(value || '').getTime())}
                 className="flex-grow-1"
+                autoComplete="off"
               />
             </Stack>
           </div>
         </Stack>
 
-        <Stack tokens={{ childrenGap: 16 }} className="mt-4">
-          <h2 className="text-lg font-semibold">本地设置</h2>
+        <Stack tokens={{ childrenGap: 8 }} className="mt-4">
+          <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
+            <h2 className="text-lg font-semibold">本地设置</h2>
+          </Stack>
           {editedGame.local ? (
             <React.Fragment>
               <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
@@ -213,6 +230,7 @@ export const Edit = () => {
                   onClick={handleSelectSavePath}
                   placeholder="选择一个目录"
                   className="flex-grow-1"
+                  autoComplete="off"
                 />
               </Stack>
               <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
@@ -223,6 +241,7 @@ export const Edit = () => {
                   onClick={handleSelectProgramFile}
                   placeholder="选择一个可执行文件"
                   className="flex-grow-1"
+                  autoComplete="off"
                 />
               </Stack>
               {/* TODO: Sync guide text file */}
@@ -234,6 +253,7 @@ export const Edit = () => {
                   onClick={handleSelectGuideFile}
                   placeholder="选择一个文本文件"
                   className="flex-grow-1"
+                  autoComplete="off"
                 />
               </Stack>
             </React.Fragment>
