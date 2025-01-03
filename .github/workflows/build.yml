@@ -33,7 +33,7 @@ jobs:
         run: npm install --frozen-lockfile
 
       - name: Build project
-        run: npm run tauri build
+        run: npx pnpm tauri build
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
