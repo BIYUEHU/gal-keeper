@@ -10,6 +10,26 @@
     "preview": "vite preview",
     "tauri": "tauri"
   },
+  "keywords": [
+    "visual novel",
+    "galgame",
+    "avg",
+    "erogame",
+    "game",
+    "adv",
+    "management",
+    "statistics",
+    "tool",
+    "Tauri",
+    "React"
+  ],
+  "bugs": {
+    "url": "https://github.com/biyuehu/gal-keeper/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/biyuehu/gal-keeper.git"
+  },
   "dependencies": {
     "@fluentui/font-icons-mdl2": "^8.5.57",
     "@fluentui/react": "^8.121.8",
