@@ -38,6 +38,9 @@ importers:
       '@tauri-apps/plugin-shell':
         specifier: ^2.2.0
         version: 2.2.0
+      axios:
+        specifier: ^1.7.9
+        version: 1.7.9
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -78,9 +81,6 @@ importers:
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.47)
-      axios:
-        specifier: ^1.7.9
-        version: 1.7.9
       globals:
         specifier: ^15.11.0
         version: 15.11.0

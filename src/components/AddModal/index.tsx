@@ -8,7 +8,7 @@ import { open } from '@tauri-apps/plugin-dialog'
 import { IS_TAURI } from '@/constant'
 import useStore, { useSharedStore } from '@/store'
 import { fetchGameData } from '@/api'
-import { generateUuid } from '@/utils'
+import { cacheImage, generateUuid } from '@/utils'
 import type { GameWithLocalData } from '@/types'
 
 interface AddModalProps {
@@ -52,11 +52,11 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
       setIsOpen(false)
 
       const id = generateUuid()
+      const fetchData = await fetchGameData(getSettingsField('fetchMethods'), gameName)
       const game: GameWithLocalData = {
         id,
         title: gameName,
         alias: [],
-        cover: '/assets/cover.png',
         description: '',
         tags: [],
         palyTimelines: [],
@@ -76,7 +76,13 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
               programFile
             }
           : undefined,
-        ...((await fetchGameData(getSettingsField('fetchMethods'), gameName)) ?? {})
+        ...fetchData,
+        ...{
+          cover:
+            fetchData?.cover && IS_TAURI && getSettingsField('autoCacheGameCover')
+              ? await cacheImage(fetchData.cover).finally(close)
+              : (fetchData?.cover ?? '/assets/cover.png')
+        }
       }
       addData(game)
       setData([...data, game])
