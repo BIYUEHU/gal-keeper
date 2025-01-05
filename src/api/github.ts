@@ -1,5 +1,5 @@
 import useStore, { type AppState, useSharedStore } from '@/store'
-import { createHttp } from './http'
+import http, { createHttp } from './http'
 import type { GameData, GameWithLocalData, Timeline } from '@/types'
 import { SHARED_JSON_FILE } from '@/constant'
 import axios, { AxiosError } from 'axios'
@@ -44,10 +44,13 @@ export async function getRepoInfo() {
 // biome-ignore lint:
 export async function readFileFromGithub(file: string): Promise<any> {
   try {
-    const str = base64Decode(
-      (await axios.get(getFileUrl(file), { headers: { Authorization: `token ${getSettingsField('githubToken')}` } }))
-        .data.content
-    )
+    const res = (
+      await axios.get(getFileUrl(file), { headers: { Authorization: `token ${getSettingsField('githubToken')}` } })
+    ).data
+    // TODO: here is a bug from github api
+    const str = res.content
+      ? base64Decode(res.content)
+      : JSON.stringify((await http.get(res.download_url.split('?token=')[0])).data)
     try {
       return JSON.parse(str)
     } catch {
@@ -185,10 +188,10 @@ export async function syncToGithub() {
     }`,
     SHARED_JSON_FILE,
     content
-  )
-
-  useStore.setState((state) => ({ sync: { ...state.sync, time: content.time, localChanges: [] } }))
-  useSharedStore.setState(() => ({ data: content.data }))
+  ).then(() => {
+    useStore.setState((state) => ({ sync: { ...state.sync, time: content.time, localChanges: [] } }))
+    useSharedStore.setState(() => ({ data: content.data }))
+  })
 
   return {
     time: content.time,
