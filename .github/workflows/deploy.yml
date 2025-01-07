@@ -27,7 +27,7 @@ jobs:
       - name: Build frontend
         run: |
           npm install
-          npm build
+          npm run build
 
       - name: Deploy to GitHub Pages
         uses: crazy-max/ghaction-github-pages@v4
