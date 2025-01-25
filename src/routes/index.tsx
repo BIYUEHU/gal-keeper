@@ -1,7 +1,7 @@
 import { Library } from '@/pages/Library'
 import { Settings } from '@/pages/Settings'
 import { Detail } from '@/pages/Detail'
-import { Home } from '@/pages/Home'
+import Home from '@/pages/Home'
 import { Category } from '@/pages/Category'
 import { Edit } from '@/pages/Edit'
 

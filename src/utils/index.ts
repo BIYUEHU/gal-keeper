@@ -1,10 +1,10 @@
 import { IS_TAURI } from '@/constant'
 import useStore from '@/store'
 import tauriStorage from '@/utils/tauriStorage'
-import { invoke } from '@tauri-apps/api/core'
-import * as shell from '@tauri-apps/plugin-shell'
+import { invoke, shell } from '@tauri-apps/api'
 import { type PersistStorage, createJSONStorage } from 'zustand/middleware'
 import { logger } from './logger'
+import type { Timeline } from '@/types'
 
 export function getStorage<T>() {
   return createJSONStorage(IS_TAURI ? () => tauriStorage : () => localStorage) as PersistStorage<T>
@@ -52,4 +52,14 @@ export function base64Decode(base64: string) {
 
 export function base64Encode(str: string) {
   return btoa(Array.from(new TextEncoder().encode(str), (byte) => String.fromCodePoint(byte)).join(''))
+}
+
+export function calculateTotalPlayTime(timelines: Timeline[]) {
+  return timelines.reduce((acc, cur) => acc + cur[2], 0) / 60
+}
+
+export function showMinutes(raw: number) {
+  const hours = Math.floor(raw / 60)
+  const minutes = Math.floor(raw % 60)
+  return hours === 0 ? `${minutes}m` : `${hours}h${minutes}m`
 }

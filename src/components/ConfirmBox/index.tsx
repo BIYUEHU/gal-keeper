@@ -1,3 +1,4 @@
+import { t } from '@/utils/i18n'
 import { Dialog, DialogType, DialogFooter, PrimaryButton, DefaultButton } from '@fluentui/react'
 
 interface ConfirmBoxProps {
@@ -9,7 +10,7 @@ interface ConfirmBoxProps {
 }
 
 export const ConfirmBox: React.FC<ConfirmBoxProps> = ({
-  title = '提示',
+  title = t`component.confirmBox.default.title`,
   text = '',
   isOpen,
   setIsOpen,
@@ -36,8 +37,8 @@ export const ConfirmBox: React.FC<ConfirmBoxProps> = ({
         }}
       >
         <DialogFooter>
-          <PrimaryButton text="确认" onClick={handleConfirm} />
-          <DefaultButton text="取消" onClick={handleCancel} />
+          <PrimaryButton text={t`component.confirmBox.button.confirm`} onClick={handleConfirm} />
+          <DefaultButton text={t`component.confirmBox.button.cancel`} onClick={handleCancel} />
         </DialogFooter>
       </Dialog>
     </>

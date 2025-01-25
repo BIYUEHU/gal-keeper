@@ -1,4 +1,5 @@
 import useStore from '@/store'
+import { t } from '@/utils/i18n'
 import { Dialog, DialogType, DialogFooter, PrimaryButton } from '@fluentui/react'
 
 export const AlertBox: React.FC = () => {
@@ -17,7 +18,7 @@ export const AlertBox: React.FC = () => {
         }}
       >
         <DialogFooter>
-          <PrimaryButton text="确认" onClick={closeAlert} />
+          <PrimaryButton text={t`component.alertBox.button.sure`} onClick={closeAlert} />
         </DialogFooter>
       </Dialog>
     </>

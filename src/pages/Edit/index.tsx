@@ -3,17 +3,18 @@ import type { FetchMethods, GameWithLocalData, LocalData } from '@/types'
 import { useNavigate, useParams } from 'react-router-dom'
 import useStore, { useSharedStore } from '@/store'
 import { DefaultButton, PrimaryButton, Stack, TextField } from '@fluentui/react'
-import { open } from '@tauri-apps/plugin-dialog'
+import { dialog } from '@tauri-apps/api'
 import { Dropdown } from '@fluentui/react/lib/Dropdown'
 import { Spinner } from '@fluentui/react-components'
 import { fetchGameData } from '@/api'
 import { IS_TAURI } from '@/constant'
 import { cacheImage } from '@/utils'
+import { t } from '@/utils/i18n'
 
 const dropdownOptions: { key: FetchMethods; text: string }[] = [
-  { key: 'mixed', text: '聚合搜索' },
-  { key: 'vndb', text: 'VNDB' },
-  { key: 'bgm', text: 'Bangumi' }
+  { key: 'mixed', text: t`page.edit.dropdown.mixed` },
+  { key: 'vndb', text: t`page.edit.dropdown.vndb` },
+  { key: 'bgm', text: t`page.edit.dropdown.bgm` }
 ]
 
 export const Edit = () => {
@@ -21,7 +22,7 @@ export const Edit = () => {
   const game = useSharedStore((state) => state.getData)(id ?? '')
 
   if (!game) {
-    return <div>游戏不存在</div>
+    return <div>{t`page.edit.game.notFound`}</div>
   }
 
   const { getSettingsField } = useStore((state) => state)
@@ -79,40 +80,37 @@ export const Edit = () => {
   }
 
   const handleSelectSavePath = async () => {
-    const savePath = await open({
-      title: '选择存档目录',
+    const savePath = await dialog.open({
+      title: t`page.edit.dialog.selectSave`,
       directory: true,
-      multiple: false,
-      canCreateDirectories: true
+      multiple: false
     })
-    if (savePath) updateLocalDataField('savePath', savePath)
+    if (savePath) updateLocalDataField('savePath', savePath as string)
   }
 
   const handleSelectProgramFile = async () => {
-    const programFile = await open({
-      title: '选择启动程序',
+    const programFile = await dialog.open({
+      title: t`page.edit.dialog.selectProgram`,
       directory: false,
-      canCreateDirectories: false,
       multiple: false,
-      filters: [{ name: '可执行文件', extensions: ['exe'] }]
+      filters: [{ name: t`page.edit.dialog.filter.executable`, extensions: ['exe'] }]
     })
-    if (programFile) updateLocalDataField('programFile', programFile)
+    if (programFile) updateLocalDataField('programFile', programFile as string)
   }
 
   const handleSelectGuideFile = async () => {
-    const guideFile = await open({
-      title: '选择攻略文件',
+    const guideFile = await dialog.open({
+      title: t`page.edit.dialog.selectGuide`,
       directory: false,
-      canCreateDirectories: false,
       multiple: false,
       filters: [
         {
-          name: '文本文件',
+          name: t`page.edit.dialog.filter.textFile`,
           extensions: ['txt', 'md', 'html', 'htm', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx']
         }
       ]
     })
-    if (guideFile) updateLocalDataField('guideFile', guideFile)
+    if (guideFile) updateLocalDataField('guideFile', guideFile as string)
   }
 
   return (
@@ -121,21 +119,21 @@ export const Edit = () => {
       <div className="overflow-auto px-4 children:children:children:my-1">
         <Stack tokens={{ childrenGap: 8 }}>
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h2 className="text-lg font-semibold">基本信息</h2>
+            <h2 className="text-lg font-semibold">{t`page.edit.section.basicInfo`}</h2>
           </Stack>
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-13">数据源</h3>
+            <h3 className="font-semibold w-13">{t`page.edit.field.source`}</h3>
             <Dropdown
               options={dropdownOptions}
               selectedKey={fetchMethod}
               className="w-25"
               onChange={(_, option) => setFetchMethod(option?.key as FetchMethods)}
             />
-            <DefaultButton text="从数据源更新数据" onClick={handleFetchData} />
+            <DefaultButton text={t`page.edit.button.fetchData`} onClick={handleFetchData} />
             {isLoading && <Spinner />}
           </Stack>
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-13">游戏名</h3>
+            <h3 className="font-semibold w-13">{t`page.edit.field.title`}</h3>
             <TextField
               value={editedGame.title}
               onChange={(_, value) => updateField('title', value || '')}
@@ -144,9 +142,8 @@ export const Edit = () => {
               autoComplete="off"
             />
           </Stack>
-
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-13">开发者</h3>
+            <h3 className="font-semibold w-13">{t`page.edit.field.developer`}</h3>
             <TextField
               value={editedGame.developer}
               onChange={(_, value) => updateField('developer', value || '')}
@@ -154,9 +151,8 @@ export const Edit = () => {
               autoComplete="off"
             />
           </Stack>
-
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-9">简介</h3>
+            <h3 className="font-semibold w-9">{t`page.edit.field.description`}</h3>
             <TextField
               value={editedGame.description}
               multiline
@@ -166,9 +162,8 @@ export const Edit = () => {
               autoComplete="off"
             />
           </Stack>
-
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-9">标签</h3>
+            <h3 className="font-semibold w-9">{t`page.edit.field.tags`}</h3>
             <TextField
               value={editedGame.tags.join(', ')}
               onChange={(_, value) =>
@@ -177,14 +172,13 @@ export const Edit = () => {
                   (value || '').split(',').map((v) => v.trim())
                 )
               }
-              placeholder="用逗号分隔多个标签"
+              placeholder={t`page.edit.field.tags.placeholder`}
               className="flex-grow-1"
               autoComplete="off"
             />
           </Stack>
-
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-13">封面图</h3>
+            <h3 className="font-semibold w-13">{t`page.edit.field.cover`}</h3>
             <TextField
               value={editedGame.cover}
               onChange={(_, value) => updateField('cover', value || '')}
@@ -192,10 +186,9 @@ export const Edit = () => {
               autoComplete="off"
             />
           </Stack>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Stack horizontal tokens={{ childrenGap: 5 }} verticalAlign="center">
-              <h3 className="font-semibold w-22">预计时长</h3>
+              <h3 className="font-semibold w-22">{t`page.edit.field.expectedHours`}</h3>
               <TextField
                 type="number"
                 value={editedGame.expectedPlayHours.toString()}
@@ -204,9 +197,8 @@ export const Edit = () => {
                 autoComplete="off"
               />
             </Stack>
-
             <Stack horizontal tokens={{ childrenGap: 5 }} verticalAlign="center">
-              <h3 className="font-semibold w-9">评分</h3>
+              <h3 className="font-semibold w-9">{t`page.edit.field.rating`}</h3>
               <TextField
                 type="number"
                 value={editedGame.rating.toString()}
@@ -215,9 +207,8 @@ export const Edit = () => {
                 autoComplete="off"
               />
             </Stack>
-
             <Stack horizontal tokens={{ childrenGap: 6 }} verticalAlign="center">
-              <h3 className="font-semibold w-22">发行日期</h3>
+              <h3 className="font-semibold w-22">{t`page.edit.field.releaseDate`}</h3>
               <TextField
                 type="date"
                 value={new Date(editedGame.releaseDate).toISOString().split('T')[0]}
@@ -231,53 +222,53 @@ export const Edit = () => {
 
         <Stack tokens={{ childrenGap: 8 }} className="mt-4">
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h2 className="text-lg font-semibold">本地设置</h2>
+            <h2 className="text-lg font-semibold">{t`page.edit.section.localSettings`}</h2>
           </Stack>
           {editedGame.local ? (
             <React.Fragment>
               <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-                <h3 className="font-semibold w-17">存档路径</h3>
+                <h3 className="font-semibold w-17">{t`page.edit.field.savePath`}</h3>
                 <TextField
                   value={editedGame.local.savePath}
                   readOnly
                   onClick={handleSelectSavePath}
-                  placeholder="选择一个目录"
+                  placeholder={t`page.edit.field.savePath.placeholder`}
                   className="flex-grow-1"
                   autoComplete="off"
                 />
               </Stack>
               <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-                <h3 className="font-semibold w-17">启动程序</h3>
+                <h3 className="font-semibold w-17">{t`page.edit.field.programFile`}</h3>
                 <TextField
                   value={editedGame.local.programFile}
                   readOnly
                   onClick={handleSelectProgramFile}
-                  placeholder="选择一个可执行文件"
+                  placeholder={t`page.edit.field.programFile.placeholder`}
                   className="flex-grow-1"
                   autoComplete="off"
                 />
               </Stack>
               {/* TODO: Sync guide text file */}
               <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-                <h3 className="font-semibold w-17">攻略文件</h3>
+                <h3 className="font-semibold w-17">{t`page.edit.field.guideFile`}</h3>
                 <TextField
                   value={editedGame.local.guideFile}
                   readOnly
                   onClick={handleSelectGuideFile}
-                  placeholder="选择一个文本文件"
+                  placeholder={t`page.edit.field.guideFile.placeholder`}
                   className="flex-grow-1"
                   autoComplete="off"
                 />
               </Stack>
             </React.Fragment>
           ) : (
-            <h3 className="text-red">请先同步至本地</h3>
+            <h3 className="text-red">{t`page.edit.text.needSync`}</h3>
           )}
         </Stack>
 
         <Stack horizontal tokens={{ childrenGap: 16 }} horizontalAlign="end" className="mt-6">
-          <DefaultButton text="取消" onClick={() => navigate(-1)} />
-          <PrimaryButton text="保存" onClick={() => handleSave(editedGame)} />
+          <DefaultButton text={t`page.edit.button.cancel`} onClick={() => navigate(-1)} />
+          <PrimaryButton text={t`page.edit.button.save`} onClick={() => handleSave(editedGame)} />
         </Stack>
       </div>
     </React.Fragment>

@@ -33,13 +33,10 @@ export interface AppState {
     alertText: string
     alertTitle: string
     fullLoadingIsOpen: boolean
-    runningPrograms: Record<string, string | undefined>
   }
   openAlert: (text: string, title?: string) => void
   closeAlert: () => void
   openFullLoading: () => () => void
-  isRunning: (program: string) => boolean
-  setRunning: (program: string, id: string, state: boolean) => void
   settings: {
     githubToken: string
     githubRepo: string
@@ -79,8 +76,7 @@ export const initialized = {
     alertIsOpen: false,
     alertText: '',
     alertTitle: '',
-    fullLoadingIsOpen: false,
-    runningPrograms: {}
+    fullLoadingIsOpen: false
   },
   settings: {
     githubToken: '',
@@ -125,18 +121,6 @@ const useStore = create(
 
         return () => {
           set((state) => ({ temps: { ...state.temps, fullLoadingIsOpen: false } }))
-        }
-      },
-      isRunning: (program) => !!get().temps.runningPrograms[program],
-      setRunning: (program, id, state) => {
-        if (state) {
-          set((state) => ({
-            temps: { ...state.temps, runningPrograms: { ...state.temps.runningPrograms, [program]: id } }
-          }))
-        } else {
-          set((state) => ({
-            temps: { ...state.temps, runningPrograms: { ...state.temps.runningPrograms, [program]: undefined } }
-          }))
         }
       },
       getSettingsField: <T extends keyof AppState['settings']>(filed: T): AppState['settings'][T] =>

@@ -1,10 +1,10 @@
 [package]
 name = "gal-keeper"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "A visual novel manaNNgement, statistics and cloud syncing tool built with Tauri and React"
+authors = ["Arimura Sena"]
 edition = "2021"
-license = "BAN-CHINAMAN-USING"
+license = "BAN-ZHINESE-USING"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -16,13 +16,14 @@ name = "gal_keeper_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2", features = [] }
+tauri-build = { version = "1", features = [] }
 
 [dependencies]
-tauri = { version = "2.1.1", features = [] }
-tauri-plugin-shell = "2.2.0"
-tauri-plugin-fs = "2.2.0"
-tauri-plugin-dialog = "2.2.0"
+tauri = { version = "1", features = [ "path-all",
+  "dialog-all",
+  "window-all",
+  "shell-open",
+] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 reqwest = "0.12.12"
@@ -31,3 +32,6 @@ winapi = { version = "0.3.9", features = ["winuser"] }
 sysinfo = "0.33.1"
 uuid = "1.11.0"
 sled = "0.34.7"
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]

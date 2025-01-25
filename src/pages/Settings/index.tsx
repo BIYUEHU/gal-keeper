@@ -3,6 +3,7 @@ import { IS_TAURI } from '@/constant'
 import type { AppState } from '@/store'
 import useStore from '@/store'
 import { openUrl } from '@/utils'
+import { f, t } from '@/utils/i18n'
 import { Stack, TextField, ChoiceGroup, Toggle, Separator, DefaultButton, Text } from '@fluentui/react'
 import { Spinner } from '@fluentui/react-components'
 import React, { useState } from 'react'
@@ -31,17 +32,17 @@ export const Settings: React.FC = () => {
         visibility: data.visibility
       })
     } else {
-      openAlert('请先填写 Github Api Token、仓库名和路径！')
+      openAlert(t`page.settings.github.alert.paramsNeeded`)
     }
   }
   const handleSyncing = async () => {
     if (checkParams()) {
       setIsLoading(true)
       const { time, add, remove } = await syncToGithub().finally(() => setIsLoading(false))
-      openAlert(`同步成功，本地游戏新增 ${add} 个，删除 ${remove} 个`)
+      openAlert(f`page.settings.github.alert.syncSuccess`(add.toString(), remove.toString()))
       setSync({ ...sync, time })
     } else {
-      openAlert('请先填写 Github Api Token、仓库名和路径！')
+      openAlert(t`page.settings.github.alert.paramsNeeded`)
     }
   }
 
@@ -60,17 +61,19 @@ export const Settings: React.FC = () => {
         />
         <Stack tokens={{ childrenGap: 4 }} verticalAlign="center">
           <Text variant="large" className="font-semibold text-gray-800">
-            {sync.username || '未登录'}
+            {sync.username || t`page.settings.profile.notLogged`}
           </Text>
           <Text variant="small" className="text-gray-500">
-            上次同步时间：{sync.time ? new Date(sync.time).toLocaleString() : '未同步'}
+            {t`page.settings.profile.lastSync`}
+            {sync.time ? new Date(sync.time).toLocaleString() : t`page.settings.profile.notSynced`}
           </Text>
           <Stack horizontal tokens={{ childrenGap: 4 }}>
             <Text variant="small" className="text-gray-500">
-              仓库大小：{sync.size ? (sync.size / 1024).toFixed(2) : 0} MB
+              {t`page.settings.profile.repoSize`}
+              {sync.size ? (sync.size / 1024).toFixed(2) : 0} MB
             </Text>
             <Text variant="small" className="text-gray-500">
-              可见性：
+              {t`page.settings.profile.visibility`}
               <span
                 className={`${
                   sync.visibility === 'public'
@@ -80,7 +83,11 @@ export const Settings: React.FC = () => {
                       : 'text-yellow-500'
                 }`}
               >
-                {sync.visibility === 'public' ? '公开' : sync.visibility === 'private' ? '私有' : '不明'}
+                {sync.visibility === 'public'
+                  ? t`page.settings.profile.visibility.public`
+                  : sync.visibility === 'private'
+                    ? t`page.settings.profile.visibility.private`
+                    : t`page.settings.profile.visibility.unknown`}
               </span>
             </Text>
           </Stack>
@@ -90,11 +97,11 @@ export const Settings: React.FC = () => {
       <Stack tokens={{ childrenGap: 8 }}>
         <Stack tokens={{ childrenGap: 4 }}>
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h2 className="text-lg font-semibold ">Github Api 设置</h2>
+            <h2 className="text-lg font-semibold">{t`page.settings.github.title`}</h2>
           </Stack>
 
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-12">Token</h3>
+            <h3 className="font-semibold w-12">{t`page.settings.github.token`}</h3>
             <TextField
               className="flex-grow-1"
               value={settings.githubToken ?? ''}
@@ -106,25 +113,26 @@ export const Settings: React.FC = () => {
               className="text-xs text-blue-400 hover:cursor-pointer"
               onClick={() => openUrl('https://github.com/settings/tokens')}
             >
-              获取 Github Api Token
+              {t`page.settings.github.token.get`}
             </span>
           </Stack>
 
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-9">仓库</h3>
+            <h3 className="font-semibold w-9">{t`page.settings.github.repo`}</h3>
             <TextField
               className="flex-grow-1"
-              placeholder="诸如：biyuehu/galgame-data"
+              placeholder={t`page.settings.github.repo.placeholder`}
               value={settings.githubRepo ?? ''}
               onChange={(_, v) => updateSettings({ githubRepo: v ?? '' })}
               autoComplete="off"
             />
           </Stack>
+
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-9">路径</h3>
+            <h3 className="font-semibold w-9">{t`page.settings.github.path`}</h3>
             <TextField
               className="flex-grow-1"
-              placeholder="诸如：gal-keeper/"
+              placeholder={t`page.settings.github.path.placeholder`}
               value={settings.githubPath ?? ''}
               onChange={(_, v) => updateSettings({ githubPath: v ?? '' })}
               autoComplete="off"
@@ -132,7 +140,7 @@ export const Settings: React.FC = () => {
           </Stack>
 
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-25">自动同步间隔</h3>
+            <h3 className="font-semibold w-25">{t`page.settings.github.autoSync`}</h3>
             <TextField
               type="number"
               value={settings.autoSyncMinutes.toString()}
@@ -140,27 +148,27 @@ export const Settings: React.FC = () => {
               className="flex-grow-1"
               autoComplete="off"
             />
-            <span className="text-xs">单位：分钟（0 表示不自动同步）</span>
+            <span className="text-xs">{t`page.settings.github.autoSync.unit`}</span>
           </Stack>
 
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <DefaultButton text="点击测试" onClick={handleTesting} />
-            <DefaultButton text="手动同步" onClick={handleSyncing} />
+            <DefaultButton text={t`page.settings.github.button.test`} onClick={handleTesting} />
+            <DefaultButton text={t`page.settings.github.button.sync`} onClick={handleSyncing} />
             {isLoading && <Spinner />}
           </Stack>
         </Stack>
         <Separator />
 
         <Stack tokens={{ childrenGap: 4 }}>
-          <h2 className="text-lg font-semibold">外观设置</h2>
+          <h2 className="text-lg font-semibold">{t`page.settings.appearance.title`}</h2>
 
           <div>
-            <h3 className="font-semibold w-12">主题</h3>
+            <h3 className="font-semibold w-12">{t`page.settings.appearance.theme`}</h3>
             <ChoiceGroup
               options={[
-                { key: 'light', text: '浅色' },
-                { key: 'dark', text: '深色' },
-                { key: 'system', text: '跟随系统' }
+                { key: 'light', text: t`page.settings.appearance.theme.light` },
+                { key: 'dark', text: t`page.settings.appearance.theme.dark` },
+                { key: 'system', text: t`page.settings.appearance.theme.system` }
               ]}
               selectedKey={settings.theme}
               onChange={(_, option) => updateSettings({ theme: option?.key as AppState['settings']['theme'] })}
@@ -168,13 +176,13 @@ export const Settings: React.FC = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold">语言</h3>
+            <h3 className="text-lg font-semibold">{t`page.settings.appearance.language`}</h3>
             <ChoiceGroup
               options={[
-                { key: 'en_US', text: '英语' },
-                { key: 'zh_CN', text: '简体中文' },
-                { key: 'ja_JP', text: '日语' },
-                { key: 'zh_TW', text: '繁体中文' }
+                { key: 'en_US', text: t`page.settings.appearance.language.en` },
+                { key: 'zh_CN', text: t`page.settings.appearance.language.zh` },
+                { key: 'ja_JP', text: t`page.settings.appearance.language.ja` },
+                { key: 'zh_TW', text: t`page.settings.appearance.language.zhTw` }
               ]}
               selectedKey={settings.language}
               onChange={(_, option) =>
@@ -186,21 +194,21 @@ export const Settings: React.FC = () => {
         <Separator />
 
         <Stack tokens={{ childrenGap: 4 }}>
-          <h2 className="text-lg font-semibold">细节设置</h2>
+          <h2 className="text-lg font-semibold">{t`page.settings.detail.title`}</h2>
           <Toggle
-            label="编辑游戏时自动设置游戏标题"
+            label={t`page.settings.detail.autoSetTitle`}
             checked={settings.autoSetGameTitle}
             onChange={(_, checked) => updateSettings({ autoSetGameTitle: checked })}
           />
           {IS_TAURI && (
             <React.Fragment>
               <Toggle
-                label="编辑游戏时自动缓存游戏封面"
+                label={t`page.settings.detail.autoCacheCover`}
                 checked={settings.autoCacheGameCover}
                 onChange={(_, checked) => updateSettings({ autoCacheGameCover: checked })}
               />
               <Toggle
-                label="仅在当前窗口为游戏窗口时记录时间"
+                label={t`page.settings.detail.onlyRecordActive`}
                 checked={settings.onlyRecordActiveTime}
                 onChange={(_, checked) => updateSettings({ onlyRecordActiveTime: checked })}
               />

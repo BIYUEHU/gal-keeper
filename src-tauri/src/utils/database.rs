@@ -9,15 +9,21 @@ fn initialize_db(directory: &str) -> Result<Db, String> {
         fs::create_dir_all(directory).map_err(|e| format!("Failed to create directory: {}", e))?;
     }
 
-    Ok(sled::open(directory.join(DB_NAME)).unwrap())
+    Ok(sled::open(directory.join(DB_NAME))
+        .map_err(|e| format!("Failed to open database: {}", e))?)
 }
 
 #[tauri::command]
 pub fn db_read_value(directory: &str, key: &str) -> Result<String, String> {
-    Ok(match initialize_db(directory)?.get(key).unwrap() {
-        Some(v) => String::from_utf8_lossy(&v).to_string(),
-        None => "".to_string(),
-    })
+    Ok(
+        match initialize_db(directory)?
+            .get(key)
+            .map_err(|e| format!("Failed to get value: {}", e))?
+        {
+            Some(v) => String::from_utf8_lossy(&v).to_string(),
+            None => "".to_string(),
+        },
+    )
 }
 
 #[tauri::command]

@@ -1,6 +1,6 @@
 import type { StateStorage } from 'zustand/middleware'
 import { appDataDir } from '@tauri-apps/api/path'
-import { invoke } from '@tauri-apps/api/core'
+import { invoke } from '@tauri-apps/api'
 import { logger } from './logger'
 
 const dbLogger = logger.label('DATABASE')

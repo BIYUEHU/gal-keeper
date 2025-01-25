@@ -48,7 +48,7 @@ async function main() {
           .sort((a, b) => b.rating - a.rating)
           .map((tag) => tag.name),
         // playMinutes: Math.floor(Math.random() * 100) + 100,
-        palyTimelines: [],
+        playTimelines: [],
         expectedPlayHours: Number((data.length_minutes / 60).toFixed(1)),
         lastPlay: Date.now() - Math.random(),
         createDate: Date.now() - Math.random(),

@@ -4,9 +4,10 @@ import { Stack } from '@fluentui/react/lib/Stack'
 import { PrimaryButton, DefaultButton } from '@fluentui/react'
 import { TextField } from '@fluentui/react/lib/TextField'
 import { Text } from '@fluentui/react/lib/Text'
-import { open } from '@tauri-apps/plugin-dialog'
+import { dialog } from '@tauri-apps/api'
 import type { GameWithLocalData } from '@/types'
 import { useSharedStore } from '@/store'
+import { t } from '@/utils/i18n'
 
 interface SyncModalProps {
   isOpen: boolean
@@ -23,14 +24,13 @@ export const SyncModal: React.FC<SyncModalProps> = ({ isOpen, setIsOpen, data })
   }, [isOpen])
 
   const handleSelectExe = async () => {
-    const filepath = await open({
-      title: '选择启动程序',
+    const filepath = await dialog.open({
+      title: t`component.syncModal.dialog.selectProgram`,
       directory: false,
-      canCreateDirectories: false,
       multiple: false,
-      filters: [{ name: '可执行文件', extensions: ['exe'] }]
+      filters: [{ name: t`component.syncModal.dialog.filter.executable`, extensions: ['exe'] }]
     })
-    if (filepath) setProgramFile(filepath)
+    if (filepath) setProgramFile(filepath as string)
   }
 
   const handleSubmit = () => {
@@ -56,23 +56,23 @@ export const SyncModal: React.FC<SyncModalProps> = ({ isOpen, setIsOpen, data })
     >
       <div className="p-6 bg-white rounded-md shadow-md">
         <Text variant="xLarge" className="font-semibold mb-4">
-          同步游戏
+          {t`component.syncModal.title`}
         </Text>
         <Stack tokens={{ childrenGap: 16 }}>
           <TextField
-            label="启动程序"
+            label={t`component.syncModal.field.program`}
             value={programFile}
             readOnly
             onClick={handleSelectExe}
-            placeholder="选择一个可执行文件"
+            placeholder={t`component.syncModal.field.program.placeholder`}
             autoComplete="off"
             required
           />
-          <PrimaryButton text="选择文件" onClick={handleSelectExe} />
+          <PrimaryButton text={t`component.syncModal.button.selectFile`} onClick={handleSelectExe} />
         </Stack>
         <Stack horizontal tokens={{ childrenGap: 16 }} horizontalAlign="end" className="mt-4">
-          <DefaultButton text="取消" onClick={() => setIsOpen(false)} />
-          <PrimaryButton text="提交" onClick={handleSubmit} />
+          <DefaultButton text={t`component.syncModal.button.cancel`} onClick={() => setIsOpen(false)} />
+          <PrimaryButton text={t`component.syncModal.button.submit`} onClick={handleSubmit} />
         </Stack>
       </div>
     </Modal>

@@ -4,7 +4,7 @@
 
   <!-- <a target="_blank" href="https://vndb.org/c90804"><img src="client/public/favicon.ico" alt="gal-keeper logo" width="200"></a> -->
 
-# GalKeeper | Aya
+# Nanno | GalKeeper
 
 **A visual novel management, statistics and cloud syncing tool built with Tauri and React.**
 

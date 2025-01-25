@@ -4,14 +4,15 @@ import { Text } from '@fluentui/react/lib/Text'
 import { Separator } from '@fluentui/react/lib/Separator'
 import React, { useMemo, useState } from 'react'
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react'
-import { invokeSafe, openUrl } from '@/utils'
+import { calculateTotalPlayTime, invokeSafe, openUrl, showMinutes } from '@/utils'
 import { IS_TAURI } from '@/constant'
 import { type Event, listen } from '@tauri-apps/api/event'
-import type { GameWithLocalData, LocalData } from '@/types'
-import useStore, { useSharedStore } from '@/store'
+import type { GameWithLocalData } from '@/types'
+import { useSharedStore } from '@/store'
 import { SyncModal } from '@/components/SyncModal'
 import { ConfirmBox } from '@/components/ConfirmBox'
 import { logger } from '@/utils/logger'
+import { f, t } from '@/utils/i18n'
 
 interface InfoOption {
   text: string
@@ -22,38 +23,33 @@ const timestampToDate = (time: number) => new Date(time).toLocaleString()
 
 const infoOptions: InfoOption[] = [
   {
-    text: '开发商',
+    text: t`page.detail.info.developer`,
     value: 'developer'
   },
   {
-    text: '发布日期',
+    text: t`page.detail.info.releaseDate`,
     value: (g) => timestampToDate(g.releaseDate)
   },
   {
-    text: '创建日期',
+    text: t`page.detail.info.createDate`,
     value: (g) => timestampToDate(g.createDate)
   },
 
   {
-    text: '预计时长',
+    text: t`page.detail.info.expectedPLayHours`,
     value: (g) => `${g.expectedPlayHours}h`
   },
   {
-    text: '游玩时长',
+    text: t`page.detail.info.playTime`,
 
-    value: (g) => {
-      const playMinutes = g.palyTimelines.reduce((acc, cur) => acc + cur[2], 0) / 1000 / 60
-      const hours = Math.floor(playMinutes / 60)
-      const minutes = Math.floor(playMinutes % 60)
-      return hours === 0 ? `${minutes}m` : `${hours}h${minutes}m`
-    }
+    value: (g) => showMinutes(calculateTotalPlayTime(g.playTimelines))
   },
   {
-    text: '游玩次数',
-    value: (g) => `${g.palyTimelines.length} 次`
+    text: t`page.detail.info.playCount`,
+    value: (g) => f`page.detail.info.playCount.value`(g.playTimelines.length.toString())
   },
   {
-    text: '上次游玩',
+    text: t`page.detail.info.lastPlay`,
     value: (g) => (g.lastPlay ? timestampToDate(g.lastPlay) : '---')
   }
 ]
@@ -66,58 +62,61 @@ export const Detail: React.FC = () => {
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false)
   const [isOpenDelete2Modal, setIsOpenDelete2Modal] = useState(false)
 
-  const { setRunning, isRunning } = useStore((state) => state)
-  const { getData, getDataByProgramFile, updateData, removeData, addPlayTimeline } = useSharedStore((state) => state)
+  const { getData, updateData, removeData, increasePlayTimeline, isRunning } = useSharedStore((state) => state)
   const [game, setGame] = useState(getData(id ?? ''))
 
   if (!game) {
-    return <div>游戏不存在</div>
+    return <div>{t`page.detail.game.notFound`}</div>
   }
 
   const commandItems: ICommandBarItemProps[] = [
     {
       key: 'sync',
-      text: '同步游戏',
+      text: t`page.detail.command.sync`,
       iconProps: { iconName: 'Link12' },
       onClick: () => setIsOpenSyncModal(true)
     },
     {
       key: 'start',
-      text: '开始游戏',
+      text: t`page.detail.command.start`,
       iconProps: { iconName: 'Play' },
       disabled: !game.local?.programFile,
       onClick: () => {
-        if (isRunning((game.local as LocalData).programFile)) return
+        if (isRunning(game.id)) {
+          logger.warn('Game is already running', game.title, '\n', id)
+          return
+        }
         invokeSafe('launch_and_monitor', { filepath: game.local?.programFile }).then(() => {
+          const id = game.id
           logger.record('Start successfully', game.title, '\n', id)
-          setRunning((game.local as LocalData).programFile, game.id, true)
+          // TODO: update data -> increasePlayTimeline
           updateData({ ...game, lastPlay: Date.now() })
-          setGame(getData(id as string))
+          setGame(getData(id))
 
-          listen('finished', (data: Event<[string, number, number, number]>) => {
-            const gameHandled = getDataByProgramFile(data.payload[0])
-            if (!gameHandled) return
+          let startTime: undefined | number
 
-            logger.record(
-              `Finished\nProcess name: ${data.payload[0]}\nStart time: ${data.payload[1]}\nStop time: ${data.payload[2]}\n Active time: ${data.payload[3]}\n`,
-              '\n'
-            )
-            setRunning((game.local as LocalData).programFile, game.id, false)
-            addPlayTimeline(gameHandled.id, data.payload.slice(1) as [number, number, number])
-            if (id === gameHandled.id) setGame(getData(gameHandled.id as string))
+          listen('increase', (data: Event<[number, number]>) => {
+            if (!startTime) startTime = data.payload[0]
+            increasePlayTimeline(id, ...data.payload)
+            logger.debug('increase', data.payload, id)
+
+            // logger.record(
+            //   `Finished\nProcess name: ${data.payload[0]}\nStart time: ${data.payload[1]}\nStop time: ${data.payload[2]}\nActive time: ${data.payload[3]}\n`,
+            //   '\n'
+            // )
           })
         })
       }
     },
     {
       key: 'edit',
-      text: '编辑信息',
+      text: t`page.detail.command.edit`,
       iconProps: { iconName: 'Edit' },
       onClick: () => navigate(`/edit/${id}`)
     },
     {
       key: 'guide',
-      text: '查看攻略',
+      text: t`page.detail.command.guide`,
       iconProps: { iconName: 'ReadingMode' },
       disabled: !game.local?.guideFile,
       onClick: () => {
@@ -126,7 +125,7 @@ export const Detail: React.FC = () => {
     },
     {
       key: 'backup',
-      text: '备份存档',
+      text: t`page.detail.command.backup`,
       iconProps: { iconName: 'CloudUpload' },
       disabled: !game.local?.savePath,
       onClick: () => {
@@ -135,13 +134,13 @@ export const Detail: React.FC = () => {
     },
     {
       key: 'more',
-      text: '更多',
+      text: t`page.detail.command.more`,
       iconProps: { iconName: 'More' },
       subMenuProps: {
         items: [
           {
             key: 'explorer',
-            text: '打开游戏目录',
+            text: t`page.detail.command.openGameDir`,
             iconProps: { iconName: 'OpenFolderHorizontal' },
             disabled: !game.local?.programFile,
             onClick: () => {
@@ -152,7 +151,7 @@ export const Detail: React.FC = () => {
           },
           {
             key: 'save',
-            text: '打开存档目录',
+            text: t`page.detail.command.openSaveDir`,
             iconProps: { iconName: 'Save' },
             disabled: !game.local?.savePath,
             onClick: () => {
@@ -161,7 +160,7 @@ export const Detail: React.FC = () => {
           },
           {
             key: 'vndb',
-            text: '查看 Vndb 页面',
+            text: t`page.detail.command.viewVndb`,
             iconProps: { iconName: 'Go' },
             disabled: !game.vndbId,
             onClick: () => {
@@ -170,7 +169,7 @@ export const Detail: React.FC = () => {
           },
           {
             key: 'bangumi',
-            text: '查看 Bangumi 页面',
+            text: t`page.detail.command.viewBangumi`,
             iconProps: { iconName: 'Go' },
             disabled: !game.bgmId,
             onClick: () => {
@@ -179,14 +178,14 @@ export const Detail: React.FC = () => {
           },
           {
             key: 'delete',
-            text: '删除本地同步',
+            text: t`page.detail.command.deleteSync`,
             iconProps: { iconName: 'Delete' },
             disabled: !game.local,
             onClick: () => setIsOpenDeleteModal(true)
           },
           {
             key: 'delete2',
-            text: '删除游戏',
+            text: t`page.detail.command.deleteGame`,
             iconProps: { iconName: 'Delete' },
             onClick: () => setIsOpenDelete2Modal(true)
           }
@@ -194,6 +193,7 @@ export const Detail: React.FC = () => {
       }
     }
   ]
+
   const handledCommandItems = useMemo(
     () =>
       commandItems.filter((item) => {
@@ -211,13 +211,13 @@ export const Detail: React.FC = () => {
       <ConfirmBox
         isOpen={isOpenDeleteModal}
         setIsOpen={setIsOpenDeleteModal}
-        text="删除本地同步后需重新设置游戏启动程序，但不会删除本地游戏文件，是否继续？"
+        text={t`page.detail.modal.deleteSync`}
         onConfirm={() => removeData(id as string, true)}
       />
       <ConfirmBox
         isOpen={isOpenDelete2Modal}
         setIsOpen={setIsOpenDelete2Modal}
-        text="该操作会删除游戏数据与云端存档备份，但不会删除本地游戏文件，是否继续？"
+        text={t`page.detail.modal.deleteGame`}
         onConfirm={() => {
           setTimeout(() => {
             removeData(id as string, false)
@@ -254,7 +254,7 @@ export const Detail: React.FC = () => {
         <Separator />
         <Stack>
           <Text variant="large" className="font-semibold">
-            简介
+            {t`page.detail.section.description`}
           </Text>
           <Text className="mt-4" variant="medium">
             {game.description}
@@ -263,7 +263,7 @@ export const Detail: React.FC = () => {
         <Separator />
         <Stack>
           <Text variant="large" className="font-semibold">
-            标签
+            {t`page.detail.section.tags`}
           </Text>
           <Stack className="mt-4 mb-6 max-w-90%" horizontal wrap tokens={{ childrenGap: 8 }}>
             {game.tags.map((tag) => (

@@ -6,6 +6,7 @@ import { SortModal } from '@/components/SortModal'
 import useStore, { useSharedStore } from '@/store'
 import { FilterModal } from '@/components/FilterModal'
 import { AddModal } from '@/components/AddModal'
+import { t } from '@/utils/i18n'
 
 export const Library: React.FC = () => {
   const [isOpenSortModal, setIsOpenSortModal] = useState(false)
@@ -56,19 +57,19 @@ export const Library: React.FC = () => {
   const commandItems: ICommandBarItemProps[] = [
     {
       key: 'add',
-      text: '添加游戏',
+      text: t`page.library.command.add`,
       iconProps: { iconName: 'Add' },
       onClick: () => setIsOpenAddModal(true)
     },
     {
       key: 'sort',
-      text: '排序',
+      text: t`page.library.command.sort`,
       iconProps: { iconName: 'Sort' },
       onClick: () => setIsOpenSortModal(true)
     },
     {
       key: 'filter',
-      text: '筛选',
+      text: t`page.library.command.filter`,
       iconProps: { iconName: 'Filter' },
       onClick: () => setIsOpenFilterModal(true)
     }
@@ -82,7 +83,7 @@ export const Library: React.FC = () => {
       <div className="border-b">
         <div className="flex items-center justify-between mb-5">
           <SearchBox
-            placeholder="搜索游戏..."
+            placeholder={t`page.library.search.placeholder`}
             value={searchText}
             onChange={(_, newValue) => setSearchText(newValue || '')}
             className="w-80"

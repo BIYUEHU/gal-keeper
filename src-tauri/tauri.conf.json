@@ -1,18 +1,33 @@
 {
-  "$schema": "https://schema.tauri.app/config/2",
-  "productName": "gal-keeper",
-  "version": "0.1.0",
-  "identifier": "com.gal-keeper.app",
   "build": {
     "beforeDevCommand": "pnpm dev",
-    "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "pnpm build",
-    "frontendDist": "../dist"
+    "devPath": "http://localhost:327",
+    "distDir": "../dist",
+    "withGlobalTauri": true
   },
-  "app": {
+  "package": {
+    "productName": "gal-keeper",
+    "version": "0.1.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "shell": {
+        "open": true
+      },
+      "window": {
+        "all": true
+      },
+      "dialog": {
+        "all": true
+      },
+      "path": {
+        "all": true
+      }
+    },
     "windows": [
       {
-        "title": "GalKeeper",
+        "title": "Nanno⭐ ~ GalKeeper",
         "width": 1200,
         "height": 720,
         "minWidth": 630,
@@ -20,26 +35,18 @@
       }
     ],
     "security": {
-      "csp": null,
-      "headers": {
-        "Cross-Origin-Opener-Policy": "same-origin",
-        "Cross-Origin-Embedder-Policy": "require-corp",
-        "Timing-Allow-Origin": [
-          "*"
-        ],
-        "X-Content-Type-Options": null
-      }
+      "csp": null
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "com.gal-keeper.nanno",
+      "icon": [
+        "icons/nanno.png",
+        "icons/nanno.ico"
+      ],
+      "copyright": "© Copyright 2024 - 2025 Arimura Sena",
+      "category": "WordGame"
     }
-  },
-  "bundle": {
-    "active": true,
-    "targets": "all",
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
-    ]
   }
 }

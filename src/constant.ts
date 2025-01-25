@@ -9,7 +9,7 @@
   }
 }
 
-export const IS_TAURI = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window && !!window.__TAURI_INTERNALS__
+export const IS_TAURI = typeof window !== 'undefined' && '__TAURI__' in window && !!window.__TAURI__
 export const IS_DEV = import.meta && !!import.meta.env?.DEV
 
 export enum StoreKey {

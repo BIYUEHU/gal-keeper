@@ -4,12 +4,13 @@ import { Stack } from '@fluentui/react/lib/Stack'
 import { PrimaryButton, DefaultButton } from '@fluentui/react'
 import { TextField } from '@fluentui/react/lib/TextField'
 import { Text } from '@fluentui/react/lib/Text'
-import { open } from '@tauri-apps/plugin-dialog'
+import { dialog } from '@tauri-apps/api'
 import { IS_TAURI } from '@/constant'
 import useStore, { useSharedStore } from '@/store'
 import { fetchGameData } from '@/api'
 import { cacheImage, generateUuid } from '@/utils'
 import type { GameWithLocalData } from '@/types'
+import { t } from '@/utils/i18n'
 
 interface AddModalProps {
   isOpen: boolean
@@ -33,16 +34,15 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
   }, [isOpen])
 
   const handleSelectProgram = async () => {
-    const filepath = await open({
-      title: '选择启动程序',
+    const filepath = await dialog.open({
+      title: t`component.addModal.dialog.selectProgram`,
       directory: false,
-      canCreateDirectories: false,
       multiple: false,
-      filters: [{ name: '可执行文件', extensions: ['exe'] }]
+      filters: [{ name: t`component.addModal.dialog.filter.executable`, extensions: ['exe'] }]
     })
     if (filepath) {
-      setProgramFile(filepath)
-      if (!gameName) setGameName(filepath.split(/[/\\]/).slice(-2, -1)[0])
+      setProgramFile(filepath as string)
+      if (!gameName) setGameName((filepath as string).split(/[/\\]/).slice(-2, -1)[0])
     }
   }
 
@@ -59,7 +59,7 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
         alias: [],
         description: '',
         tags: [],
-        palyTimelines: [],
+        playTimelines: [],
         expectedPlayHours: 0,
         lastPlay: 0,
         createDate: Date.now(),
@@ -100,20 +100,24 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
     >
       <div className="p-6 bg-white rounded-md shadow-md">
         <Text variant="xLarge" className="font-semibold mb-4">
-          添加游戏
+          {t`component.addModal.title`}
         </Text>
         <Stack tokens={{ childrenGap: 16 }}>
           <TextField
             disabled={!IS_TAURI}
-            label="启动程序"
+            label={t`component.addModal.field.program`}
             value={programFile}
             readOnly
             onClick={handleSelectProgram}
-            placeholder="选择一个可执行文件"
+            placeholder={t`component.addModal.field.program.placeholder`}
           />
-          <PrimaryButton disabled={!IS_TAURI} text="选择文件" onClick={handleSelectProgram} />
+          <PrimaryButton
+            disabled={!IS_TAURI}
+            text={t`component.addModal.button.selectFile`}
+            onClick={handleSelectProgram}
+          />
           <TextField
-            label="游戏名字"
+            label={t`component.addModal.field.name`}
             value={gameName}
             onChange={(_, value) => setGameName(value || '')}
             required
@@ -121,8 +125,8 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
           />
         </Stack>
         <Stack horizontal tokens={{ childrenGap: 16 }} horizontalAlign="end" className="mt-4">
-          <DefaultButton text="取消" onClick={() => setIsOpen(false)} />
-          <PrimaryButton text="提交" onClick={handleSubmit} />
+          <DefaultButton text={t`component.addModal.button.cancel`} onClick={() => setIsOpen(false)} />
+          <PrimaryButton text={t`component.addModal.button.submit`} onClick={handleSubmit} />
         </Stack>
       </div>
     </Modal>

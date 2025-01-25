@@ -1,14 +1,15 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { IS_TAURI, StoreKey } from '@/constant'
-import type { GameData, GameWithLocalData, Timeline } from '@/types'
+import type { GameData, GameWithLocalData } from '@/types'
 import { getStorage } from '@/utils'
 import useStore from './main'
 
 export interface SharedState {
   data: GameData[]
   initialize: () => void
-  addPlayTimeline: (id: string, data: Timeline) => void
+  isRunning: (id: string) => boolean
+  increasePlayTimeline: (id: string, startTime: number, endTime: number) => void
   addData: (data: GameWithLocalData) => void
   updateData: (data: GameWithLocalData) => void
   removeData: (id: string, onlyLocal: boolean) => void
@@ -30,13 +31,46 @@ export const useSharedStore = create(
         //   local: state.local.filter(clear)
         // }))
       },
-      addPlayTimeline: (id, data) => {
+      isRunning: (id) =>
+        get().data.some(
+          (item) =>
+            item.id === id && Date.now() - item.playTimelines.reduce((acc, cur) => (acc > cur[1] ? acc : cur[1]), 0) < 3
+        ),
+      increasePlayTimeline: (id, startTime, endTime) => {
+        if (
+          get().data.some(
+            (item) =>
+              item.id === id &&
+              item.playTimelines.some((timeline) => timeline[0] === startTime && timeline[1] >= endTime)
+          )
+        ) {
+          return
+        }
+
         set((state) => ({
-          data: state.data.map((item) =>
-            item.id === id ? { ...item, palyTimelines: [...item.palyTimelines, data] } : item
+          data: state.data.map(
+            (item): GameData => ({
+              ...item,
+              // TODO:
+              playTimelines: item.id === id ? [...item.playTimelines, [startTime, endTime, 1]] : item.playTimelines
+            })
           )
         }))
-        useStore.getState().addLocalChange({ id, type: 'timelines', data })
+
+        set((state) => ({
+          data: state.data.map(
+            (item): GameData => ({
+              ...item,
+              playTimelines: ((index) => {
+                if (index === -1) return item.playTimelines
+                item.playTimelines[index] = [startTime, endTime, item.playTimelines[index][2] + 1]
+                return item.playTimelines
+              })(item.playTimelines.findIndex((timeline) => timeline[0] === startTime))
+            })
+          )
+        }))
+        // TODO: change local data
+        // useStore.getState().addLocalChange({ id, type: 'timelines', data })
       },
       addData: (data) => {
         const { local, ...game } = data

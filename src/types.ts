@@ -8,7 +8,7 @@ export interface GameData {
   description: string
   tags: string[]
   // playMinutes: number
-  palyTimelines: [number, number, number][]
+  playTimelines: [number, number, number][]
   expectedPlayHours: number
   lastPlay: number
   createDate: number
@@ -33,7 +33,7 @@ export interface GameWithLocalData extends GameData {
   local?: LocalData
 }
 
-export type FetchGameData = Omit<GameData, 'id' | 'local' | 'palyTimelines' | 'lastPlay' | 'createDate'>
+export type FetchGameData = Omit<GameData, 'id' | 'local' | 'playTimelines' | 'lastPlay' | 'createDate'>
 
 export type SortKeys = 'Title' | 'CreateDate' | 'LastPlay' | 'Developer' | 'Rating' | 'ReleaseDate'
 

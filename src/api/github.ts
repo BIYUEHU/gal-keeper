@@ -67,13 +67,11 @@ export async function readFileFromGithub(file: string): Promise<any> {
 
 export async function writeFileToGithub(message: string, file: string, content: string | object, isCrate = false) {
   const url = getFileUrl(file)
-  return (
-    await githubHttp.put(url, {
-      message,
-      content: base64Encode(typeof content === 'string' ? content : JSON.stringify(content, null, 2)),
-      sha: isCrate ? undefined : (await githubHttp.get(url)).data.sha
-    })
-  ).data
+  return await githubHttp.put(url, {
+    message,
+    content: base64Encode(typeof content === 'string' ? content : JSON.stringify(content, null, 2)),
+    sha: isCrate ? undefined : (await githubHttp.get(url)).data.sha
+  })
 }
 
 export async function syncToGithub() {
@@ -93,9 +91,9 @@ export async function syncToGithub() {
       .filter((item) => !localRemoveIds.includes(item.id))
       .map(
         (item): GameData =>
-          // Update information of data (Exclude `palyTimelines`)
+          // Update information of data (Exclude `playTimelines`)
           localUpdateIds.includes(item.id)
-            ? { ...(data.find((local) => local.id === item.id) as GameData), palyTimelines: item.palyTimelines }
+            ? { ...(data.find((local) => local.id === item.id) as GameData), playTimelines: item.playTimelines }
             : item
       )
       .map((item) =>
@@ -103,9 +101,9 @@ export async function syncToGithub() {
         localTimelinesIds.includes(item.id)
           ? {
               ...item,
-              palyTimelines: [
-                ...item.palyTimelines,
-                ...(useSharedStore.getState().getData(item.id) as Required<GameWithLocalData>).palyTimelines
+              playTimelines: [
+                ...item.playTimelines,
+                ...(useSharedStore.getState().getData(item.id) as Required<GameWithLocalData>).playTimelines
               ]
             }
           : item
