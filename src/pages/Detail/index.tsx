@@ -4,15 +4,16 @@ import { Text } from '@fluentui/react/lib/Text'
 import { Separator } from '@fluentui/react/lib/Separator'
 import React, { useMemo, useState } from 'react'
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react'
-import { calculateTotalPlayTime, invokeSafe, openUrl, showMinutes } from '@/utils'
+import { calculateTotalPlayTime, openUrl, showMinutes } from '@/utils'
 import { IS_TAURI } from '@/constant'
 import { type Event, listen } from '@tauri-apps/api/event'
 import type { GameWithLocalData } from '@/types'
-import { useSharedStore } from '@/store'
+import useStore from '@/store'
 import { SyncModal } from '@/components/SyncModal'
 import { ConfirmBox } from '@/components/ConfirmBox'
 import { logger } from '@/utils/logger'
 import { f, t } from '@/utils/i18n'
+import { invoke } from '@tauri-apps/api'
 
 interface InfoOption {
   text: string
@@ -62,13 +63,13 @@ export const Detail: React.FC = () => {
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false)
   const [isOpenDelete2Modal, setIsOpenDelete2Modal] = useState(false)
 
-  const { getData, updateData, removeData, increasePlayTimeline, isRunning } = useSharedStore((state) => state)
-  const [game, setGame] = useState(getData(id ?? ''))
+  const { getGameData, addGameData, removeGameData, increasePlayTimeline, isRunningGame } = useStore((state) => state)
+  const [game, setGame] = useState(getGameData(id ?? ''))
 
   if (!game) {
     return <div>{t`page.detail.game.notFound`}</div>
   }
-
+  console.log(game)
   const commandItems: ICommandBarItemProps[] = [
     {
       key: 'sync',
@@ -82,16 +83,15 @@ export const Detail: React.FC = () => {
       iconProps: { iconName: 'Play' },
       disabled: !game.local?.programFile,
       onClick: () => {
-        if (isRunning(game.id)) {
+        if (isRunningGame(game.id)) {
           logger.warn('Game is already running', game.title, '\n', id)
           return
         }
-        invokeSafe('launch_and_monitor', { filepath: game.local?.programFile }).then(() => {
+        invoke('launch_and_monitor', { filepath: game.local?.programFile }).then(() => {
           const id = game.id
           logger.record('Start successfully', game.title, '\n', id)
-          // TODO: update data -> increasePlayTimeline
-          updateData({ ...game, lastPlay: Date.now() })
-          setGame(getData(id))
+          addGameData({ ...game, lastPlay: Date.now() })
+          setGame(getGameData(id))
 
           let startTime: undefined | number
 
@@ -120,7 +120,7 @@ export const Detail: React.FC = () => {
       iconProps: { iconName: 'ReadingMode' },
       disabled: !game.local?.guideFile,
       onClick: () => {
-        invokeSafe('open_with_explorer', { directory: game.local?.guideFile })
+        invoke('open_with_explorer', { directory: game.local?.guideFile })
       }
     },
     {
@@ -129,6 +129,7 @@ export const Detail: React.FC = () => {
       iconProps: { iconName: 'CloudUpload' },
       disabled: !game.local?.savePath,
       onClick: () => {
+        // TODO: Implement backup
         // invokeSafe('backup', )
       }
     },
@@ -144,7 +145,7 @@ export const Detail: React.FC = () => {
             iconProps: { iconName: 'OpenFolderHorizontal' },
             disabled: !game.local?.programFile,
             onClick: () => {
-              invokeSafe('open_with_explorer', {
+              invoke('open_with_explorer', {
                 directory: game.local?.programFile.split(/[/\\]/).slice(0, -1).join('\\')
               })
             }
@@ -155,7 +156,7 @@ export const Detail: React.FC = () => {
             iconProps: { iconName: 'Save' },
             disabled: !game.local?.savePath,
             onClick: () => {
-              invokeSafe('open_with_explorer', { directory: game.local?.savePath })
+              invoke('open_with_explorer', { directory: game.local?.savePath })
             }
           },
           {
@@ -212,7 +213,7 @@ export const Detail: React.FC = () => {
         isOpen={isOpenDeleteModal}
         setIsOpen={setIsOpenDeleteModal}
         text={t`page.detail.modal.deleteSync`}
-        onConfirm={() => removeData(id as string, true)}
+        onConfirm={() => removeGameData(id as string, true)}
       />
       <ConfirmBox
         isOpen={isOpenDelete2Modal}
@@ -220,7 +221,7 @@ export const Detail: React.FC = () => {
         text={t`page.detail.modal.deleteGame`}
         onConfirm={() => {
           setTimeout(() => {
-            removeData(id as string, false)
+            removeGameData(id as string, false)
             navigate('/library')
           }, 0)
         }}

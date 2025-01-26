@@ -3,11 +3,13 @@ import { Stack } from '@fluentui/react/lib/Stack'
 import { Icon } from '@fluentui/react/lib/Icon'
 import routes from '@/routes'
 import { useLocation, useNavigate } from 'react-router-dom'
-import useStore from '@/store'
+import { useUI } from '@/contexts/UIContext'
 
 export const Sidebar: React.FC = () => {
-  const sidebar = useStore((state) => state.sidebar)
-  const toggleSidebar = useStore((state) => state.toggleSidebar)
+  const {
+    state: { sidebarOpen },
+    toggleSidebar
+  } = useUI()
   const navigate = useNavigate()
   const location = useLocation()
   const [selectedKey, setSelectedKey] = useState(location.pathname)
@@ -18,7 +20,7 @@ export const Sidebar: React.FC = () => {
   }
 
   return (
-    <Stack className={`h-screen bg-gray-50 ${sidebar ? 'w-64' : 'w-13'}`}>
+    <Stack className={`h-screen bg-gray-50 ${sidebarOpen ? 'w-64' : 'w-13'}`}>
       <div className="space-y-1">
         <div
           className="mt-2 w-7 h-7 flex items-center mx-1 p-2 cursor-pointer hover:bg-gray-200"
@@ -27,15 +29,15 @@ export const Sidebar: React.FC = () => {
           <Icon iconName="GlobalNavButton" className="ml-2 scale-120" />
         </div>
         {routes
-          .filter((item) => item.icon)
+          .filter((item) => 'icon' in item)
           .map((item) => (
             <div
               className={`h-6 flex items-center mx-1 p-2 cursor-pointer ${item.path === selectedKey ? 'bg-gray-200' : 'hover:bg-gray-200'}`}
               key={item.path}
               onClick={() => handleNavigation(item.path)}
             >
-              <Icon iconName={item.icon} className="ml-2 scale-120" />
-              {sidebar && <span className="ml-2">{item.title}</span>}
+              <Icon iconName={(item as { icon: string }).icon} className="ml-2 scale-120" />
+              {sidebarOpen && <span className="ml-2">{item.title}</span>}
             </div>
           ))}
       </div>

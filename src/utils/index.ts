@@ -1,14 +1,6 @@
 import { IS_TAURI } from '@/constant'
-import useStore from '@/store'
-import tauriStorage from '@/utils/tauriStorage'
 import { invoke, shell } from '@tauri-apps/api'
-import { type PersistStorage, createJSONStorage } from 'zustand/middleware'
-import { logger } from './logger'
 import type { Timeline } from '@/types'
-
-export function getStorage<T>() {
-  return createJSONStorage(IS_TAURI ? () => tauriStorage : () => localStorage) as PersistStorage<T>
-}
 
 export function generateUuid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -25,24 +17,22 @@ export async function openUrl(url: string) {
   }
 }
 
-export async function invokeSafe<T>(
-  cmd: string,
-  args: Parameters<typeof invoke>[1] = {},
-  handler: (e: unknown) => string = (e) => `意外的错误：${String(e)}`
-): Promise<T | null> {
-  try {
-    return await invoke(cmd, args)
-  } catch (e) {
-    logger.label('INVOKE').error(`\n Command: ${cmd}\n Args:`, args, '\n Error:', e)
-    useStore.getState().openAlert(handler(e), '错误')
-    return null
-  }
-}
+// export async function invokeSafe<T>(
+//   cmd: string,
+//   args: Parameters<typeof invoke>[1] = {},
+//   handler: (e: unknown) => string = (e) => `意外的错误：${String(e)}`
+// ): Promise<T | null> {
+//   try {
+//     return await invoke(cmd, args)
+//   } catch (e) {
+//     logger.label('INVOKE').error(`\n Command: ${cmd}\n Args:`, args, '\n Error:', e)
+//     // useStore.getState().openAlert(handler(e), '错误')
+//     return null
+//   }
+// }
 
 export async function cacheImage(url: string): Promise<string> {
-  return url.startsWith('http')
-    ? ((await invokeSafe<string>('url_to_base64', { url }, (e) => `缓存图标失败：${String(e)}`)) ?? url)
-    : url
+  return url.startsWith('http') ? ((await invoke<string>('url_to_base64', { url })) ?? url) : url
 }
 
 export function base64Decode(base64: string) {

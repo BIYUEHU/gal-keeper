@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import type { FetchMethods, GameWithLocalData, LocalData } from '@/types'
 import { useNavigate, useParams } from 'react-router-dom'
-import useStore, { useSharedStore } from '@/store'
+import useStore from '@/store'
 import { DefaultButton, PrimaryButton, Stack, TextField } from '@fluentui/react'
 import { dialog } from '@tauri-apps/api'
 import { Dropdown } from '@fluentui/react/lib/Dropdown'
@@ -10,6 +10,7 @@ import { fetchGameData } from '@/api'
 import { IS_TAURI } from '@/constant'
 import { cacheImage } from '@/utils'
 import { t } from '@/utils/i18n'
+import { useUI } from '@/contexts/UIContext'
 
 const dropdownOptions: { key: FetchMethods; text: string }[] = [
   { key: 'mixed', text: t`page.edit.dropdown.mixed` },
@@ -19,20 +20,22 @@ const dropdownOptions: { key: FetchMethods; text: string }[] = [
 
 export const Edit = () => {
   const { id } = useParams()
-  const game = useSharedStore((state) => state.getData)(id ?? '')
+  const game = useStore((state) => state.getGameData)(id ?? '')
 
   if (!game) {
     return <div>{t`page.edit.game.notFound`}</div>
   }
 
-  const { getSettingsField } = useStore((state) => state)
-  const [fetchMethod, setFetchMethod] = useState<FetchMethods>(getSettingsField('fetchMethods'))
+  const {
+    settings: { autoSetGameTitle, autoCacheGameCover, fetchMethods },
+    updateGameData
+  } = useStore((state) => state)
+  const [fetchMethod, setFetchMethod] = useState<FetchMethods>(fetchMethods)
   const navigate = useNavigate()
-  const updateData = useSharedStore((state) => state.updateData)
   const [editedGame, setEditedGame] = useState(game)
 
   const [isLoading, setIsLoading] = useState(false)
-  const { openFullLoading } = useStore((state) => state)
+  const { openFullLoading } = useUI()
 
   const updateField = <T extends Exclude<keyof GameWithLocalData, 'id' | 'local'>>(
     key: T,
@@ -56,25 +59,23 @@ export const Edit = () => {
 
   const handleSave = async (data: GameWithLocalData) => {
     const close = openFullLoading()
-    updateData({
+    updateGameData({
       ...data,
       ...{
-        cover:
-          data.cover && IS_TAURI && getSettingsField('autoCacheGameCover')
-            ? await cacheImage(data.cover).finally(close)
-            : data.cover
+        cover: data.cover && IS_TAURI && autoCacheGameCover ? await cacheImage(data.cover) : data.cover
       }
     })
+    close()
     navigate(-1)
   }
 
   const handleFetchData = async () => {
     setIsLoading(true)
-    const fetchData = await fetchGameData(fetchMethod, editedGame.title)
+    const fetchData = await fetchGameData(fetchMethod, editedGame.title).finally(close)
     setEditedGame({
       ...editedGame,
       ...fetchData,
-      ...{ title: fetchData && getSettingsField('autoSetGameTitle') ? fetchData.title : editedGame.title }
+      ...{ title: fetchData && autoSetGameTitle ? fetchData.title : editedGame.title }
     })
     setIsLoading(false)
   }

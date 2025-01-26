@@ -4,13 +4,14 @@ import { Stack } from '@fluentui/react/lib/Stack'
 import { PrimaryButton, DefaultButton } from '@fluentui/react'
 import { TextField } from '@fluentui/react/lib/TextField'
 import { Text } from '@fluentui/react/lib/Text'
-import { dialog } from '@tauri-apps/api'
 import { IS_TAURI } from '@/constant'
-import useStore, { useSharedStore } from '@/store'
+import useStore from '@/store'
 import { fetchGameData } from '@/api'
 import { cacheImage, generateUuid } from '@/utils'
 import type { GameWithLocalData } from '@/types'
 import { t } from '@/utils/i18n'
+import { dialog } from '@tauri-apps/api'
+import { useUI } from '@/contexts/UIContext'
 
 interface AddModalProps {
   isOpen: boolean
@@ -20,42 +21,43 @@ interface AddModalProps {
 }
 
 export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, setData }) => {
-  const [programFile, setProgramFile] = useState<string>('')
-  const [gameName, setGameName] = useState<string>('')
-  const getSettingsField = useStore((state) => state.getSettingsField)
-  const { openFullLoading } = useStore((state) => state)
-  const { addData } = useSharedStore((state) => state)
+  const [formData, setFormData] = useState({ programFile: '', gameName: '' })
+  const { openFullLoading } = useUI()
+
+  const {
+    addGameData,
+    settings: { autoCacheGameCover, fetchMethods }
+  } = useStore((state) => state)
+  // const fileSelect = useFileSelect()
 
   useEffect(() => {
-    if (isOpen) {
-      setProgramFile('')
-      setGameName('')
-    }
+    if (isOpen) setFormData({ programFile: '', gameName: '' })
   }, [isOpen])
 
   const handleSelectProgram = async () => {
     const filepath = await dialog.open({
       title: t`component.addModal.dialog.selectProgram`,
       directory: false,
-      multiple: false,
       filters: [{ name: t`component.addModal.dialog.filter.executable`, extensions: ['exe'] }]
     })
     if (filepath) {
-      setProgramFile(filepath as string)
-      if (!gameName) setGameName((filepath as string).split(/[/\\]/).slice(-2, -1)[0])
+      setFormData((state) => ({
+        gameName: state.gameName ? state.gameName : (filepath as string).split(/[/\\]/).slice(-2, -1)[0],
+        programFile: filepath as string
+      }))
     }
   }
 
   const handleSubmit = async () => {
-    if (gameName) {
+    if (formData.gameName) {
       const close = openFullLoading()
       setIsOpen(false)
 
       const id = generateUuid()
-      const fetchData = await fetchGameData(getSettingsField('fetchMethods'), gameName)
+      const fetchData = await fetchGameData(fetchMethods, formData.gameName)
       const game: GameWithLocalData = {
         id,
-        title: gameName,
+        title: formData.gameName,
         alias: [],
         description: '',
         tags: [],
@@ -68,23 +70,23 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
         developer: '',
         images: [],
         links: [],
-        local: programFile
+        local: formData.programFile
           ? {
               id,
               // TODO: auto find save and guide file
               // ...(await invoke('search_nearby_files_and_saves')),
-              programFile
+              programFile: formData.programFile
             }
           : undefined,
         ...fetchData,
         ...{
           cover:
-            fetchData?.cover && IS_TAURI && getSettingsField('autoCacheGameCover')
+            fetchData?.cover && IS_TAURI && autoCacheGameCover
               ? await cacheImage(fetchData.cover).finally(close)
               : (fetchData?.cover ?? '/assets/cover.png')
         }
       }
-      addData(game)
+      addGameData(game)
       setData([...data, game])
       close()
     }
@@ -93,6 +95,7 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
   return (
     <Modal
       isOpen={isOpen}
+      isClickableOutsideFocusTrap={false}
       isBlocking={false}
       styles={{
         main: { width: 400, maxWidth: '90%' }
@@ -106,7 +109,7 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
           <TextField
             disabled={!IS_TAURI}
             label={t`component.addModal.field.program`}
-            value={programFile}
+            value={formData.programFile}
             readOnly
             onClick={handleSelectProgram}
             placeholder={t`component.addModal.field.program.placeholder`}
@@ -118,8 +121,8 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
           />
           <TextField
             label={t`component.addModal.field.name`}
-            value={gameName}
-            onChange={(_, value) => setGameName(value || '')}
+            value={formData.gameName}
+            onChange={(_, value) => setFormData((state) => ({ ...state, gameName: value ?? '' }))}
             required
             autoComplete="off"
           />

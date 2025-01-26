@@ -22,9 +22,10 @@ const dropdownOptions: { key: SortKeys; text: string }[] = [
 ]
 
 export const SortModal: React.FC<SortModalProps> = ({ isOpen, setIsOpen }) => {
-  const primaryKey = useStore((state) => state.sort.primaryKey)
-  const isPrimaryDescending = useStore((state) => state.sort.isPrimaryDescending)
-  const setSort = useStore((state) => state.setSort)
+  const {
+    updateSettings,
+    settings: { sortPrimaryKey, sortIsPrimaryDescending }
+  } = useStore((state) => state)
 
   return (
     <Modal
@@ -42,15 +43,15 @@ export const SortModal: React.FC<SortModalProps> = ({ isOpen, setIsOpen }) => {
           <Stack tokens={{ childrenGap: 8 }} className="flex-grow">
             <Dropdown
               options={dropdownOptions}
-              selectedKey={primaryKey}
-              onChange={(_, option) => setSort({ primaryKey: (option?.key || 'Title') as SortKeys })}
+              selectedKey={sortPrimaryKey}
+              onChange={(_, option) => updateSettings({ sortPrimaryKey: (option?.key || 'Title') as SortKeys })}
             />
             <Toggle
               label={t`component.sortModal.toggle.label`}
-              checked={isPrimaryDescending}
+              checked={sortIsPrimaryDescending}
               onText={t`component.sortModal.toggle.descending`}
               offText={t`component.sortModal.toggle.ascending`}
-              onChange={(_, checked) => setSort({ isPrimaryDescending: checked })}
+              onChange={(_, checked) => updateSettings({ sortIsPrimaryDescending: checked })}
             />
           </Stack>
         </Stack>

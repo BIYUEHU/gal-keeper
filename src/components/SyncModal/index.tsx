@@ -6,7 +6,7 @@ import { TextField } from '@fluentui/react/lib/TextField'
 import { Text } from '@fluentui/react/lib/Text'
 import { dialog } from '@tauri-apps/api'
 import type { GameWithLocalData } from '@/types'
-import { useSharedStore } from '@/store'
+import useStore from '@/store'
 import { t } from '@/utils/i18n'
 
 interface SyncModalProps {
@@ -17,7 +17,7 @@ interface SyncModalProps {
 
 export const SyncModal: React.FC<SyncModalProps> = ({ isOpen, setIsOpen, data }) => {
   const [programFile, setProgramFile] = useState<string>('')
-  const { updateData } = useSharedStore((state) => state)
+  const { updateGameData } = useStore((state) => state)
 
   useEffect(() => {
     if (isOpen) setProgramFile('')
@@ -42,7 +42,7 @@ export const SyncModal: React.FC<SyncModalProps> = ({ isOpen, setIsOpen, data })
         }),
         programFile
       }
-      updateData(data)
+      updateGameData(data)
     }
   }
 

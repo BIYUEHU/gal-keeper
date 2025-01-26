@@ -2,6 +2,7 @@ export interface GameData {
   id: string
   vndbId?: string
   bgmId?: string
+  updateDate?: number
   title: string
   alias: string[]
   cover: string
@@ -40,19 +41,3 @@ export type SortKeys = 'Title' | 'CreateDate' | 'LastPlay' | 'Developer' | 'Rati
 export type FetchMethods = 'mixed' | 'vndb' | 'bgm'
 
 export type Timeline = [number, number, number]
-
-export type LocalChanges = { id: string } & (
-  | {
-      type: 'add' | 'update' | 'remove'
-    }
-  | {
-      type: 'timelines'
-      data: Timeline
-    }
-)
-
-export type CloudChanges = {
-  title: string[]
-  type: 'add' | 'remove'
-  time: number
-}

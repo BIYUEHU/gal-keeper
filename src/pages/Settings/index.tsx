@@ -1,7 +1,8 @@
 import { getRepoInfo, syncToGithub } from '@/api/github'
 import { IS_TAURI } from '@/constant'
-import type { AppState } from '@/store'
+import { useUI } from '@/contexts/UIContext'
 import useStore from '@/store'
+import type { RootState } from '@/store'
 import { openUrl } from '@/utils'
 import { f, t } from '@/utils/i18n'
 import { Stack, TextField, ChoiceGroup, Toggle, Separator, DefaultButton, Text } from '@fluentui/react'
@@ -11,8 +12,7 @@ import React, { useState } from 'react'
 export const Settings: React.FC = () => {
   const { settings, updateSettings } = useStore((state) => state)
   const [sync, setSync] = useState(useStore((state) => state.sync))
-
-  const openAlert = useStore((state) => state.openAlert)
+  const { openAlert } = useUI()
   const [isLoading, setIsLoading] = useState(false)
 
   const checkParams = () => settings.githubToken && settings.githubRepo && settings.githubPath
@@ -38,9 +38,9 @@ export const Settings: React.FC = () => {
   const handleSyncing = async () => {
     if (checkParams()) {
       setIsLoading(true)
-      const { time, add, remove } = await syncToGithub().finally(() => setIsLoading(false))
-      openAlert(f`page.settings.github.alert.syncSuccess`(add.toString(), remove.toString()))
-      setSync({ ...sync, time })
+      // const { time, add, remove } = await syncToGithub().finally(() => setIsLoading(false))
+      // openAlert(f`page.settings.github.alert.syncSuccess`(add.toString(), remove.toString()))
+      // setSync({ ...sync, time })
     } else {
       openAlert(t`page.settings.github.alert.paramsNeeded`)
     }
@@ -171,7 +171,7 @@ export const Settings: React.FC = () => {
                 { key: 'system', text: t`page.settings.appearance.theme.system` }
               ]}
               selectedKey={settings.theme}
-              onChange={(_, option) => updateSettings({ theme: option?.key as AppState['settings']['theme'] })}
+              onChange={(_, option) => updateSettings({ theme: option?.key as RootState['settings']['theme'] })}
             />
           </div>
 

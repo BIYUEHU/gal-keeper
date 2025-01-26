@@ -5,12 +5,18 @@ import Home from '@/pages/Home'
 import { Category } from '@/pages/Category'
 import { Edit } from '@/pages/Edit'
 
-export interface RouteConfig {
+export type RouteConfig = {
   path: string
   component: JSX.Element
   title: string
-  icon?: string
-}
+} & (
+  | {
+      icon: string
+    }
+  | {
+      belong: string
+    }
+)
 
 const routes: RouteConfig[] = [
   {
@@ -28,12 +34,14 @@ const routes: RouteConfig[] = [
   {
     path: '/details/:id',
     component: <Detail />,
-    title: '游戏'
+    title: '游戏',
+    belong: '/library'
   },
   {
     path: '/edit/:id',
     component: <Edit />,
-    title: '游戏'
+    title: '游戏',
+    belong: '/library'
   },
   {
     path: '/category',

@@ -3,83 +3,96 @@ import { Link } from 'react-router-dom'
 import { SearchBox } from '@fluentui/react/lib/SearchBox'
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react/lib/CommandBar'
 import { SortModal } from '@/components/SortModal'
-import useStore, { useSharedStore } from '@/store'
+import useStore from '@/store'
 import { FilterModal } from '@/components/FilterModal'
 import { AddModal } from '@/components/AddModal'
 import { t } from '@/utils/i18n'
 
 export const Library: React.FC = () => {
-  const [isOpenSortModal, setIsOpenSortModal] = useState(false)
-  const [isOpenFilterModal, setIsOpenFilterModal] = useState(false)
-  const [isOpenAddModal, setIsOpenAddModal] = useState(false)
-
-  const { primaryKey, isPrimaryDescending } = useStore((state) => state.sort)
-  const { onlyDisplayLocal } = useStore((state) => state.filter)
+  const [modalData, setModalData] = useState({
+    isOpenSortModal: false,
+    isOpenFilterModal: false,
+    isOpenAddModal: false
+  })
+  const { sortPrimaryKey, sortIsPrimaryDescending, sortOnlyDisplayLocal } = useStore((state) => state.settings)
   const [searchText, setSearchText] = useState('')
-  const [games, setGames] = useState(useSharedStore((state) => state.getAllData)(false))
+  const [games, setGames] = useState(useStore((state) => state.getAllGameData)(false))
 
   const filteredData = useMemo(() => {
     const target = searchText.toLocaleLowerCase()
     return games.filter(
       (game) =>
         [game.title, game.developer].some((field) => field.toLocaleLowerCase().includes(target)) &&
-        (game.local || !onlyDisplayLocal)
+        (game.local || !sortOnlyDisplayLocal)
     )
-  }, [searchText, games, onlyDisplayLocal])
+  }, [searchText, games, sortOnlyDisplayLocal])
 
   const sortedData = useMemo(() => {
     const sorted = [...filteredData]
-    switch (primaryKey) {
+    switch (sortPrimaryKey) {
       case 'Title':
-        sorted.sort((a, b) => (isPrimaryDescending ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title)))
+        sorted.sort((a, b) =>
+          sortIsPrimaryDescending ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title)
+        )
         break
       case 'Developer':
         sorted.sort((a, b) =>
-          isPrimaryDescending ? b.developer.localeCompare(a.developer) : a.developer.localeCompare(b.developer)
+          sortIsPrimaryDescending ? b.developer.localeCompare(a.developer) : a.developer.localeCompare(b.developer)
         )
         break
       case 'LastPlay':
-        sorted.sort((a, b) => (isPrimaryDescending ? b.lastPlay - a.lastPlay : a.lastPlay - b.lastPlay))
+        sorted.sort((a, b) => (sortIsPrimaryDescending ? b.lastPlay - a.lastPlay : a.lastPlay - b.lastPlay))
         break
       case 'Rating':
-        sorted.sort((a, b) => (isPrimaryDescending ? b.rating - a.rating : a.rating - b.rating))
+        sorted.sort((a, b) => (sortIsPrimaryDescending ? b.rating - a.rating : a.rating - b.rating))
         break
       case 'ReleaseDate':
-        sorted.sort((a, b) => (isPrimaryDescending ? b.releaseDate - a.releaseDate : a.releaseDate - b.releaseDate))
+        sorted.sort((a, b) => (sortIsPrimaryDescending ? b.releaseDate - a.releaseDate : a.releaseDate - b.releaseDate))
         break
       case 'CreateDate':
-        sorted.sort((a, b) => (isPrimaryDescending ? b.createDate - a.createDate : a.createDate - b.createDate))
+        sorted.sort((a, b) => (sortIsPrimaryDescending ? b.createDate - a.createDate : a.createDate - b.createDate))
         break
     }
     return sorted
-  }, [filteredData, primaryKey, isPrimaryDescending])
+  }, [filteredData, sortPrimaryKey, sortIsPrimaryDescending])
 
   const commandItems: ICommandBarItemProps[] = [
     {
       key: 'add',
       text: t`page.library.command.add`,
       iconProps: { iconName: 'Add' },
-      onClick: () => setIsOpenAddModal(true)
+      onClick: () => setModalData((prev) => ({ ...prev, isOpenAddModal: true }))
     },
     {
       key: 'sort',
       text: t`page.library.command.sort`,
       iconProps: { iconName: 'Sort' },
-      onClick: () => setIsOpenSortModal(true)
+      onClick: () => setModalData((prev) => ({ ...prev, isOpenSortModal: true }))
     },
     {
       key: 'filter',
       text: t`page.library.command.filter`,
       iconProps: { iconName: 'Filter' },
-      onClick: () => setIsOpenFilterModal(true)
+      onClick: () => setModalData((prev) => ({ ...prev, isOpenFilterModal: true }))
     }
   ]
 
   return (
     <React.Fragment>
-      <AddModal isOpen={isOpenAddModal} setIsOpen={setIsOpenAddModal} data={games} setData={setGames} />
-      <SortModal isOpen={isOpenSortModal} setIsOpen={setIsOpenSortModal} />
-      <FilterModal isOpen={isOpenFilterModal} setIsOpen={setIsOpenFilterModal} />
+      <AddModal
+        isOpen={modalData.isOpenAddModal}
+        setIsOpen={() => setModalData((prev) => ({ ...prev, isOpenAddModal: false }))}
+        data={games}
+        setData={setGames}
+      />
+      <SortModal
+        isOpen={modalData.isOpenSortModal}
+        setIsOpen={() => setModalData((prev) => ({ ...prev, isOpenSortModal: false }))}
+      />
+      <FilterModal
+        isOpen={modalData.isOpenFilterModal}
+        setIsOpen={() => setModalData((prev) => ({ ...prev, isOpenFilterModal: false }))}
+      />
       <div className="border-b">
         <div className="flex items-center justify-between mb-5">
           <SearchBox

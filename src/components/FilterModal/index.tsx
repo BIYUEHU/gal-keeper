@@ -12,8 +12,10 @@ interface FilterModalProps {
 }
 
 export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, setIsOpen }) => {
-  const { onlyDisplayLocal } = useStore((state) => state.filter)
-  const { setFilter } = useStore((state) => state)
+  const {
+    settings: { sortOnlyDisplayLocal },
+    updateSettings
+  } = useStore((state) => state)
 
   return (
     <Modal
@@ -31,10 +33,10 @@ export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, setIsOpen }) =
           <Stack tokens={{ childrenGap: 8 }} className="flex-grow">
             <Toggle
               label={t`component.filterModal.field.onlyLocal`}
-              checked={onlyDisplayLocal}
+              checked={sortOnlyDisplayLocal}
               onText={t`component.filterModal.toggle.yes`}
               offText={t`component.filterModal.toggle.no`}
-              onChange={(_, checked) => setFilter({ onlyDisplayLocal: checked })}
+              onChange={(_, checked) => updateSettings({ sortOnlyDisplayLocal: checked })}
             />
           </Stack>
         </Stack>

@@ -1,26 +1,26 @@
-import useStore from '@/store'
+import { useUI } from '@/contexts/UIContext'
 import { t } from '@/utils/i18n'
-import { Dialog, DialogType, DialogFooter, PrimaryButton } from '@fluentui/react'
+import { Dialog, DialogFooter, PrimaryButton, DialogType } from '@fluentui/react'
 
-export const AlertBox: React.FC = () => {
-  const { alertIsOpen, alertText, alertTitle } = useStore((state) => state.temps)
-  const closeAlert = useStore((state) => state.closeAlert)
+export function AlertBox() {
+  const {
+    state: { alert },
+    closeAlert
+  } = useUI()
 
   return (
-    <>
-      <Dialog
-        hidden={!alertIsOpen}
-        onDismiss={closeAlert}
-        dialogContentProps={{
-          type: DialogType.normal,
-          title: alertTitle,
-          subText: alertText
-        }}
-      >
-        <DialogFooter>
-          <PrimaryButton text={t`component.alertBox.button.sure`} onClick={closeAlert} />
-        </DialogFooter>
-      </Dialog>
-    </>
+    <Dialog
+      hidden={!alert.isOpen}
+      onDismiss={closeAlert}
+      dialogContentProps={{
+        type: DialogType.normal,
+        title: alert.title,
+        subText: alert.text
+      }}
+    >
+      <DialogFooter>
+        <PrimaryButton text={t`component.alertBox.button.sure`} onClick={closeAlert} />
+      </DialogFooter>
+    </Dialog>
   )
 }

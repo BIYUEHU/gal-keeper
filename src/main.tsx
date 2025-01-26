@@ -4,20 +4,19 @@ import { initializeIcons } from '@fluentui/font-icons-mdl2'
 import '@/index.css'
 import 'virtual:uno.css'
 import App from '@/App'
-import { useSharedStore } from './store'
+import useStore from './store'
 import { appDataDir } from '@tauri-apps/api/path'
 import { logger } from './utils/logger'
 import { IS_DEV } from './constant'
 
 /* Initialize */
 initializeIcons()
-useSharedStore.getState().initialize()
 ;(async () => {
   logger.debug('Application directory:', await appDataDir())
 })()
 
 if (IS_DEV) {
-  ;(globalThis as unknown as { store: typeof useSharedStore }).store = useSharedStore
+  ;(globalThis as unknown as { store: typeof useStore }).store = useStore
 }
 
 /* Events */

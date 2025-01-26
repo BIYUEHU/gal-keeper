@@ -3,16 +3,15 @@ import { Stack } from '@fluentui/react/lib/Stack'
 import { Text } from '@fluentui/react/lib/Text'
 import { Card } from '@fluentui/react-components'
 import { t } from '@/utils/i18n'
-import { useSharedStore } from '@/store'
+import useStore from '@/store'
 import type { GameWithLocalData } from '@/types'
 import { calculateTotalPlayTime, showMinutes } from '@/utils'
 import { Link } from 'react-router-dom'
 
 const Home: React.FC = () => {
-  // const { temps } = useStore()
-  const [games] = useState(useSharedStore((state) => state.getAllData)(false))
-  const runningGames: GameWithLocalData[] =
-    /* games.filter((game) => game.local && temps.runningPrograms[game.local.programFile]) */ []
+  const { getAllGameData, isRunningGame } = useStore((state) => state)
+  const [games] = useState(getAllGameData(false))
+  const runningGames = useMemo(() => games.filter((game) => isRunningGame(game.id)), [games, isRunningGame])
 
   const stats = useMemo(() => {
     const todayStart = new Date(
