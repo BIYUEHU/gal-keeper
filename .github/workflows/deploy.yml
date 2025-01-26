@@ -1,0 +1,39 @@
+name: Deploy
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+  
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Build frontend
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: page
+          build_dir: dist
+          fqdn: https://gal.hotaru.icu
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
