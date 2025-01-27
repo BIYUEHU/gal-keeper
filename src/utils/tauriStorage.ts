@@ -1,9 +1,7 @@
 import type { StateStorage } from 'zustand/middleware'
 import { appDataDir } from '@tauri-apps/api/path'
 import { invoke } from '@tauri-apps/api'
-import { logger } from './logger'
-
-const dbLogger = logger.label('DATABASE')
+import { dbLogger } from './logger'
 
 const tauriStorage: StateStorage = {
   getItem: async (key) => {

@@ -2,25 +2,23 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Stack } from '@fluentui/react/lib/Stack'
 import { Text } from '@fluentui/react/lib/Text'
 import { Separator } from '@fluentui/react/lib/Separator'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react'
-import { calculateTotalPlayTime, openUrl, showMinutes } from '@/utils'
+import { calculateTotalPlayTime, openUrl, showMinutes, showTime } from '@/utils'
 import { IS_TAURI } from '@/constant'
-import { type Event, listen } from '@tauri-apps/api/event'
 import type { GameWithLocalData } from '@/types'
 import useStore from '@/store'
 import { SyncModal } from '@/components/SyncModal'
 import { ConfirmBox } from '@/components/ConfirmBox'
-import { logger } from '@/utils/logger'
 import { f, t } from '@/utils/i18n'
 import { invoke } from '@tauri-apps/api'
+import events from '@/utils/events'
+import logger, { invokeLogger } from '@/utils/logger'
 
 interface InfoOption {
   text: string
   value: keyof GameWithLocalData | ((g: GameWithLocalData) => string)
 }
-
-const timestampToDate = (time: number) => new Date(time).toLocaleString()
 
 const infoOptions: InfoOption[] = [
   {
@@ -29,11 +27,11 @@ const infoOptions: InfoOption[] = [
   },
   {
     text: t`page.detail.info.releaseDate`,
-    value: (g) => timestampToDate(g.releaseDate)
+    value: (g) => new Date(g.releaseDate).toLocaleDateString()
   },
   {
     text: t`page.detail.info.createDate`,
-    value: (g) => timestampToDate(g.createDate)
+    value: (g) => new Date(g.createDate).toLocaleDateString()
   },
 
   {
@@ -51,31 +49,38 @@ const infoOptions: InfoOption[] = [
   },
   {
     text: t`page.detail.info.lastPlay`,
-    value: (g) => (g.lastPlay ? timestampToDate(g.lastPlay) : '---')
+    value: (g) => (g.lastPlay ? showTime(g.lastPlay / 1000) : '---')
   }
 ]
 
 export const Detail: React.FC = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const [modalData, setModalData] = useState({
+    isOpenSyncModal: false,
+    isOpenDeleteModal: false,
+    isOpenDelete2Modal: false
+  })
 
-  const [isOpenSyncModal, setIsOpenSyncModal] = useState(false)
-  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false)
-  const [isOpenDelete2Modal, setIsOpenDelete2Modal] = useState(false)
-
-  const { getGameData, addGameData, removeGameData, increasePlayTimeline, isRunningGame } = useStore((state) => state)
+  const { getGameData, updateGameData, removeGameData, isRunningGame } = useStore((state) => state)
   const [game, setGame] = useState(getGameData(id ?? ''))
+
+  useEffect(() => {
+    events.on('updateGame', (id: string) => {
+      if (id === game?.id) setGame(getGameData(id))
+    })
+  }, [game, getGameData])
 
   if (!game) {
     return <div>{t`page.detail.game.notFound`}</div>
   }
-  console.log(game)
+
   const commandItems: ICommandBarItemProps[] = [
     {
       key: 'sync',
       text: t`page.detail.command.sync`,
       iconProps: { iconName: 'Link12' },
-      onClick: () => setIsOpenSyncModal(true)
+      onClick: () => setModalData({ ...modalData, isOpenSyncModal: true })
     },
     {
       key: 'start',
@@ -83,29 +88,18 @@ export const Detail: React.FC = () => {
       iconProps: { iconName: 'Play' },
       disabled: !game.local?.programFile,
       onClick: () => {
-        if (isRunningGame(game.id)) {
-          logger.warn('Game is already running', game.title, '\n', id)
+        const id = game.id
+        if (isRunningGame(id)) {
+          logger.debug('Game is already running, title:', game.title, ', id:', id)
           return
         }
-        invoke('launch_and_monitor', { filepath: game.local?.programFile }).then(() => {
-          const id = game.id
-          logger.record('Start successfully', game.title, '\n', id)
-          addGameData({ ...game, lastPlay: Date.now() })
-          setGame(getGameData(id))
-
-          let startTime: undefined | number
-
-          listen('increase', (data: Event<[number, number]>) => {
-            if (!startTime) startTime = data.payload[0]
-            increasePlayTimeline(id, ...data.payload)
-            logger.debug('increase', data.payload, id)
-
-            // logger.record(
-            //   `Finished\nProcess name: ${data.payload[0]}\nStart time: ${data.payload[1]}\nStop time: ${data.payload[2]}\nActive time: ${data.payload[3]}\n`,
-            //   '\n'
-            // )
+        invoke('launch_and_monitor', { id, filepath: game.local?.programFile })
+          .then(() => {
+            logger.debug('Start successfully, title:', game.title, ', id:', id)
+            updateGameData({ ...game, lastPlay: Date.now() })
+            setGame(getGameData(id))
           })
-        })
+          .catch((e) => invokeLogger.error('Failed to start game', e))
       }
     },
     {
@@ -119,9 +113,10 @@ export const Detail: React.FC = () => {
       text: t`page.detail.command.guide`,
       iconProps: { iconName: 'ReadingMode' },
       disabled: !game.local?.guideFile,
-      onClick: () => {
-        invoke('open_with_explorer', { directory: game.local?.guideFile })
-      }
+      onClick: () =>
+        invoke('open_with_explorer', { directory: game.local?.guideFile }).catch((e) =>
+          invokeLogger.error('Failed to open guide file', e)
+        )
     },
     {
       key: 'backup',
@@ -144,51 +139,51 @@ export const Detail: React.FC = () => {
             text: t`page.detail.command.openGameDir`,
             iconProps: { iconName: 'OpenFolderHorizontal' },
             disabled: !game.local?.programFile,
-            onClick: () => {
+            onClick: () =>
               invoke('open_with_explorer', {
                 directory: game.local?.programFile.split(/[/\\]/).slice(0, -1).join('\\')
-              })
-            }
+              }).catch((e) => invokeLogger.error('Failed to open game directory', e))
           },
           {
             key: 'save',
             text: t`page.detail.command.openSaveDir`,
             iconProps: { iconName: 'Save' },
             disabled: !game.local?.savePath,
-            onClick: () => {
-              invoke('open_with_explorer', { directory: game.local?.savePath })
-            }
+            onClick: () =>
+              invoke('open_with_explorer', { directory: game.local?.savePath }).catch((e) =>
+                invokeLogger.error('Failed to open save directory', e)
+              )
           },
           {
             key: 'vndb',
             text: t`page.detail.command.viewVndb`,
             iconProps: { iconName: 'Go' },
             disabled: !game.vndbId,
-            onClick: () => {
-              openUrl(`https://vndb.org/${game.vndbId}`)
-            }
+            onClick: () =>
+              openUrl(`https://vndb.org/${game.vndbId}`).catch((e) => invokeLogger.error('Failed to open vndb page', e))
           },
           {
             key: 'bangumi',
             text: t`page.detail.command.viewBangumi`,
             iconProps: { iconName: 'Go' },
             disabled: !game.bgmId,
-            onClick: () => {
-              openUrl(`https://bgm.tv/subject/${game.bgmId}`)
-            }
+            onClick: () =>
+              openUrl(`https://bgm.tv/subject/${game.bgmId}`).catch((e) =>
+                invokeLogger.error('Failed to open bangumi page', e)
+              )
           },
           {
             key: 'delete',
             text: t`page.detail.command.deleteSync`,
             iconProps: { iconName: 'Delete' },
             disabled: !game.local,
-            onClick: () => setIsOpenDeleteModal(true)
+            onClick: () => setModalData({ ...modalData, isOpenDeleteModal: true })
           },
           {
             key: 'delete2',
             text: t`page.detail.command.deleteGame`,
             iconProps: { iconName: 'Delete' },
-            onClick: () => setIsOpenDelete2Modal(true)
+            onClick: () => setModalData({ ...modalData, isOpenDelete2Modal: true })
           }
         ]
       }
@@ -208,16 +203,20 @@ export const Detail: React.FC = () => {
 
   return (
     <React.Fragment>
-      <SyncModal data={game} isOpen={isOpenSyncModal} setIsOpen={setIsOpenSyncModal} />
+      <SyncModal
+        data={game}
+        isOpen={modalData.isOpenSyncModal}
+        setIsOpen={(isOpen) => setModalData({ ...modalData, isOpenSyncModal: isOpen })}
+      />
       <ConfirmBox
-        isOpen={isOpenDeleteModal}
-        setIsOpen={setIsOpenDeleteModal}
+        isOpen={modalData.isOpenDeleteModal}
+        setIsOpen={(isOpen) => setModalData({ ...modalData, isOpenDeleteModal: isOpen })}
         text={t`page.detail.modal.deleteSync`}
         onConfirm={() => removeGameData(id as string, true)}
       />
       <ConfirmBox
-        isOpen={isOpenDelete2Modal}
-        setIsOpen={setIsOpenDelete2Modal}
+        isOpen={modalData.isOpenDelete2Modal}
+        setIsOpen={(isOpen) => setModalData({ ...modalData, isOpenDelete2Modal: isOpen })}
         text={t`page.detail.modal.deleteGame`}
         onConfirm={() => {
           setTimeout(() => {
@@ -230,7 +229,11 @@ export const Detail: React.FC = () => {
       <div className="overflow-auto">
         <Stack horizontal horizontalAlign="stretch" tokens={{ childrenGap: 16 }}>
           <Stack tokens={{ childrenGap: 2 }} className="mt-4">
-            <img src={game.cover} alt={game.title} className="max-h-65 max-w-40 lg:max-w-80 rounded-lg shadow-lg" />
+            <img
+              src={game.cover || '/assets/cover.png'}
+              alt={game.title}
+              className="max-h-65 max-w-40 lg:max-w-80 rounded-lg shadow-lg"
+            />
           </Stack>
           <Stack className="flex-grow" tokens={{ childrenGap: 12 }}>
             <Text variant="xxLargePlus" className="font-semibold line-height-normal">

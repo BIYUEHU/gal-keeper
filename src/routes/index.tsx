@@ -4,6 +4,7 @@ import { Detail } from '@/pages/Detail'
 import Home from '@/pages/Home'
 import { Category } from '@/pages/Category'
 import { Edit } from '@/pages/Edit'
+import { t } from '@/utils/i18n'
 
 export type RouteConfig = {
   path: string
@@ -22,37 +23,37 @@ const routes: RouteConfig[] = [
   {
     path: '/',
     component: <Home />,
-    title: '首页',
+    title: t`page.home.title`,
     icon: 'CompassNW'
   },
   {
     path: '/library',
     component: <Library />,
-    title: '游戏',
+    title: t`page.library.title`,
     icon: 'WebAppBuilderFragment'
   },
   {
     path: '/details/:id',
     component: <Detail />,
-    title: '游戏',
+    title: t`page.library.title`,
     belong: '/library'
   },
   {
     path: '/edit/:id',
     component: <Edit />,
-    title: '游戏',
+    title: t`page.library.title`,
     belong: '/library'
   },
   {
     path: '/category',
     component: <Category />,
-    title: '分类',
+    title: t`page.category.title`,
     icon: 'Flag'
   },
   {
     path: '/settings',
     component: <Settings />,
-    title: '设置',
+    title: t`page.settings.title`,
     icon: 'Settings'
   }
 ]

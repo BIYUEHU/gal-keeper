@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import { IS_TAURI, StoreKey } from '@/constant'
 import type { GameData, GameWithLocalData, FetchMethods, LocalData, SortKeys } from '@/types'
 import tauriStorage from '@/utils/tauriStorage'
+import events from '@/utils/events'
 
 export interface RootState {
   gameData: GameData[]
@@ -106,6 +107,7 @@ const useStore = create(
               : item
           )
         }))
+        events.emit('updateGame', id)
       },
 
       addGameData(data) {
@@ -118,6 +120,7 @@ const useStore = create(
               }
             : {})
         }))
+        events.emit('updateGame', data.id)
       },
 
       updateGameData(data) {
@@ -130,6 +133,7 @@ const useStore = create(
             ? { localData: state.localData.map((item) => (item.id === data.id ? { ...item, ...local } : item)) }
             : {})
         }))
+        events.emit('updateGame', data.id)
       },
 
       removeGameData(id, onlyLocal) {
@@ -145,6 +149,7 @@ const useStore = create(
             deleteIds: onlyLocal ? [...state.sync.deleteIds, id] : state.sync.deleteIds
           }
         }))
+        events.emit('updateGame', id)
       },
 
       getGameData(id) {

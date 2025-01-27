@@ -8,6 +8,7 @@ import { dialog } from '@tauri-apps/api'
 import type { GameWithLocalData } from '@/types'
 import useStore from '@/store'
 import { t } from '@/utils/i18n'
+import { invokeLogger } from '@/utils/logger'
 
 interface SyncModalProps {
   isOpen: boolean
@@ -24,12 +25,14 @@ export const SyncModal: React.FC<SyncModalProps> = ({ isOpen, setIsOpen, data })
   }, [isOpen])
 
   const handleSelectExe = async () => {
-    const filepath = await dialog.open({
-      title: t`component.syncModal.dialog.selectProgram`,
-      directory: false,
-      multiple: false,
-      filters: [{ name: t`component.syncModal.dialog.filter.executable`, extensions: ['exe'] }]
-    })
+    const filepath = await dialog
+      .open({
+        title: t`component.syncModal.dialog.selectProgram`,
+        directory: false,
+        multiple: false,
+        filters: [{ name: t`component.syncModal.dialog.filter.executable`, extensions: ['exe'] }]
+      })
+      .catch((e) => invokeLogger.error(e))
     if (filepath) setProgramFile(filepath as string)
   }
 

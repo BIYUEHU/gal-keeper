@@ -11,6 +11,7 @@ import { IS_TAURI } from '@/constant'
 import { cacheImage } from '@/utils'
 import { t } from '@/utils/i18n'
 import { useUI } from '@/contexts/UIContext'
+import { invokeLogger } from '@/utils/logger'
 
 const dropdownOptions: { key: FetchMethods; text: string }[] = [
   { key: 'mixed', text: t`page.edit.dropdown.mixed` },
@@ -33,7 +34,6 @@ export const Edit = () => {
   const [fetchMethod, setFetchMethod] = useState<FetchMethods>(fetchMethods)
   const navigate = useNavigate()
   const [editedGame, setEditedGame] = useState(game)
-
   const [isLoading, setIsLoading] = useState(false)
   const { openFullLoading } = useUI()
 
@@ -71,13 +71,14 @@ export const Edit = () => {
 
   const handleFetchData = async () => {
     setIsLoading(true)
-    const fetchData = await fetchGameData(fetchMethod, editedGame.title).finally(close)
+    const fetchData = await fetchGameData(fetchMethod, editedGame.title).finally(() => {
+      setIsLoading(false)
+    })
     setEditedGame({
       ...editedGame,
       ...fetchData,
       ...{ title: fetchData && autoSetGameTitle ? fetchData.title : editedGame.title }
     })
-    setIsLoading(false)
   }
 
   const handleSelectSavePath = async () => {
@@ -90,27 +91,31 @@ export const Edit = () => {
   }
 
   const handleSelectProgramFile = async () => {
-    const programFile = await dialog.open({
-      title: t`page.edit.dialog.selectProgram`,
-      directory: false,
-      multiple: false,
-      filters: [{ name: t`page.edit.dialog.filter.executable`, extensions: ['exe'] }]
-    })
+    const programFile = await dialog
+      .open({
+        title: t`page.edit.dialog.selectProgram`,
+        directory: false,
+        multiple: false,
+        filters: [{ name: t`page.edit.dialog.filter.executable`, extensions: ['exe'] }]
+      })
+      .catch((e) => invokeLogger.error(e))
     if (programFile) updateLocalDataField('programFile', programFile as string)
   }
 
   const handleSelectGuideFile = async () => {
-    const guideFile = await dialog.open({
-      title: t`page.edit.dialog.selectGuide`,
-      directory: false,
-      multiple: false,
-      filters: [
-        {
-          name: t`page.edit.dialog.filter.textFile`,
-          extensions: ['txt', 'md', 'html', 'htm', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx']
-        }
-      ]
-    })
+    const guideFile = await dialog
+      .open({
+        title: t`page.edit.dialog.selectGuide`,
+        directory: false,
+        multiple: false,
+        filters: [
+          {
+            name: t`page.edit.dialog.filter.textFile`,
+            extensions: ['txt', 'md', 'html', 'htm', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx']
+          }
+        ]
+      })
+      .catch((e) => invokeLogger.error(e))
     if (guideFile) updateLocalDataField('guideFile', guideFile as string)
   }
 

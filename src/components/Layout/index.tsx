@@ -3,6 +3,10 @@ import { Sidebar } from '../Sidebar'
 import { Spinner } from '@fluentui/react-components'
 import { useUI } from '@/contexts/UIContext'
 import { AlertBox } from '../AlertBox'
+import { useEffect } from 'react'
+import events from '@/utils/events'
+import { type LoggerData, LoggerLevel } from '@kotori-bot/logger'
+import { t } from '@/utils/i18n'
 
 interface LayoutProps {
   title: string
@@ -11,8 +15,22 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ title, outlet }) => {
   const {
-    state: { fullLoading, sidebarOpen }
+    state: { fullLoading, sidebarOpen },
+    openAlert
   } = useUI()
+
+  useEffect(() => {
+    events.on('error', (data: LoggerData) => {
+      if (data.label.length === 0) return
+      if (data.label[0] === 'HTTP') {
+        openAlert(data.msg, t`alert.title.error.http`)
+      } else if (data.level === LoggerLevel.FATAL) {
+        openAlert(data.msg, t`alert.title.error.fatal`)
+      } else {
+        openAlert(data.msg, t`alert.title.error`)
+      }
+    })
+  }, [openAlert])
 
   return (
     <Stack horizontal className="h-screen w-screen">

@@ -1,3 +1,4 @@
+import { t } from '@/utils/i18n'
 import { createContext, useContext, useReducer } from 'react'
 
 interface UIState {
@@ -28,7 +29,7 @@ const initialState: UIState = {
   alert: {
     isOpen: false,
     text: '',
-    title: '提示'
+    title: t`alert.title`
   },
   fullLoading: false,
   sidebarOpen: true
@@ -42,7 +43,7 @@ function uiReducer(state: UIState, action: UIAction): UIState {
         alert: {
           isOpen: true,
           text: action.payload.text,
-          title: action.payload.title || '提示'
+          title: action.payload.title || t`alert.title`
         }
       }
     case 'CLOSE_ALERT':

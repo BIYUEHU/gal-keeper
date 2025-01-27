@@ -14,7 +14,7 @@ fn get_secs_timestamp() -> u64 {
 }
 
 #[tauri::command]
-pub fn launch_and_monitor(app_handle: AppHandle, filepath: &str) -> Result<(), String> {
+pub fn launch_and_monitor(app_handle: AppHandle, filepath: &str, id: String) -> Result<(), String> {
     let pid = Command::new(filepath)
         .current_dir(Path::new(filepath).join(".."))
         .spawn()
@@ -24,9 +24,15 @@ pub fn launch_and_monitor(app_handle: AppHandle, filepath: &str) -> Result<(), S
 
     let start_time = get_secs_timestamp();
     thread::spawn(move || {
-        monitor_process(app_handle, start_time, Pid::from_u32(pid), false)
-            .map_err(|e| format!("Failed to monitor process: {}", e))
-            .unwrap();
+        monitor_process(
+            app_handle,
+            id.clone(),
+            start_time,
+            Pid::from_u32(pid),
+            false,
+        )
+        .map_err(|e| format!("Failed to monitor process: {}", e))
+        .unwrap();
 
         println!(
             "Monitoring finished. Start time: {}, Stop time: {}",
@@ -53,6 +59,7 @@ fn find_child_process(launcher_pid: Pid, system: &mut System) -> Option<Pid> {
 
 fn monitor_process(
     app_handle: AppHandle,
+    id: String,
     start_time: u64,
     pid: Pid,
     is_child: bool,
@@ -65,7 +72,7 @@ fn monitor_process(
         if let Some(process) = system.process(pid) {
             if is_window_active(process.pid()).unwrap_or(false) {
                 app_handle
-                    .emit_all("increase", (start_time, get_secs_timestamp()))
+                    .emit_all("increase", (id.clone(), start_time, get_secs_timestamp()))
                     .map_err(|e| format!("Failed to emit event: {}", e))
                     .unwrap();
             }
@@ -74,7 +81,7 @@ fn monitor_process(
             system.refresh_processes(ProcessesToUpdate::All, true);
             if let Some(target_pid) = find_child_process(pid, &mut system) {
                 println!("Found child process process with PID: {}", target_pid);
-                monitor_process(app_handle, start_time, target_pid, true)
+                monitor_process(app_handle, id, start_time, target_pid, true)
                     .map_err(|e| format!("Failed to monitor child process: {}", e))?;
             } else {
                 println!("Target process exited and no child process found.");

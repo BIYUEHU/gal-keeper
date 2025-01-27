@@ -6,8 +6,9 @@ import 'virtual:uno.css'
 import App from '@/App'
 import useStore from './store'
 import { appDataDir } from '@tauri-apps/api/path'
-import { logger } from './utils/logger'
+import logger from './utils/logger'
 import { IS_DEV } from './constant'
+import { type Event, listen } from '@tauri-apps/api/event'
 
 /* Initialize */
 initializeIcons()
@@ -29,6 +30,11 @@ document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && ['r', 'u', 'p', 'l', 'j', 'g', 'f', 's'].includes(e.key.toLowerCase())) {
     e.preventDefault()
   }
+})
+
+listen('increase', (data: Event<[string, number, number]>) => {
+  useStore.getState().increasePlayTimeline(...data.payload)
+  logger.debug('increase', data.payload)
 })
 
 /* Render */
