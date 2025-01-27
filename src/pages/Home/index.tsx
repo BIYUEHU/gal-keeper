@@ -12,7 +12,6 @@ import events from '@/utils/events'
 const Home: React.FC = () => {
   const { getAllGameData, isRunningGame } = useStore((state) => state)
   const [games, setGames] = useState(getAllGameData(false))
-  const runningGames = useMemo(() => games.filter((game) => isRunningGame(game.id)), [games, isRunningGame])
 
   useEffect(() => {
     events.on('updateGame', () => setGames(getAllGameData(false)))
@@ -36,20 +35,17 @@ const Home: React.FC = () => {
       totalPlayTime,
       todayPlayTime,
       totalPlayCount,
-      recentPlayed: [...games]
+      recentPlayed: games
         .sort((a, b) => b.lastPlay - a.lastPlay)
         .slice(0, 5)
         .filter((game) => Date.now() - new Date(game.lastPlay).getTime() < 7 * 24 * 60 * 60 * 1000),
-      mostPlayed: [...games]
-        .sort((a, b) => calculateTotalPlayTime(b.playTimelines) - calculateTotalPlayTime(a.playTimelines))
-        .slice(0, 5)
-        .filter((game) => calculateTotalPlayTime(game.playTimelines) > 0),
-      recentAdded: [...games]
+      runningGames: games.filter((game) => isRunningGame(game.id)).slice(5),
+      recentAdded: games
         .sort((a, b) => b.createDate - a.createDate)
         .slice(0, 5)
-        .filter((game) => Date.now() - new Date(game.lastPlay).getTime() < 7 * 24 * 60 * 60 * 1000)
+        .filter((game) => Date.now() - new Date(game.createDate).getTime() < 7 * 24 * 60 * 60 * 1000)
     }
-  }, [games])
+  }, [games, isRunningGame])
 
   const timeline = useMemo(() => {
     const events: Array<{
@@ -128,31 +124,6 @@ const Home: React.FC = () => {
             </Text>
           </Card>
         </Stack>
-        <Stack horizontal tokens={{ childrenGap: 16 }}>
-          <Card className="flex-1 p-4">
-            <Text variant="xLarge" className="block mb-4">{t`page.home.running`}</Text>
-            {runningGames.length > 0 ? (
-              <Stack tokens={{ childrenGap: 8 }}>
-                {runningGames.map((game) => (
-                  <Link
-                    to={`/details/${game.id}`}
-                    key={game.id}
-                    className="no-underline flex items-center p-2 rounded hover:bg-gray-50"
-                  >
-                    <img
-                      src={game.cover || '/assets/cover.png'}
-                      alt={game.title}
-                      className="w-10 h-10 object-cover rounded mr-3"
-                    />
-                    <Text>{game.title}</Text>
-                  </Link>
-                ))}
-              </Stack>
-            ) : (
-              <Text className="text-gray-500">{t`page.home.running.empty`}</Text>
-            )}
-          </Card>
-        </Stack>
 
         <Stack horizontal tokens={{ childrenGap: 16 }}>
           <Card className="flex-1 p-4">
@@ -179,31 +150,6 @@ const Home: React.FC = () => {
           </Card>
 
           <Card className="flex-1 p-4">
-            <Text variant="xLarge" className="block mb-4">{t`page.home.activity.mostPlayed`}</Text>
-            <Stack tokens={{ childrenGap: 8 }}>
-              {stats.mostPlayed.map((game) => (
-                <Link
-                  to={`/details/${game.id}`}
-                  key={game.id}
-                  className="no-underline flex items-center p-2 rounded hover:bg-gray-50"
-                >
-                  <img
-                    src={game.cover || '/assets/cover.png'}
-                    alt={game.title}
-                    className="w-10 h-10 object-cover rounded mr-3"
-                  />
-                  <div>
-                    <Text block>{game.title}</Text>
-                    <Text className="text-sm text-gray-500">
-                      {showMinutes(calculateTotalPlayTime(game.playTimelines))}
-                    </Text>
-                  </div>
-                </Link>
-              ))}
-            </Stack>
-          </Card>
-
-          <Card className="flex-1 p-4">
             <Text variant="xLarge" className="block mb-4">{t`page.home.activity.latest`}</Text>
             <Stack tokens={{ childrenGap: 8 }}>
               {stats.recentAdded.map((game) => (
@@ -223,6 +169,32 @@ const Home: React.FC = () => {
                   </div>
                 </Link>
               ))}
+            </Stack>
+          </Card>
+
+          <Card className="flex-1 p-4">
+            <Text variant="xLarge" className="block mb-4">{t`page.home.activity.running`}</Text>
+            <Stack tokens={{ childrenGap: 8 }}>
+              {stats.runningGames.length > 0 ? (
+                stats.runningGames.map((game) => (
+                  <Link
+                    to={`/details/${game.id}`}
+                    key={game.id}
+                    className="no-underline flex items-center p-2 rounded hover:bg-gray-50"
+                  >
+                    <img
+                      src={game.cover || '/assets/cover.png'}
+                      alt={game.title}
+                      className="w-10 h-10 object-cover rounded mr-3"
+                    />
+                    <div>
+                      <Text block>{game.title}</Text>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <Text className="text-gray-500">{t`page.home.activity.running.empty`}</Text>
+              )}
             </Stack>
           </Card>
         </Stack>

@@ -9,7 +9,7 @@ import { Stack, TextField, ChoiceGroup, Toggle, Separator, DefaultButton, Text }
 import { Spinner } from '@fluentui/react-components'
 import React, { useState } from 'react'
 
-export const Settings: React.FC = () => {
+const Settings: React.FC = () => {
   const { settings, updateSettings } = useStore((state) => state)
   const [sync, setSync] = useState(useStore((state) => state.sync))
   const { openAlert } = useUI()
@@ -219,3 +219,5 @@ export const Settings: React.FC = () => {
     </div>
   )
 }
+
+export default Settings

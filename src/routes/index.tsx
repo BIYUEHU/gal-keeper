@@ -1,9 +1,9 @@
-import { Library } from '@/pages/Library'
-import { Settings } from '@/pages/Settings'
-import { Detail } from '@/pages/Detail'
+import Library from '@/pages/Library'
+import Settings from '@/pages/Settings'
+import Detail from '@/pages/Detail'
 import Home from '@/pages/Home'
-import { Category } from '@/pages/Category'
-import { Edit } from '@/pages/Edit'
+import Category from '@/pages/Category'
+import Edit from '@/pages/Edit'
 import { t } from '@/utils/i18n'
 
 export type RouteConfig = {
@@ -45,7 +45,7 @@ const routes: RouteConfig[] = [
     belong: '/library'
   },
   {
-    path: '/category',
+    path: '/category/:id?',
     component: <Category />,
     title: t`page.category.title`,
     icon: 'Flag'

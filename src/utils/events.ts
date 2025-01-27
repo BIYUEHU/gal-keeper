@@ -4,6 +4,7 @@ import EventsEmiter from 'fluoro/dist/context/events'
 export interface EventsMapping {
   updateGame(id: string): void
   error(data: LoggerData): void
+  storageInitialized(): void
 }
 
 const events = new EventsEmiter<EventsMapping>()

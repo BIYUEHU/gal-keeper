@@ -1,13 +1,15 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { IS_TAURI, StoreKey } from '@/constant'
-import type { GameData, GameWithLocalData, FetchMethods, LocalData, SortKeys } from '@/types'
+import type { GameData, GameWithLocalData, FetchMethods, LocalData, SortKeys, Group, Category } from '@/types'
 import tauriStorage from '@/utils/tauriStorage'
 import events from '@/utils/events'
 
 export interface RootState {
   gameData: GameData[]
   localData: LocalData[]
+  groups: Group[]
+  categories: Category[]
   sync: {
     time: number
     deleteIds: string[]
@@ -34,21 +36,26 @@ export interface RootState {
 }
 
 type RootStateMethods = {
-  isRunningGame: (id: string) => boolean
-  increasePlayTimeline: (id: string, startTime: number, endTime: number) => void
-  addGameData: (data: GameWithLocalData) => void
-  updateGameData: (data: GameWithLocalData) => void
-  removeGameData: (id: string, onlyLocal: boolean) => void
-  getGameData: (id: string) => GameWithLocalData | undefined
-  getAllGameData: <T extends boolean>(isPure: T) => (true extends T ? GameData : GameWithLocalData)[]
-  // getGameDataByProgramFile: (programFile: string) => GameWithLocalData | undefined
-  updateSettings: (settings: Partial<RootState['settings']>) => void
+  isRunningGame(id: string): boolean
+  increasePlayTimeline(id: string, startTime: number, endTime: number): void
+  addGroup(name: string): void
+  deleteGroup(id: string): void
+  addCategory(groupId: string, name: string): void
+  deleteCategory(id: string): void
+  addGameData(data: GameWithLocalData): void
+  updateGameData(data: GameWithLocalData): void
+  removeGameData(id: string, onlyLocal: boolean): void
+  getGameData(id: string): GameWithLocalData | undefined
+  getAllGameData<T extends boolean>(isPure: T): (true extends T ? GameData : GameWithLocalData)[]
+  // getGameDataByProgramFile(programFile: string) : GameWithLocalData | undefined
+  updateSettings(settings: Partial<RootState['settings']>): void
 }
 
 const initialState: RootState = {
   gameData: [],
   localData: [],
-
+  groups: [],
+  categories: [],
   sync: {
     time: 0,
     deleteIds: [],
@@ -97,10 +104,10 @@ const useStore = create(
                   ...item,
                   playTimelines: ((index) =>
                     index === -1
-                      ? [...item.playTimelines, [startTime, endTime, 60]]
+                      ? [...item.playTimelines, [startTime, endTime, 1]]
                       : [
                           ...item.playTimelines.slice(0, index),
-                          [startTime, endTime, item.playTimelines[index][2] + 60],
+                          [startTime, endTime, item.playTimelines[index][2] + 1],
                           ...item.playTimelines.slice(index + 1)
                         ])(item.playTimelines.findIndex((timeline) => timeline[0] === startTime))
                 }
@@ -113,7 +120,7 @@ const useStore = create(
       addGameData(data) {
         const { local, ...game } = data
         set((state) => ({
-          gameData: [...state.gameData, game],
+          gameData: [...state.gameData, { ...game, updateDate: Date.now() / 1000 }],
           ...(local && IS_TAURI
             ? {
                 localData: [...state.localData, local]
@@ -150,6 +157,36 @@ const useStore = create(
           }
         }))
         events.emit('updateGame', id)
+      },
+
+      addGroup(name) {
+        const id = crypto.randomUUID()
+        set((state) => ({
+          groups: [...state.groups, { id, name, categoryIds: [] }]
+        }))
+      },
+      deleteGroup(id) {
+        set((state) => ({
+          groups: state.groups.filter((group) => group.id !== id)
+        }))
+      },
+      addCategory(groupId, name) {
+        const id = crypto.randomUUID()
+        set((state) => ({
+          categories: [...state.categories, { id, name, gameIds: [] }],
+          groups: state.groups.map((group) =>
+            group.id === groupId ? { ...group, categoryIds: [...group.categoryIds, id] } : group
+          )
+        }))
+      },
+      deleteCategory(id) {
+        set((state) => ({
+          categories: state.categories.filter((category) => category.id !== id),
+          groups: state.groups.map((group) => ({
+            ...group,
+            categoryIds: group.categoryIds.filter((categoryId) => categoryId !== id)
+          }))
+        }))
       },
 
       getGameData(id) {

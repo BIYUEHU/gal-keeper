@@ -53,7 +53,7 @@ const infoOptions: InfoOption[] = [
   }
 ]
 
-export const Detail: React.FC = () => {
+const Detail: React.FC = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const [modalData, setModalData] = useState({
@@ -281,3 +281,5 @@ export const Detail: React.FC = () => {
     </React.Fragment>
   )
 }
+
+export default Detail

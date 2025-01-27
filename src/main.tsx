@@ -7,14 +7,12 @@ import App from '@/App'
 import useStore from './store'
 import { appDataDir } from '@tauri-apps/api/path'
 import logger from './utils/logger'
-import { IS_DEV } from './constant'
+import { IS_DEV, IS_TAURI } from './constant'
 import { type Event, listen } from '@tauri-apps/api/event'
+import events from './utils/events'
 
 /* Initialize */
 initializeIcons()
-;(async () => {
-  logger.debug('Application directory:', await appDataDir())
-})()
 
 if (IS_DEV) {
   ;(globalThis as unknown as { store: typeof useStore }).store = useStore
@@ -31,11 +29,21 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault()
   }
 })
+document.addEventListener('dragstart', (e) => e.preventDefault())
 
-listen('increase', (data: Event<[string, number, number]>) => {
-  useStore.getState().increasePlayTimeline(...data.payload)
-  logger.debug('increase', data.payload)
-})
+if (IS_TAURI) {
+  ;(async () => {
+    logger.debug('Application directory:', await appDataDir())
+  })()
+  listen('increase', (data: Event<[string, number, number]>) => {
+    useStore.getState().increasePlayTimeline(...data.payload)
+    logger.debug('increase', data.payload)
+  })
+} else {
+  setTimeout(() => {
+    events.emit('storageInitialized')
+  }, 200)
+}
 
 /* Render */
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

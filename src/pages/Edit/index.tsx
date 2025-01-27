@@ -19,7 +19,7 @@ const dropdownOptions: { key: FetchMethods; text: string }[] = [
   { key: 'bgm', text: t`page.edit.dropdown.bgm` }
 ]
 
-export const Edit = () => {
+const Edit = () => {
   const { id } = useParams()
   const game = useStore((state) => state.getGameData)(id ?? '')
 
@@ -280,3 +280,5 @@ export const Edit = () => {
     </React.Fragment>
   )
 }
+
+export default Edit

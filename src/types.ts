@@ -34,7 +34,19 @@ export interface GameWithLocalData extends GameData {
   local?: LocalData
 }
 
-export type FetchGameData = Omit<GameData, 'id' | 'local' | 'playTimelines' | 'lastPlay' | 'createDate'>
+export interface Group {
+  id: string
+  name: string
+  categoryIds: string[]
+}
+
+export interface Category {
+  id: string
+  name: string
+  gameIds: string[]
+}
+
+export type FetchGameData = Omit<GameData, 'id' | 'local' | 'playTimelines' | 'lastPlay' | 'createDate' | 'updateDate'>
 
 export type SortKeys = 'Title' | 'CreateDate' | 'LastPlay' | 'Developer' | 'Rating' | 'ReleaseDate'
 
