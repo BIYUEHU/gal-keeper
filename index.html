@@ -20,10 +20,12 @@
       }
       @keyframes maximize {
         from { transform: scale(1); }
-        to { transform: scale(3); }
+        to { transform: scale(2); }
+        from { transform: scale(2); }
+        to { transform: scale(0.5); }
       }
       .maximize-animation {
-        animation: maximize 1s ease-in-out;
+        animation: maximize 1.5s ease-in-out;
       }
 
       .app-loading {

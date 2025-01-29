@@ -53,3 +53,10 @@ export type SortKeys = 'Title' | 'CreateDate' | 'LastPlay' | 'Developer' | 'Rati
 export type FetchMethods = 'mixed' | 'vndb' | 'bgm'
 
 export type Timeline = [number, number, number]
+
+// biome-ignore lint:
+export const enum DefaultGroup {
+  DEVELOPER = 'developer',
+  RATING = 'rating',
+  PLAY_STATE = 'play_state'
+}

@@ -11,7 +11,7 @@ interface FilterModalProps {
   setIsOpen: (isOpen: boolean) => void
 }
 
-export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, setIsOpen }) => {
+const FilterModal: React.FC<FilterModalProps> = ({ isOpen, setIsOpen }) => {
   const {
     settings: { sortOnlyDisplayLocal },
     updateSettings
@@ -47,3 +47,5 @@ export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, setIsOpen }) =
     </Modal>
   )
 }
+
+export default FilterModal

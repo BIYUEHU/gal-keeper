@@ -19,17 +19,16 @@ const Home: React.FC = () => {
 
   const stats = useMemo(() => {
     const todayStart =
-      new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDay()}`).getTime() / 1000
+      new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`).getTime() / 1000
 
-    let totalPlayTime = 0
-    let todayPlayTime = 0
-    let totalPlayCount = 0
-
-    games.map((game) => {
-      totalPlayTime += calculateTotalPlayTime(game.playTimelines)
-      todayPlayTime += calculateTotalPlayTime(game.playTimelines.filter(([_, start]) => start >= todayStart))
-      totalPlayCount += game.playTimelines.length
-    })
+    const [totalPlayTime, todayPlayTime, totalPlayCount] = games.reduce(
+      (acc, game) => [
+        acc[0] + calculateTotalPlayTime(game.playTimelines),
+        acc[1] + calculateTotalPlayTime(game.playTimelines.filter(([_, start]) => start >= todayStart)),
+        acc[2] + game.playTimelines.length
+      ],
+      [0, 0, 0]
+    )
 
     return {
       totalPlayTime,
@@ -39,7 +38,7 @@ const Home: React.FC = () => {
         .sort((a, b) => b.lastPlay - a.lastPlay)
         .slice(0, 5)
         .filter((game) => Date.now() - new Date(game.lastPlay).getTime() < 7 * 24 * 60 * 60 * 1000),
-      runningGames: games.filter((game) => isRunningGame(game.id)).slice(5),
+      runningGames: games.filter((game) => isRunningGame(game.id)).slice(0, 5),
       recentAdded: games
         .sort((a, b) => b.createDate - a.createDate)
         .slice(0, 5)
@@ -58,14 +57,13 @@ const Home: React.FC = () => {
     games.map((game) =>
       game.playTimelines.map(([_, end, second]) => {
         const minutes = second / 60
-        if (minutes >= 1) {
-          events.push({
-            type: 'play',
-            game,
-            time: end * 1000,
-            minutes
-          })
-        }
+        if (minutes < 1) return
+        events.push({
+          type: 'play',
+          game,
+          time: end * 1000,
+          minutes
+        })
       })
     )
 
@@ -81,7 +79,7 @@ const Home: React.FC = () => {
   }, [games])
 
   return (
-    <div className="overflow-auto  p-4">
+    <div className="overflow-auto p-4">
       <Stack tokens={{ childrenGap: 20 }}>
         <Stack horizontal tokens={{ childrenGap: 16 }}>
           <Card className="flex-1 p-4">

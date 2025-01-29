@@ -1,3 +1,4 @@
+import { DefaultGroup } from '@/types'
 import { t } from '@/utils/i18n'
 import { createContext, useContext, useReducer } from 'react'
 
@@ -9,6 +10,7 @@ interface UIState {
   }
   fullLoading: boolean
   sidebarOpen: boolean
+  currentGroupId: string
 }
 
 type UIAction =
@@ -16,6 +18,7 @@ type UIAction =
   | { type: 'CLOSE_ALERT' }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'TOGGLE_SIDEBAR' }
+  | { type: 'SET_CURRENT_GROUP'; payload: string }
 
 interface UIContextType {
   state: UIState
@@ -23,6 +26,7 @@ interface UIContextType {
   closeAlert: () => void
   openFullLoading: () => () => void
   toggleSidebar: () => void
+  setCurrentGroupId: (group: string) => void
 }
 
 const initialState: UIState = {
@@ -32,7 +36,8 @@ const initialState: UIState = {
     title: t`alert.title`
   },
   fullLoading: false,
-  sidebarOpen: true
+  sidebarOpen: true,
+  currentGroupId: DefaultGroup.DEVELOPER
 }
 
 function uiReducer(state: UIState, action: UIAction): UIState {
@@ -64,6 +69,11 @@ function uiReducer(state: UIState, action: UIAction): UIState {
         ...state,
         sidebarOpen: !state.sidebarOpen
       }
+    case 'SET_CURRENT_GROUP':
+      return {
+        ...state,
+        currentGroupId: action.payload
+      }
     default:
       return state
   }
@@ -85,8 +95,10 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
 
   const toggleSidebar = () => dispatch({ type: 'TOGGLE_SIDEBAR' })
 
+  const setCurrentGroupId = (group: string) => dispatch({ type: 'SET_CURRENT_GROUP', payload: group })
+
   return (
-    <UIContext.Provider value={{ state, openAlert, closeAlert, openFullLoading, toggleSidebar }}>
+    <UIContext.Provider value={{ state, openAlert, closeAlert, openFullLoading, toggleSidebar, setCurrentGroupId }}>
       {children}
     </UIContext.Provider>
   )

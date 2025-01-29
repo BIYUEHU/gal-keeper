@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { SortModal } from '@/components/SortModal'
+import SortModal from '@/components/SortModal'
 import useStore from '@/store'
-import { FilterModal } from '@/components/FilterModal'
-import { AddModal } from '@/components/AddModal'
+import FilterModal from '@/components/FilterModal'
+import AddModal from '@/components/AddModal'
 import { t } from '@/utils/i18n'
 import GameList from '@/components/GameList'
 import type { ICommandBarItemProps } from '@fluentui/react'
@@ -41,7 +41,6 @@ const Library: React.FC = () => {
       <AddModal
         isOpen={modalData.isOpenAddModal}
         setIsOpen={() => setModalData((prev) => ({ ...prev, isOpenAddModal: false }))}
-        data={games}
         setData={setGames}
       />
       <SortModal

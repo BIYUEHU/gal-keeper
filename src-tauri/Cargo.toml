@@ -19,7 +19,8 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "1", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "path-all",
+tauri = { version = "1", features = [ "http-all",
+  "path-all",
   "dialog-all",
   "window-all",
   "shell-open",

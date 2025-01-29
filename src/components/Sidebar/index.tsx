@@ -5,7 +5,7 @@ import routes from '@/routes'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useUI } from '@/contexts/UIContext'
 
-export const Sidebar: React.FC = () => {
+const Sidebar: React.FC = () => {
   const {
     state: { sidebarOpen },
     toggleSidebar
@@ -42,3 +42,5 @@ export const Sidebar: React.FC = () => {
     </Stack>
   )
 }
+
+export default Sidebar

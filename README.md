@@ -22,7 +22,7 @@
 - React
 - FluentUI
 - UnoCSS
-- Tauri
+- TauriV1.* (Fuck Electron, NW.js and TauriV2.\*)
 - Sled
 
 ## License

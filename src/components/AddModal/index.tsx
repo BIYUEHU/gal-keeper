@@ -17,11 +17,10 @@ import { invokeLogger } from '@/utils/logger'
 interface AddModalProps {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
-  data: GameWithLocalData[]
-  setData: (data: GameWithLocalData[]) => void
+  setData: (fn: (data: GameWithLocalData[]) => GameWithLocalData[]) => void
 }
 
-export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, setData }) => {
+const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, setData }) => {
   const [formData, setFormData] = useState({ programFile: '', gameName: '' })
   const { openFullLoading } = useUI()
 
@@ -29,7 +28,6 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
     addGameData,
     settings: { fetchMethods }
   } = useStore((state) => state)
-  // const fileSelect = useFileSelect()
 
   useEffect(() => {
     if (isOpen) setFormData({ programFile: '', gameName: '' })
@@ -95,7 +93,7 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
       // }
     }
     addGameData(game)
-    setData([...data, game])
+    setData((state) => [...state, game])
     setIsOpen(false)
     close()
   }
@@ -143,3 +141,5 @@ export const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, data, set
     </Modal>
   )
 }
+
+export default AddModal

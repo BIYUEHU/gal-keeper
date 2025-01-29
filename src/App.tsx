@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { FluentProvider, webLightTheme } from '@fluentui/react-components'
 import routes from './routes'
-import { Layout } from './components/Layout'
+import Layout from './components/Layout'
 import { UIProvider } from './contexts/UIContext'
 import { useEffect } from 'react'
 import events from './utils/events'

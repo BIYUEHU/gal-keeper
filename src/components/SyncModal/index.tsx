@@ -16,7 +16,7 @@ interface SyncModalProps {
   data: GameWithLocalData
 }
 
-export const SyncModal: React.FC<SyncModalProps> = ({ isOpen, setIsOpen, data }) => {
+const SyncModal: React.FC<SyncModalProps> = ({ isOpen, setIsOpen, data }) => {
   const [programFile, setProgramFile] = useState<string>('')
   const { updateGameData } = useStore((state) => state)
 
@@ -81,3 +81,5 @@ export const SyncModal: React.FC<SyncModalProps> = ({ isOpen, setIsOpen, data })
     </Modal>
   )
 }
+
+export default SyncModal

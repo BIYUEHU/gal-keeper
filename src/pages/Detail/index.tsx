@@ -8,8 +8,8 @@ import { calculateTotalPlayTime, openUrl, showMinutes, showTime } from '@/utils'
 import { IS_TAURI } from '@/constant'
 import type { GameWithLocalData } from '@/types'
 import useStore from '@/store'
-import { SyncModal } from '@/components/SyncModal'
-import { ConfirmBox } from '@/components/ConfirmBox'
+import SyncModal from '@/components/SyncModal'
+import ConfirmBox from '@/components/ConfirmBox'
 import { f, t } from '@/utils/i18n'
 import { invoke } from '@tauri-apps/api'
 import events from '@/utils/events'
@@ -62,7 +62,7 @@ const Detail: React.FC = () => {
     isOpenDelete2Modal: false
   })
 
-  const { getGameData, updateGameData, removeGameData, isRunningGame } = useStore((state) => state)
+  const { getGameData, removeGameData, isRunningGame } = useStore((state) => state)
   const [game, setGame] = useState(getGameData(id ?? ''))
 
   useEffect(() => {
@@ -94,11 +94,7 @@ const Detail: React.FC = () => {
           return
         }
         invoke('launch_and_monitor', { id, filepath: game.local?.programFile })
-          .then(() => {
-            logger.debug('Start successfully, title:', game.title, ', id:', id)
-            updateGameData({ ...game, lastPlay: Date.now() })
-            setGame(getGameData(id))
-          })
+          .then(() => logger.debug('Start successfully, title:', game.title, ', id:', id))
           .catch((e) => invokeLogger.error('Failed to start game', e))
       }
     },

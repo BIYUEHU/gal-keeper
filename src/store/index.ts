@@ -41,13 +41,13 @@ type RootStateMethods = {
   addGroup(name: string): void
   deleteGroup(id: string): void
   addCategory(groupId: string, name: string): void
+  updateCategory(id: string, ids: string[]): void
   deleteCategory(id: string): void
   addGameData(data: GameWithLocalData): void
   updateGameData(data: GameWithLocalData): void
   removeGameData(id: string, onlyLocal: boolean): void
   getGameData(id: string): GameWithLocalData | undefined
   getAllGameData<T extends boolean>(isPure: T): (true extends T ? GameData : GameWithLocalData)[]
-  // getGameDataByProgramFile(programFile: string) : GameWithLocalData | undefined
   updateSettings(settings: Partial<RootState['settings']>): void
 }
 
@@ -85,23 +85,22 @@ const useStore = create(
   persist<RootState & RootStateMethods>(
     (set, get) => ({
       ...initialState,
-
       isRunningGame(id) {
         return (
           Date.now() / 1000 -
             (get()
               .getGameData(id)
-              ?.playTimelines.reduce((acc, cur) => (acc > cur[1] ? acc : cur[1]), 0) ?? 0) <
+              ?.playTimelines.reduce((acc, cur) => Math.max(acc, cur[1]), 0) ?? 0) <
           3
         )
       },
-
       increasePlayTimeline(id, startTime, endTime) {
         set((state) => ({
           gameData: state.gameData.map((item) =>
             item.id === id
               ? {
                   ...item,
+                  lastPlay: endTime * 1000,
                   playTimelines: ((index) =>
                     index === -1
                       ? [...item.playTimelines, [startTime, endTime, 1]]
@@ -116,7 +115,6 @@ const useStore = create(
         }))
         events.emit('updateGame', id)
       },
-
       addGameData(data) {
         const { local, ...game } = data
         set((state) => ({
@@ -129,7 +127,6 @@ const useStore = create(
         }))
         events.emit('updateGame', data.id)
       },
-
       updateGameData(data) {
         const { local, ...game } = data
         set((state) => ({
@@ -142,7 +139,6 @@ const useStore = create(
         }))
         events.emit('updateGame', data.id)
       },
-
       removeGameData(id, onlyLocal) {
         set((state) => ({
           gameData: onlyLocal ? state.gameData : state.gameData.filter((item) => item.id !== id),
@@ -158,7 +154,6 @@ const useStore = create(
         }))
         events.emit('updateGame', id)
       },
-
       addGroup(name) {
         const id = crypto.randomUUID()
         set((state) => ({
@@ -176,6 +171,13 @@ const useStore = create(
           categories: [...state.categories, { id, name, gameIds: [] }],
           groups: state.groups.map((group) =>
             group.id === groupId ? { ...group, categoryIds: [...group.categoryIds, id] } : group
+          )
+        }))
+      },
+      updateCategory(id, ids) {
+        set((state) => ({
+          categories: state.categories.map((category) =>
+            category.id === id ? { ...category, gameIds: ids } : category
           )
         }))
       },

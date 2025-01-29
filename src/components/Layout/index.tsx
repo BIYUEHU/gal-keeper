@@ -1,8 +1,8 @@
 import { Stack } from '@fluentui/react/lib/Stack'
-import { Sidebar } from '../Sidebar'
+import Sidebar from '../Sidebar'
 import { Spinner } from '@fluentui/react-components'
 import { useUI } from '@/contexts/UIContext'
-import { AlertBox } from '../AlertBox'
+import AlertBox from '../AlertBox'
 import { useEffect } from 'react'
 import events from '@/utils/events'
 import { type LoggerData, LoggerLevel } from '@kotori-bot/logger'
@@ -13,7 +13,7 @@ interface LayoutProps {
   outlet: React.ReactElement
 }
 
-export const Layout: React.FC<LayoutProps> = ({ title, outlet }) => {
+const Layout: React.FC<LayoutProps> = ({ title, outlet }) => {
   const {
     state: { fullLoading, sidebarOpen },
     openAlert
@@ -54,3 +54,5 @@ export const Layout: React.FC<LayoutProps> = ({ title, outlet }) => {
     </Stack>
   )
 }
+
+export default Layout

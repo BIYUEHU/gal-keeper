@@ -17,7 +17,7 @@ Content-Type: application/json
 ### Bangumi
 
 GET https://api.bgm.tv/search/subject/{{QUERY}} HTTP/1.1
-User-Agent: czy0729/Bangumi/6.4.0 (Android) (http://github.com/czy0729/Bangumi)
+User-Agent: biyuehu/gal-keeper/0.1.0 (http://github.com/biyuehu/gal-keeper)
 
 
 ## Github Api

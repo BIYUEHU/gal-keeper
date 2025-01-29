@@ -21,7 +21,7 @@ const dropdownOptions: { key: SortKeys; text: string }[] = [
   { key: 'ReleaseDate', text: t`component.sortModal.sort.releaseDate` }
 ]
 
-export const SortModal: React.FC<SortModalProps> = ({ isOpen, setIsOpen }) => {
+const SortModal: React.FC<SortModalProps> = ({ isOpen, setIsOpen }) => {
   const {
     updateSettings,
     settings: { sortPrimaryKey, sortIsPrimaryDescending }
@@ -62,3 +62,5 @@ export const SortModal: React.FC<SortModalProps> = ({ isOpen, setIsOpen }) => {
     </Modal>
   )
 }
+
+export default SortModal

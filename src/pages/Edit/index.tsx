@@ -71,9 +71,11 @@ const Edit = () => {
 
   const handleFetchData = async () => {
     setIsLoading(true)
-    const fetchData = await fetchGameData(fetchMethod, editedGame.title).finally(() => {
-      setIsLoading(false)
-    })
+    const fetchData = await fetchGameData(fetchMethod, editedGame.title, [editedGame.bgmId, editedGame.vndbId]).finally(
+      () => {
+        setIsLoading(false)
+      }
+    )
     setEditedGame({
       ...editedGame,
       ...fetchData,
@@ -137,6 +139,28 @@ const Edit = () => {
             />
             <DefaultButton text={t`page.edit.button.fetchData`} onClick={handleFetchData} />
             {isLoading && <Spinner />}
+            {['bgm', 'mixed'].includes(fetchMethod) && (
+              <>
+                <h4 className="font-semibold w-13">Bgm Id</h4>
+                <TextField
+                  value={editedGame.bgmId}
+                  onChange={(_, value) => updateField('bgmId', value || '')}
+                  className="max-w-20 flex-grow-1"
+                  autoComplete="off"
+                />
+              </>
+            )}
+            {['vndb', 'mixed'].includes(fetchMethod) && (
+              <>
+                <h4 className="font-semibold w-13">Vndb Id</h4>
+                <TextField
+                  value={editedGame.vndbId}
+                  onChange={(_, value) => updateField('vndbId', value || '')}
+                  className="max-w-20 flex-grow-1"
+                  autoComplete="off"
+                />
+              </>
+            )}
           </Stack>
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
             <h3 className="font-semibold w-13">{t`page.edit.field.title`}</h3>

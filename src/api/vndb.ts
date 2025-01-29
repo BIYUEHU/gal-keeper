@@ -10,16 +10,16 @@ const VNDB_HEADER = {
   }
 }
 
-function generateVNDBBody(name: string) {
+function generateVNDBBody(name: string, isId: boolean) {
   return {
-    filters: ['search', '=', name],
+    filters: isId ? ['id', '=', name] : ['search', '=', name],
     fields:
       'id, title, image.url, released, titles.title, length_minutes, rating, screenshots.url, tags.name, developers.name, description, va.character.name, va.character.image.url, tags.rating, extlinks.name, extlinks.url'
   }
 }
 
-export async function fetchFromVndb(name: string): Promise<FetchGameData | null> {
-  const data = (await http.post(VNDB_URL, generateVNDBBody(name), VNDB_HEADER)).data.results[0]
+export async function fetchFromVndb(name: string, id?: string): Promise<FetchGameData | null> {
+  const data = (await http.post(VNDB_URL, generateVNDBBody(id || name, !!id), VNDB_HEADER)).data.results[0]
   if (!data) return null
 
   return {
@@ -31,7 +31,8 @@ export async function fetchFromVndb(name: string): Promise<FetchGameData | null>
     tags: (data.tags as { rating: number; name: string }[])
       .filter((tag) => tag.rating >= 2)
       .sort((a, b) => b.rating - a.rating)
-      .map((tag) => tag.name),
+      .slice(0, 30)
+      .map(({ name }) => name),
     expectedPlayHours: Number((data.length_minutes / 60).toFixed(1)),
     releaseDate: new Date(data.released).getTime(),
     rating: Number((data.rating / 10).toFixed(1)),

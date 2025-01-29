@@ -2,7 +2,7 @@ import { useUI } from '@/contexts/UIContext'
 import { t } from '@/utils/i18n'
 import { Dialog, DialogFooter, PrimaryButton, DialogType, DefaultButton } from '@fluentui/react'
 
-export function AlertBox() {
+const AlertBox: React.FC = () => {
   const {
     state: { alert },
     closeAlert
@@ -39,3 +39,5 @@ export function AlertBox() {
     </Dialog>
   )
 }
+
+export default AlertBox

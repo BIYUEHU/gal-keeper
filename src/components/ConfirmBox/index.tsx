@@ -9,7 +9,7 @@ interface ConfirmBoxProps {
   onConfirm?: () => void
 }
 
-export const ConfirmBox: React.FC<ConfirmBoxProps> = ({
+const ConfirmBox: React.FC<ConfirmBoxProps> = ({
   title = t`component.confirmBox.default.title`,
   text = '',
   isOpen,
@@ -44,3 +44,5 @@ export const ConfirmBox: React.FC<ConfirmBoxProps> = ({
     </>
   )
 }
+
+export default ConfirmBox
