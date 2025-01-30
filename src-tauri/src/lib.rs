@@ -1,7 +1,7 @@
 use utils::common::{open_with_explorer, open_with_notepad, search_nearby_files_and_saves};
 use utils::database::{db_read_value, db_write_value};
 use utils::launch::launch_and_monitor;
-use utils::request::{download_image, send_http_request, url_to_base64};
+use utils::request::{send_http_request, url_to_base64};
 
 mod utils;
 
@@ -15,7 +15,6 @@ pub fn run() {
             open_with_notepad,
             launch_and_monitor,
             send_http_request,
-            download_image,
             url_to_base64,
             search_nearby_files_and_saves
         ])

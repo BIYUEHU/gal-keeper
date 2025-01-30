@@ -38,7 +38,7 @@ const InsertModal: React.FC<AddGameModalProps> = ({ isOpen, setIsOpen, setData, 
   }, [isOpen, data])
 
   return (
-    <Modal isOpen={isOpen} isBlocking={false} containerClassName="modal-container">
+    <Modal isOpen={isOpen} isBlocking={false} containerClassName="modal-container overflow-hidden">
       <div className="p-6 bg-white rounded-md shadow-md">
         <Text variant="xLarge" className="font-semibold mb-4">
           {t`component.addModal.title`}

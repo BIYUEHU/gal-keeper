@@ -1,27 +1,6 @@
-export interface GameData {
-  id: string
-  vndbId?: string
-  bgmId?: string
-  updateDate?: number
-  title: string
-  alias: string[]
-  cover: string
-  description: string
-  tags: string[]
-  // playMinutes: number
-  playTimelines: [number, number, number][]
-  expectedPlayHours: number
-  lastPlay: number
-  createDate: number
-  releaseDate: number
-  rating: number
-  developer: string
-  images: string[]
-  links: {
-    url: string
-    name: string
-  }[]
-}
+import type { GameData } from './schema'
+
+export * from './schema'
 
 export interface LocalData {
   id: string

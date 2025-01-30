@@ -7,13 +7,12 @@ import { dialog } from '@tauri-apps/api'
 import { Dropdown } from '@fluentui/react/lib/Dropdown'
 import { Spinner } from '@fluentui/react-components'
 import { fetchGameData } from '@/api'
-import { IS_TAURI } from '@/constant'
 import { cacheImage } from '@/utils'
 import { t } from '@/utils/i18n'
 import { useUI } from '@/contexts/UIContext'
 import { invokeLogger } from '@/utils/logger'
 
-const dropdownOptions: { key: FetchMethods; text: string }[] = [
+export const dropdownOptions: { key: FetchMethods; text: string }[] = [
   { key: 'mixed', text: t`page.edit.dropdown.mixed` },
   { key: 'vndb', text: t`page.edit.dropdown.vndb` },
   { key: 'bgm', text: t`page.edit.dropdown.bgm` }
@@ -28,7 +27,7 @@ const Edit = () => {
   }
 
   const {
-    settings: { autoSetGameTitle, autoCacheImage, fetchMethods },
+    settings: { autoSetGameTitle, fetchMethods },
     updateGameData
   } = useStore((state) => state)
   const [fetchMethod, setFetchMethod] = useState<FetchMethods>(fetchMethods)
@@ -62,9 +61,10 @@ const Edit = () => {
     updateGameData({
       ...data,
       ...{
-        cover: data.cover && IS_TAURI && autoCacheImage ? await cacheImage(data.cover) : data.cover
+        cover: data.cover
       }
     })
+    await cacheImage(data).catch((e) => invokeLogger.error(e))
     close()
     navigate(-1)
   }
@@ -135,7 +135,7 @@ const Edit = () => {
               options={dropdownOptions}
               selectedKey={fetchMethod}
               className="w-25"
-              onChange={(_, option) => setFetchMethod(option?.key as FetchMethods)}
+              onChange={(_, option) => setFetchMethod((option?.key as FetchMethods) ?? 'vndb')}
             />
             <DefaultButton text={t`page.edit.button.fetchData`} onClick={handleFetchData} />
             {isLoading && <Spinner />}

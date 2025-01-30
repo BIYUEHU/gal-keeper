@@ -22,7 +22,7 @@ export async function fetchFromBangumi(name: string, id?: string): Promise<Fetch
       httpLogger.error(res.body)
       throw new Error(`Bangumi API error, status code: ${res.status}, body: ${res.body}`)
     }
-    console.log(res.body)
+
     const list = (() => {
       try {
         return JSON.parse(res.body)
@@ -37,6 +37,7 @@ export async function fetchFromBangumi(name: string, id?: string): Promise<Fetch
   const { data } = await http.get(`https://api.bgm.tv/v0/subjects/${tempId}`)
 
   return {
+    vndbId: undefined,
     bgmId: String(tempId),
     title: data.name,
     alias: data.name_cn ? [data.name_cn] : [],

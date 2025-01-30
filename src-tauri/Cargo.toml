@@ -6,12 +6,7 @@ authors = ["Arimura Sena"]
 edition = "2021"
 license = "BAN-ZHINESE-USING"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [lib]
-# The `_lib` suffix may seem redundant but it is necessary
-# to make the lib name unique and wouldn't conflict with the bin name.
-# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
 name = "gal_keeper_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
@@ -19,7 +14,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "1", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [
+tauri = { version = "1", features = [ "fs-all",
   "path-all",
   "dialog-all",
   "window-all",
@@ -31,8 +26,9 @@ reqwest = "0.12.12"
 base64 = "0.22.1"
 winapi = { version = "0.3.9", features = ["winuser"] }
 sysinfo = "0.33.1"
-uuid = "1.11.0"
-sled = "0.34.7"
+rusty-leveldb = "3.0.2"
+sled = "*"
+
 
 [features]
 custom-protocol = ["tauri/custom-protocol"]

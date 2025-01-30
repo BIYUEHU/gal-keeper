@@ -5,12 +5,22 @@ import Layout from './components/Layout'
 import { UIProvider } from './contexts/UIContext'
 import { useEffect } from 'react'
 import events from './utils/events'
+import useStore from './store'
 
 const App: React.FC = () => {
   useEffect(() => {
     events.on('storageInitialized', () => {
       setTimeout(() => {
         ;(window as { hideLoading?: () => void }).hideLoading?.()
+        // ! This is a temprary
+        if (!useStore.getState().settings.maxTimelineDisplayCount) {
+          useStore.setState({
+            settings: {
+              ...useStore.getState().settings,
+              maxTimelineDisplayCount: 50
+            }
+          })
+        }
       }, 200)
     })
   }, [])

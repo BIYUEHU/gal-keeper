@@ -2,7 +2,13 @@
 
 <div align="center">
 
-  <!-- <a target="_blank" href="https://vndb.org/c90804"><img src="client/public/favicon.ico" alt="gal-keeper logo" width="200"></a> -->
+  <div style="width:200px">
+
+   ![src-tauri/icons/nanno.png](src-tauri/icons/nanno.png)
+
+  </div>
+
+
 
 # Nanno | GalKeeper
 

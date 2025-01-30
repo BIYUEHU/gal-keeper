@@ -5,6 +5,7 @@ import { CommandBar, type ICommandBarItemProps } from '@fluentui/react/lib/Comma
 import { t } from '@/utils/i18n'
 import type { GameWithLocalData } from '@/types'
 import useStore from '@/store'
+import { getGameCover } from '@/utils'
 
 interface GameListProps {
   games: GameWithLocalData[]
@@ -81,7 +82,7 @@ const GameList: React.FC<GameListProps> = ({ games, commandItems, children }) =>
                   <div className="absolute border-t-solid border-t-20 border-t-sky border-r-solid border-r-20 border-r-transparent" />
                 )}
                 <img
-                  src={game.cover || '/assets/cover.png'}
+                  src={getGameCover(game)}
                   alt=""
                   className="w-full h-full object-cover transition-transform"
                   draggable="false"

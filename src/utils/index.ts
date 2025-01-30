@@ -1,8 +1,8 @@
 import { IS_TAURI } from '@/constant'
 import { invoke, shell } from '@tauri-apps/api'
-import type { Timeline } from '@/types'
+import type { GameData, Timeline } from '@/types'
 import { f, t } from './i18n'
-import { appDataDir } from '@tauri-apps/api/path'
+import useStore from '@/store'
 
 export function generateUuid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -19,11 +19,18 @@ export async function openUrl(url: string) {
   }
 }
 
-export async function cacheImage(url: string): Promise<string> {
-  return invoke('download_image', {
-    url,
-    directory: await appDataDir()
-  })
+export async function cacheImage(data: GameData) {
+  const {
+    getCache,
+    addCache,
+    settings: { autoCacheImage }
+  } = useStore.getState()
+  if (IS_TAURI && autoCacheImage && data.cover && data.cover.startsWith('http') && !getCache(data.cover)) {
+    const base64: string = await invoke('url_to_base64', {
+      url: data.cover
+    })
+    if (base64) addCache(data.cover, base64)
+  }
 }
 
 export function base64Decode(base64: string) {
@@ -47,17 +54,6 @@ export function showMinutes(raw: number) {
 
 export function showTime(raw: number) {
   const now = Date.now() / 1000
-  /*   'time.justnow': '刚刚',
-  'time.minutesAgo': '{0} 分钟前',
-  'time.hoursAgo': '{0} 小时前',
-  'time.yesterday': '昨天',
-  'time.daysAgo': '{0} 天前',
-  'time.lastWeek': '上周',
-  'time.weeksAgo': '{0} 周前',
-  'time.lastMonth': '上个月',
-  'time.monthsAgo': '{0} 个月前',
-  'time.lastYear': '去年',
-  'time.yearsAgo': '{0} 年前' */
   if (now - raw < 60) return t`time.justnow`
   if (now - raw < 60 * 60) return f`time.minutesAgo`(Math.floor((now - raw) / 60).toString())
   if (now - raw < 60 * 60 * 24) return f`time.hoursAgo`(Math.floor((now - raw) / (60 * 60)).toString())
@@ -70,4 +66,8 @@ export function showTime(raw: number) {
     return f`time.monthsAgo`(Math.floor((now - raw) / (60 * 60 * 24 * 30)).toString())
   if (now - raw < 60 * 60 * 24 * 365 * 2) return t`time.lastYear`
   return f`time.yearsAgo`(Math.floor((now - raw) / (60 * 60 * 24 * 365)).toString())
+}
+
+export function getGameCover(data: GameData) {
+  return data.cover ? useStore.getState().getCache(data.cover) || data.cover : '/assets/cover.png'
 }

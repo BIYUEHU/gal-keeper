@@ -1,6 +1,41 @@
 use sled::Db;
 use std::fs;
 
+/*
+
+use rusty_leveldb::{Options, DB};
+use std::fs;
+
+const DB_NAME: &'static str = "data";
+
+fn initialize_db(directory: &str) -> Result<DB, String> {
+    let directory = std::path::Path::new(&directory);
+    if !directory.exists() {
+        fs::create_dir_all(directory).map_err(|e| format!("Failed to create directory: {}", e))?;
+    }
+
+    Ok(DB::open(directory.join(DB_NAME), Options::default())
+        .map_err(|e| format!("Failed to open database: {}", e))?)
+}
+
+#[tauri::command]
+pub fn db_read_value(directory: &str, key: &str) -> Result<String, String> {
+    Ok(match initialize_db(directory)?.get(key.as_bytes()) {
+        Some(v) => String::from_utf8_lossy(&v).to_string(),
+        None => "".to_string(),
+    })
+}
+
+#[tauri::command]
+pub fn db_write_value(directory: &str, key: &str, value: &str) -> Result<(), String> {
+    let mut db = initialize_db(directory)?;
+    db.put(key.as_bytes(), value.as_bytes())
+        .map_err(|e| format!("Failed to insert key-value pair: {}", e))?;
+    Ok(())
+}
+
+*/
+
 const DB_NAME: &'static str = "db";
 
 fn initialize_db(directory: &str) -> Result<Db, String> {

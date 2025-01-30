@@ -1,21 +1,104 @@
 import { getRepoInfo, syncToGithub } from '@/api/github'
 import { IS_TAURI } from '@/constant'
 import { useUI } from '@/contexts/UIContext'
-import useStore from '@/store'
+import useStore, { initialState } from '@/store'
 import type { RootState } from '@/store'
-import { openUrl } from '@/utils'
+import { type FetchMethods, gameDataListSchema } from '@/types'
+import { generateUuid, openUrl } from '@/utils'
 import { f, t } from '@/utils/i18n'
+import logger, { invokeLogger } from '@/utils/logger'
 import { Stack, TextField, ChoiceGroup, Toggle, Separator, DefaultButton, Text } from '@fluentui/react'
+import { Dropdown } from '@fluentui/react/lib/Dropdown'
 import { Spinner } from '@fluentui/react-components'
+import { dialog } from '@tauri-apps/api'
+import { readTextFile, writeBinaryFile } from '@tauri-apps/api/fs'
 import React, { useState } from 'react'
+import { dropdownOptions } from '../Edit'
 
 const Settings: React.FC = () => {
-  const { settings, updateSettings } = useStore((state) => state)
+  const { settings, updateSettings, importGameData } = useStore((state) => state)
   const [sync, setSync] = useState(useStore((state) => state.sync))
   const { openAlert } = useUI()
   const [isLoading, setIsLoading] = useState(false)
 
   const checkParams = () => settings.githubToken && settings.githubRepo && settings.githubPath
+
+  const handleExport = async () => {
+    const jsonString = JSON.stringify(useStore.getState().gameData, null, 2)
+    const blob = new Blob([jsonString], { type: 'application/json' })
+
+    if (IS_TAURI) {
+      const filePath = await dialog.save({
+        filters: [
+          {
+            name: 'JSON',
+            extensions: ['json']
+          }
+        ]
+      })
+
+      if (filePath) await writeBinaryFile(filePath, await blob.arrayBuffer())
+    } else {
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `game-data-${generateUuid()}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    }
+  }
+
+  const handleImport = async () => {
+    if (IS_TAURI) {
+      const selectedFile = await dialog
+        .open({
+          multiple: false,
+          filters: [
+            {
+              name: 'JSON',
+              extensions: ['json']
+            }
+          ]
+        })
+        .catch((e) => {
+          invokeLogger.error(`Error while opening file dialog: ${e}`)
+          throw e
+        })
+
+      if (!selectedFile) return
+      try {
+        importGameData(gameDataListSchema.parse(JSON.parse(await readTextFile(selectedFile as string))))
+      } catch (error) {
+        logger.error(error)
+      }
+    } else {
+      await new Promise((resolve, reject) => {
+        const input = document.createElement('input')
+        input.type = 'file'
+        input.accept = 'application/json'
+        input.onchange = (event) => {
+          const file = (event.target as HTMLInputElement).files?.[0]
+          if (file) {
+            const reader = new FileReader()
+            reader.onload = () => {
+              try {
+                importGameData(gameDataListSchema.parse(JSON.parse(reader.result?.toString() ?? '')))
+                resolve(undefined)
+              } catch (error) {
+                reject(error)
+              }
+            }
+            reader.readAsText(file)
+          } else {
+            reject(new Error('No file selected'))
+          }
+        }
+        input.click()
+      }).catch((e) => logger.error(e))
+    }
+  }
 
   const handleTesting = async () => {
     if (checkParams()) {
@@ -35,6 +118,7 @@ const Settings: React.FC = () => {
       openAlert(t`page.settings.github.alert.paramsNeeded`)
     }
   }
+
   const handleSyncing = async () => {
     if (checkParams()) {
       setIsLoading(true)
@@ -152,6 +236,18 @@ const Settings: React.FC = () => {
           </Stack>
 
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
+            <h3 className="font-semibold w-29">{t`page.settings.github.source`}</h3>
+            <Dropdown
+              options={dropdownOptions}
+              selectedKey={settings.fetchMethods}
+              className="w-30"
+              onChange={(_, option) => updateSettings({ fetchMethods: (option?.key as FetchMethods) ?? 'vndb' })}
+            />
+          </Stack>
+
+          <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
+            <DefaultButton text={t`page.settings.github.button.export`} onClick={handleExport} />
+            <DefaultButton text={t`page.settings.github.button.import`} onClick={handleImport} />
             <DefaultButton text={t`page.settings.github.button.test`} onClick={handleTesting} />
             <DefaultButton text={t`page.settings.github.button.sync`} onClick={handleSyncing} />
             {isLoading && <Spinner />}
@@ -162,7 +258,8 @@ const Settings: React.FC = () => {
         <Stack tokens={{ childrenGap: 4 }}>
           <h2 className="text-lg font-semibold">{t`page.settings.appearance.title`}</h2>
 
-          <div>
+          {/* TODO: Implement theme */}
+          {/* <div>
             <h3 className="font-semibold w-12">{t`page.settings.appearance.theme`}</h3>
             <ChoiceGroup
               options={[
@@ -173,7 +270,7 @@ const Settings: React.FC = () => {
               selectedKey={settings.theme}
               onChange={(_, option) => updateSettings({ theme: option?.key as RootState['settings']['theme'] })}
             />
-          </div>
+          </div> */}
 
           <div>
             <h3 className="text-lg font-semibold">{t`page.settings.appearance.language`}</h3>
@@ -195,6 +292,18 @@ const Settings: React.FC = () => {
 
         <Stack tokens={{ childrenGap: 4 }}>
           <h2 className="text-lg font-semibold">{t`page.settings.detail.title`}</h2>
+          <TextField
+            label={t`page.settings.detail.maxTimelineDisplayCount`}
+            className="w-35"
+            value={settings.maxTimelineDisplayCount.toString()}
+            type="number"
+            onChange={(_, v) =>
+              updateSettings({
+                maxTimelineDisplayCount: v ? Number.parseInt(v) : initialState.settings.maxTimelineDisplayCount
+              })
+            }
+            autoComplete="off"
+          />
           <Toggle
             label={t`page.settings.detail.autoSetTitle`}
             checked={settings.autoSetGameTitle}
@@ -206,11 +315,6 @@ const Settings: React.FC = () => {
                 label={t`page.settings.detail.autoCacheCover`}
                 checked={settings.autoCacheImage}
                 onChange={(_, checked) => updateSettings({ autoCacheImage: checked })}
-              />
-              <Toggle
-                label={t`page.settings.detail.onlyRecordActive`}
-                checked={settings.onlyRecordActiveTime}
-                onChange={(_, checked) => updateSettings({ onlyRecordActiveTime: checked })}
               />
             </React.Fragment>
           )}

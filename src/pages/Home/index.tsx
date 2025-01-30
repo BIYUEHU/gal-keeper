@@ -5,12 +5,16 @@ import { Card } from '@fluentui/react-components'
 import { t } from '@/utils/i18n'
 import useStore from '@/store'
 import type { GameWithLocalData } from '@/types'
-import { calculateTotalPlayTime, showMinutes, showTime } from '@/utils'
+import { calculateTotalPlayTime, getGameCover, showMinutes, showTime } from '@/utils'
 import { Link } from 'react-router-dom'
 import events from '@/utils/events'
 
 const Home: React.FC = () => {
-  const { getAllGameData, isRunningGame } = useStore((state) => state)
+  const {
+    getAllGameData,
+    isRunningGame,
+    settings: { maxTimelineDisplayCount }
+  } = useStore((state) => state)
   const [games, setGames] = useState(getAllGameData(false))
 
   useEffect(() => {
@@ -75,8 +79,8 @@ const Home: React.FC = () => {
       })
     )
 
-    return events.sort((a, b) => b.time - a.time)
-  }, [games])
+    return events.sort((a, b) => b.time - a.time).slice(0, maxTimelineDisplayCount)
+  }, [games, maxTimelineDisplayCount])
 
   return (
     <div className="overflow-auto p-4">
@@ -133,14 +137,10 @@ const Home: React.FC = () => {
                   key={game.id}
                   className="no-underline flex items-center p-2 rounded hover:bg-gray-50"
                 >
-                  <img
-                    src={game.cover || '/assets/cover.png'}
-                    alt={game.title}
-                    className="w-10 h-10 object-cover rounded mr-3"
-                  />
+                  <img src={getGameCover(game)} alt={game.title} className="w-10 h-10 object-cover rounded mr-3" />
                   <div>
                     <Text block>{game.title}</Text>
-                    <Text className="text-sm text-gray-500">{showTime(game.lastPlay / 1000)}</Text>
+                    <Text className="text-sm text-gray-500">{showTime(game.lastPlay ?? 0 / 1000)}</Text>
                   </div>
                 </Link>
               ))}
@@ -156,11 +156,7 @@ const Home: React.FC = () => {
                   key={game.id}
                   className="no-underline flex items-center p-2 rounded hover:bg-gray-50"
                 >
-                  <img
-                    src={game.cover || '/assets/cover.png'}
-                    alt={game.title}
-                    className="w-10 h-10 object-cover rounded mr-3"
-                  />
+                  <img src={getGameCover(game)} alt={game.title} className="w-10 h-10 object-cover rounded mr-3" />
                   <div>
                     <Text block>{game.title}</Text>
                     <Text className="text-sm text-gray-500">{showTime(game.createDate / 1000)}</Text>
@@ -180,11 +176,7 @@ const Home: React.FC = () => {
                     key={game.id}
                     className="no-underline flex items-center p-2 rounded hover:bg-gray-50"
                   >
-                    <img
-                      src={game.cover || '/assets/cover.png'}
-                      alt={game.title}
-                      className="w-10 h-10 object-cover rounded mr-3"
-                    />
+                    <img src={getGameCover(game)} alt={game.title} className="w-10 h-10 object-cover rounded mr-3" />
                     <div>
                       <Text block>{game.title}</Text>
                     </div>
@@ -209,7 +201,7 @@ const Home: React.FC = () => {
                 <div className="flex-grow">
                   <div className="flex items-center">
                     <img
-                      src={event.game.cover || '/assets/cover.png'}
+                      src={getGameCover(event.game)}
                       alt={event.game.title}
                       className="w-10 h-10 object-cover rounded mr-3"
                     />

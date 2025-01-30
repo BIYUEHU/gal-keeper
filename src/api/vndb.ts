@@ -23,6 +23,7 @@ export async function fetchFromVndb(name: string, id?: string): Promise<FetchGam
   if (!data) return null
 
   return {
+    bgmId: undefined,
     vndbId: String(data.id),
     title: data.title,
     alias: data.titles.map((title: { title: string }) => title.title),

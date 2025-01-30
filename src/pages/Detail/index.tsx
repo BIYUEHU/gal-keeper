@@ -4,7 +4,9 @@ import { Text } from '@fluentui/react/lib/Text'
 import { Separator } from '@fluentui/react/lib/Separator'
 import React, { useEffect, useMemo, useState } from 'react'
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react'
-import { calculateTotalPlayTime, openUrl, showMinutes, showTime } from '@/utils'
+import { Card } from '@fluentui/react-components'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { calculateTotalPlayTime, getGameCover, openUrl, showMinutes, showTime } from '@/utils'
 import { IS_TAURI } from '@/constant'
 import type { GameWithLocalData } from '@/types'
 import useStore from '@/store'
@@ -33,19 +35,9 @@ const infoOptions: InfoOption[] = [
     text: t`page.detail.info.createDate`,
     value: (g) => new Date(g.createDate).toLocaleDateString()
   },
-
   {
     text: t`page.detail.info.expectedPLayHours`,
     value: (g) => `${g.expectedPlayHours}h`
-  },
-  {
-    text: t`page.detail.info.playTime`,
-
-    value: (g) => showMinutes(calculateTotalPlayTime(g.playTimelines))
-  },
-  {
-    text: t`page.detail.info.playCount`,
-    value: (g) => f`page.detail.info.playCount.value`(g.playTimelines.length.toString())
   },
   {
     text: t`page.detail.info.lastPlay`,
@@ -62,7 +54,12 @@ const Detail: React.FC = () => {
     isOpenDelete2Modal: false
   })
 
-  const { getGameData, removeGameData, isRunningGame } = useStore((state) => state)
+  const {
+    getGameData,
+    removeGameData,
+    isRunningGame,
+    settings: { maxTimelineDisplayCount }
+  } = useStore((state) => state)
   const [game, setGame] = useState(getGameData(id ?? ''))
 
   useEffect(() => {
@@ -197,6 +194,66 @@ const Detail: React.FC = () => {
     [commandItems, game]
   )
 
+  const stats = useMemo(() => {
+    const todayStart =
+      new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`).getTime() / 1000
+
+    const totalPlayTime = calculateTotalPlayTime(game.playTimelines)
+    const todayPlayTime = calculateTotalPlayTime(game.playTimelines.filter(([_, start]) => start >= todayStart))
+    const totalPlayCount = game.playTimelines.length
+
+    return {
+      totalPlayTime,
+      todayPlayTime,
+      totalPlayCount
+    }
+  }, [game])
+
+  const timeline = useMemo(() => {
+    const events: Array<{
+      type: 'play' | 'add'
+      time: number
+      minutes?: number
+    }> = [
+      {
+        type: 'add',
+        time: game.createDate
+      }
+    ]
+
+    game.playTimelines.map(([_, end, second]) => {
+      const minutes = second / 60
+      if (minutes < 1) return
+      events.push({
+        type: 'play',
+        time: end * 1000,
+        minutes
+      })
+    })
+
+    return events.sort((a, b) => b.time - a.time).slice(0, maxTimelineDisplayCount)
+  }, [game, maxTimelineDisplayCount])
+
+  const chartData = useMemo(() => {
+    const data = []
+    const todayStart =
+      new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`).getTime() / 1000
+    const weekStart = todayStart - 6 * 24 * 60 * 60
+
+    for (let i = weekStart; i <= todayStart; i += 24 * 60 * 60) {
+      const dayEnd = i + 24 * 60 * 60
+      const dayPlayTime = game.playTimelines
+        .filter(([_, start]) => start >= i && start < dayEnd)
+        .reduce((acc, [_, __, second]) => acc + second, 0)
+      data.push({
+        date: new Date(i * 1000).toLocaleDateString(),
+        playTime: (dayPlayTime / 60).toFixed(1)
+      })
+    }
+
+    return data
+  }, [game])
+
   return (
     <React.Fragment>
       <SyncModal
@@ -226,7 +283,7 @@ const Detail: React.FC = () => {
         <Stack horizontal horizontalAlign="stretch" tokens={{ childrenGap: 16 }}>
           <Stack tokens={{ childrenGap: 2 }} className="mt-4">
             <img
-              src={game.cover || '/assets/cover.png'}
+              src={getGameCover(game)}
               alt={game.title}
               className="max-h-65 max-w-40 lg:max-w-80 rounded-lg shadow-lg"
             />
@@ -250,8 +307,31 @@ const Detail: React.FC = () => {
               </Text>
             </Stack>
           </Stack>
-        </Stack>{' '}
+        </Stack>
         <Separator />
+
+        <Stack horizontal tokens={{ childrenGap: 16 }} className="mt-4">
+          <Card className="flex-1 p-4">
+            <Text variant="xLarge" className="block mb-2">{t`page.home.stats.totalPlayTime`}</Text>
+            <Text variant="xxLarge" className="font-bold">
+              {showMinutes(stats.totalPlayTime)}
+            </Text>
+          </Card>
+          <Card className="flex-1 p-4">
+            <Text variant="xLarge" className="block mb-2">{t`page.home.stats.todayPlayTime`}</Text>
+            <Text variant="xxLarge" className="font-bold">
+              {showMinutes(stats.todayPlayTime)}
+            </Text>
+          </Card>
+          <Card className="flex-1 p-4">
+            <Text variant="xLarge" className="block mb-2">{t`page.home.stats.totalPlayCount`}</Text>
+            <Text variant="xxLarge" className="font-bold">
+              {stats.totalPlayCount}
+            </Text>
+          </Card>
+        </Stack>
+        <Separator />
+
         <Stack>
           <Text variant="large" className="font-semibold">
             {t`page.detail.section.description`}
@@ -261,7 +341,8 @@ const Detail: React.FC = () => {
           </Text>
         </Stack>
         <Separator />
-        <Stack>
+
+        <Stack className="mt-4">
           <Text variant="large" className="font-semibold">
             {t`page.detail.section.tags`}
           </Text>
@@ -272,6 +353,44 @@ const Detail: React.FC = () => {
               </Text>
             ))}
           </Stack>
+        </Stack>
+        <Separator />
+
+        {/* <Stack className="mt-4">
+          <Text variant="xLarge" className="block mb-4">{t`page.home.timeline.title`}</Text>
+          <Card>
+            <Stack tokens={{ childrenGap: 12 }} className="max-h-100 overflow-auto">
+              {timeline.map((event) => (
+                <div className="flex-grow" key={event.time}>
+                  <div className="flex items-center">
+                    <div className="flex-grow">
+                      <Text className="text-sm text-gray-500">
+                        {`${showTime(event.time / 1000)} • `}
+                        {event.type === 'play' ? t`page.home.timeline.played` : t`page.home.timeline.added`}
+                        {event.minutes && ` • ${showMinutes(event.minutes)}`}
+                      </Text>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Stack>
+          </Card>
+        </Stack> */}
+
+        <Stack className="mt-4">
+          <Text variant="large" className="font-semibold mb-5">
+            {t`page.detail.timeline.chart`}
+          </Text>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="playTime" fill="#8884d8" name={t`page.detail.timeline.playTime`} />
+            </BarChart>
+          </ResponsiveContainer>
         </Stack>
       </div>
     </React.Fragment>

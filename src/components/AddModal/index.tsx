@@ -26,8 +26,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, setData }) => {
 
   const {
     addGameData,
-    addCache,
-    settings: { fetchMethods, autoCacheImage }
+    settings: { fetchMethods }
   } = useStore((state) => state)
 
   useEffect(() => {
@@ -63,7 +62,10 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, setData }) => {
     })
     const game: GameWithLocalData = {
       id,
+      vndbId: undefined,
+      bgmId: undefined,
       title: formData.gameName,
+      updateDate: Date.now() / 1000,
       alias: [],
       description: '',
       tags: [],
@@ -87,13 +89,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, setData }) => {
       cover: '',
       ...fetchData
     }
-    // if (autoCacheImage && game.cover) {
-    //   const filepath = await cacheImage(game.cover)
-    //   .catch((e) => invokeLogger.error(e))
-    //   if (filepath) {
-    //     add
-    //   }
-    // }
+    await cacheImage(game).catch((e) => invokeLogger.error(e))
     addGameData(game)
     setData((state) => [...state, game])
     setIsOpen(false)

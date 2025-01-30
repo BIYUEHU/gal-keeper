@@ -29,7 +29,7 @@ export interface RootState {
     theme: 'light' | 'dark'
     language: 'en_US' | 'zh_CN' | 'ja_JP' | 'zh_TW'
     fetchMethods: FetchMethods
-    onlyRecordActiveTime: boolean
+    maxTimelineDisplayCount: number
     autoSetGameTitle: boolean
     autoCacheImage: boolean
     sortOnlyDisplayLocal: boolean
@@ -50,6 +50,7 @@ type RootStateMethods = {
   updateGameData(data: GameWithLocalData): void
   removeGameData(id: string, onlyLocal: boolean): void
   getGameData(id: string): GameWithLocalData | undefined
+  importGameData(data: GameData[]): void
   getAllGameData<T extends boolean>(isPure: T): (true extends T ? GameData : GameWithLocalData)[]
   updateSettings(settings: Partial<RootState['settings']>): void
   addCache(url: string, file: string): void
@@ -57,7 +58,7 @@ type RootStateMethods = {
   removeCache(url: string): void
 }
 
-const initialState: RootState = {
+export const initialState: RootState = {
   gameData: [],
   localData: [],
   groups: [],
@@ -79,7 +80,7 @@ const initialState: RootState = {
     theme: 'light',
     language: 'zh_CN',
     fetchMethods: 'vndb',
-    onlyRecordActiveTime: true,
+    maxTimelineDisplayCount: 50,
     autoSetGameTitle: true,
     autoCacheImage: true,
     sortOnlyDisplayLocal: false,
@@ -125,7 +126,7 @@ const useStore = create(
       addGameData(data) {
         const { local, ...game } = data
         set((state) => ({
-          gameData: [...state.gameData, { ...game, updateDate: Date.now() / 1000 }],
+          gameData: [...state.gameData, { ...game }],
           ...(local && IS_TAURI
             ? {
                 localData: [...state.localData, local]
@@ -148,7 +149,13 @@ const useStore = create(
       },
       removeGameData(id, onlyLocal) {
         set((state) => ({
-          gameData: onlyLocal ? state.gameData : state.gameData.filter((item) => item.id !== id),
+          gameData: onlyLocal
+            ? state.gameData
+            : state.gameData.filter((item) => {
+                if (item.id !== id) return true
+                if (item.cover) get().removeCache(item.cover)
+                return false
+              }),
           ...(IS_TAURI
             ? {
                 localData: state.localData.filter((item) => item.id !== id)
@@ -159,6 +166,7 @@ const useStore = create(
             deleteIds: onlyLocal ? [...state.sync.deleteIds, id] : state.sync.deleteIds
           }
         }))
+
         events.emit('updateGame', id)
       },
       addGroup(name) {
@@ -215,6 +223,12 @@ const useStore = create(
           local: localData.find((l) => l.id === item.id)
         }))
       },
+      importGameData(data) {
+        set((state) => ({
+          gameData: [...state.gameData.filter((item) => !data.some((d) => d.id === item.id)), ...data],
+          localData: state.localData.filter((item) => data.some((d) => d.id === item.id))
+        }))
+      },
       updateSettings(settings) {
         set((state) => ({
           settings: {
@@ -250,8 +264,3 @@ const useStore = create(
 )
 
 export default useStore
-
-// export * from './main'
-// export * from './shared'
-
-// export default useStore
