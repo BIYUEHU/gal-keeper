@@ -7,7 +7,7 @@ import events from './events'
 let isInitialized = false
 
 const tauriStorage: StateStorage = {
-  getItem: async (key) => {
+  async getItem(key) {
     try {
       if (!isInitialized) {
         setTimeout(() => events.emit('storageInitialized'), 200)
@@ -31,7 +31,7 @@ const tauriStorage: StateStorage = {
       return null
     }
   },
-  setItem: async (key, value) => {
+  async setItem(key, value) {
     try {
       await invoke('db_write_value', {
         directory: await appDataDir(),
@@ -42,7 +42,7 @@ const tauriStorage: StateStorage = {
       dbLogger.fatal(`Failed to write file for key ${key}:`, error)
     }
   },
-  removeItem: async (key) => {
+  async removeItem(key) {
     try {
       await invoke('db_remove_value', { directory: await appDataDir(), key })
       dbLogger.debug(`Removed file for key ${key}`)

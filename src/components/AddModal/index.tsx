@@ -7,7 +7,7 @@ import { Text } from '@fluentui/react/lib/Text'
 import { IS_TAURI } from '@/constant'
 import useStore from '@/store'
 import { fetchGameData } from '@/api'
-import { generateUuid } from '@/utils'
+import { cacheImage, generateUuid } from '@/utils'
 import type { GameWithLocalData } from '@/types'
 import { t } from '@/utils/i18n'
 import { dialog } from '@tauri-apps/api'
@@ -26,7 +26,8 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, setData }) => {
 
   const {
     addGameData,
-    settings: { fetchMethods }
+    addCache,
+    settings: { fetchMethods, autoCacheImage }
   } = useStore((state) => state)
 
   useEffect(() => {
@@ -85,13 +86,14 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, setData }) => {
         : undefined,
       cover: '',
       ...fetchData
-      // ...{
-      //   cover:
-      //     fetchData?.cover && IS_TAURI && autoCacheGameCover
-      //       ? await cacheImage(fetchData.cover).finally(close)
-      //       : (fetchData?.cover ?? '/assets/cover.png')
-      // }
     }
+    // if (autoCacheImage && game.cover) {
+    //   const filepath = await cacheImage(game.cover)
+    //   .catch((e) => invokeLogger.error(e))
+    //   if (filepath) {
+    //     add
+    //   }
+    // }
     addGameData(game)
     setData((state) => [...state, game])
     setIsOpen(false)

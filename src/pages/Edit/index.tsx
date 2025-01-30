@@ -28,7 +28,7 @@ const Edit = () => {
   }
 
   const {
-    settings: { autoSetGameTitle, autoCacheGameCover, fetchMethods },
+    settings: { autoSetGameTitle, autoCacheImage, fetchMethods },
     updateGameData
   } = useStore((state) => state)
   const [fetchMethod, setFetchMethod] = useState<FetchMethods>(fetchMethods)
@@ -62,7 +62,7 @@ const Edit = () => {
     updateGameData({
       ...data,
       ...{
-        cover: data.cover && IS_TAURI && autoCacheGameCover ? await cacheImage(data.cover) : data.cover
+        cover: data.cover && IS_TAURI && autoCacheImage ? await cacheImage(data.cover) : data.cover
       }
     })
     close()

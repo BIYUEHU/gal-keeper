@@ -204,8 +204,8 @@ const Settings: React.FC = () => {
             <React.Fragment>
               <Toggle
                 label={t`page.settings.detail.autoCacheCover`}
-                checked={settings.autoCacheGameCover}
-                onChange={(_, checked) => updateSettings({ autoCacheGameCover: checked })}
+                checked={settings.autoCacheImage}
+                onChange={(_, checked) => updateSettings({ autoCacheImage: checked })}
               />
               <Toggle
                 label={t`page.settings.detail.onlyRecordActive`}

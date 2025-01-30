@@ -18,6 +18,9 @@ export interface RootState {
     username: string
     avatar: string
   }
+  cache: {
+    [url: string]: string
+  }
   settings: {
     githubToken: string
     githubRepo: string
@@ -28,7 +31,7 @@ export interface RootState {
     fetchMethods: FetchMethods
     onlyRecordActiveTime: boolean
     autoSetGameTitle: boolean
-    autoCacheGameCover: boolean
+    autoCacheImage: boolean
     sortOnlyDisplayLocal: boolean
     sortPrimaryKey: SortKeys
     sortIsPrimaryDescending: boolean
@@ -49,6 +52,9 @@ type RootStateMethods = {
   getGameData(id: string): GameWithLocalData | undefined
   getAllGameData<T extends boolean>(isPure: T): (true extends T ? GameData : GameWithLocalData)[]
   updateSettings(settings: Partial<RootState['settings']>): void
+  addCache(url: string, file: string): void
+  getCache(url: string): string | undefined
+  removeCache(url: string): void
 }
 
 const initialState: RootState = {
@@ -64,6 +70,7 @@ const initialState: RootState = {
     username: '',
     avatar: ''
   },
+  cache: {},
   settings: {
     githubToken: '',
     githubRepo: '',
@@ -74,7 +81,7 @@ const initialState: RootState = {
     fetchMethods: 'vndb',
     onlyRecordActiveTime: true,
     autoSetGameTitle: true,
-    autoCacheGameCover: true,
+    autoCacheImage: true,
     sortOnlyDisplayLocal: false,
     sortPrimaryKey: 'CreateDate',
     sortIsPrimaryDescending: true
@@ -190,7 +197,6 @@ const useStore = create(
           }))
         }))
       },
-
       getGameData(id) {
         const gameData = get().gameData.find((item) => item.id === id)
         if (!gameData) return undefined
@@ -200,7 +206,6 @@ const useStore = create(
           local: get().localData.find((local) => local.id === id)
         }
       },
-
       getAllGameData(isPure) {
         const { gameData, localData } = get()
         if (isPure) return gameData
@@ -210,60 +215,30 @@ const useStore = create(
           local: localData.find((l) => l.id === item.id)
         }))
       },
-
-      // getGameDataByProgramFile(programFile) {
-      //   const id = get().localData.find((item) => item.programFile === programFile)?.id
-      //   return id ? get().getGameData(id) : undefined
-      // },
-
-      // openAlert(text, title = '提示') {
-      //   set((state) => ({
-      //     temps: {
-      //       ...state.temps,
-      //       alertIsOpen: true,
-      //       alertText: text,
-      //       alertTitle: title
-      //     }
-      //   }))
-      // },
-
-      // closeAlert() {
-      //   set((state) => ({
-      //     temps: {
-      //       ...state.temps,
-      //       alertIsOpen: false
-      //     }
-      //   }))
-      // },
-
-      // openFullLoading() {
-      //   set((state) => ({
-      //     temps: {
-      //       ...state.temps,
-      //       fullLoadingIsOpen: true
-      //     }
-      //   }))
-
-      //   return () => {
-      //     set((state) => ({
-      //       temps: {
-      //         ...state.temps,
-      //         fullLoadingIsOpen: false
-      //       }
-      //     }))
-      //   }
-      // },
-
-      // getSettingsField(field) {
-      //   return get().settings[field]
-      // },
-
       updateSettings(settings) {
         set((state) => ({
           settings: {
             ...state.settings,
             ...settings
           }
+        }))
+      },
+      addCache(url, file) {
+        set((state) => ({
+          cache: {
+            ...state.cache,
+            [url]: file
+          }
+        }))
+      },
+      getCache(url) {
+        return get().cache[url]
+      },
+      removeCache(url) {
+        const { cache } = get()
+        delete cache[url]
+        set(() => ({
+          cache
         }))
       }
     }),

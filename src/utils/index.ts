@@ -2,6 +2,7 @@ import { IS_TAURI } from '@/constant'
 import { invoke, shell } from '@tauri-apps/api'
 import type { Timeline } from '@/types'
 import { f, t } from './i18n'
+import { appDataDir } from '@tauri-apps/api/path'
 
 export function generateUuid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -19,7 +20,10 @@ export async function openUrl(url: string) {
 }
 
 export async function cacheImage(url: string): Promise<string> {
-  return url.startsWith('http') ? ((await invoke<string>('url_to_base64', { url })) ?? url) : url
+  return invoke('download_image', {
+    url,
+    directory: await appDataDir()
+  })
 }
 
 export function base64Decode(base64: string) {
