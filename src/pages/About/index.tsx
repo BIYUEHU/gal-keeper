@@ -62,7 +62,7 @@ const About: React.FC = () => {
     <div className="overflow-auto p-4">
       <Stack className="h-75vh flex flex-col justify-center items-center my-auto px-7">
         <img
-          onClick={() => openUrl('https://bgm.tv/character/22537')}
+          onClick={() => openUrl('https://vndb.org/c18258')}
           src="/assets/cover.png"
           alt="logo"
           className="w-48 h-48 mb-4 hover:cursor-pointer"

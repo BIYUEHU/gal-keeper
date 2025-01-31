@@ -300,9 +300,9 @@ const Settings: React.FC = () => {
             <ChoiceGroup
               options={[
                 { key: 'en_US', text: t`page.settings.appearance.language.en` },
-                { key: 'zh_CN', text: t`page.settings.appearance.language.zh` },
                 { key: 'ja_JP', text: t`page.settings.appearance.language.ja` },
-                { key: 'zh_TW', text: t`page.settings.appearance.language.zhTw` }
+                { key: 'zh_TW', text: t`page.settings.appearance.language.zhTw` },
+                { key: 'zh_CN', text: t`page.settings.appearance.language.zh` }
               ]}
               selectedKey={settings.language}
               onChange={(_, option) =>

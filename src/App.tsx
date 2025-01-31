@@ -14,6 +14,7 @@ import axios from 'axios'
 import { listen } from '@tauri-apps/api/event'
 import { syncToGithub } from './api/github'
 import { invoke } from '@tauri-apps/api'
+import { random } from '@kotori-bot/tools'
 
 const App: React.FC = () => {
   const { _hasHydrated, settings, gameData } = useStore((state) => state)
@@ -38,12 +39,19 @@ const App: React.FC = () => {
         ;(window as { hideLoading?: () => void }).hideLoading?.()
         setInitialized(true)
 
-        if (!IS_TAURI) return
-
+        if (!IS_TAURI || !settings.autoSyncMinutes || settings.autoSyncMinutes <= 0) return
+        const id = random.int(0, 1000000).toString()
         invoke('auto_sync', {
-          durationMinutes: settings.autoSyncMinutes
+          durationMinutes: settings.autoSyncMinutes,
+          id
         }).catch((e) => invokeLogger.error(e))
-        listen('sync', () => {
+        listen<string>('sync', ({ payload }) => {
+          if (id !== payload) return
+          const { githubToken, githubRepo, githubPath } = useStore.getState().settings
+          if (!githubToken || !githubRepo || !githubPath) {
+            logger.warn('auto-sync skipped due to missing settings.')
+            return
+          }
           logger.debug('starting auto-sync...')
           syncToGithub().then(() => {
             logger.debug('auto-sync finished.')

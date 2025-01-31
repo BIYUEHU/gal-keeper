@@ -31,8 +31,8 @@ const ConfirmBox: React.FC<ConfirmBoxProps> = ({ title = '', text = '', isOpen, 
         }}
       >
         <DialogFooter>
-          <DefaultButton text={t`component.confirmBox.button.confirm`} onClick={handleConfirm} />
-          <PrimaryButton text={t`component.confirmBox.button.cancel`} onClick={handleCancel} />
+          <DefaultButton text={t`component.confirmBox.button.cancel`} onClick={handleCancel} />
+          <PrimaryButton text={t`component.confirmBox.button.confirm`} onClick={handleConfirm} />
         </DialogFooter>
       </Dialog>
     </>
