@@ -7,16 +7,9 @@ import { dialog } from '@tauri-apps/api'
 import { Dropdown } from '@fluentui/react/lib/Dropdown'
 import { Spinner } from '@fluentui/react-components'
 import { fetchGameData } from '@/api'
-import { cacheImage } from '@/utils'
 import { t } from '@/utils/i18n'
 import { useUI } from '@/contexts/UIContext'
 import { invokeLogger } from '@/utils/logger'
-
-export const dropdownOptions: { key: FetchMethods; text: string }[] = [
-  { key: 'mixed', text: t`page.edit.dropdown.mixed` },
-  { key: 'vndb', text: t`page.edit.dropdown.vndb` },
-  { key: 'bgm', text: t`page.edit.dropdown.bgm` }
-]
 
 const Edit = () => {
   const { id } = useParams()
@@ -27,12 +20,14 @@ const Edit = () => {
   }
 
   const {
-    settings: { autoSetGameTitle, fetchMethods },
+    settings: { autoSetGameTitle },
     updateGameData
   } = useStore((state) => state)
-  const [fetchMethod, setFetchMethod] = useState<FetchMethods>(fetchMethods)
   const navigate = useNavigate()
   const [editedGame, setEditedGame] = useState(game)
+  const [fetchMethod, setFetchMethod] = useState<FetchMethods>(
+    editedGame.bgmId && editedGame.vndbId ? 'mixed' : editedGame.bgmId ? 'bgm' : 'vndb'
+  )
   const [isLoading, setIsLoading] = useState(false)
   const { openFullLoading } = useUI()
 
@@ -64,7 +59,6 @@ const Edit = () => {
         cover: data.cover
       }
     })
-    await cacheImage(data).catch((e) => invokeLogger.error(e))
     close()
     navigate(-1)
   }
@@ -120,6 +114,12 @@ const Edit = () => {
       .catch((e) => invokeLogger.error(e))
     if (guideFile) updateLocalDataField('guideFile', guideFile as string)
   }
+
+  const dropdownOptions: { key: FetchMethods; text: string }[] = [
+    { key: 'mixed', text: t`page.edit.dropdown.mixed` },
+    { key: 'vndb', text: t`page.edit.dropdown.vndb` },
+    { key: 'bgm', text: t`page.edit.dropdown.bgm` }
+  ]
 
   return (
     <React.Fragment>

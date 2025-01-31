@@ -59,21 +59,6 @@ pub fn search_nearby_files_and_saves(
     ))
 }
 
-// #[tauri::command]
-// pub fn initialize_directory(directory: &str, files: Vec<&str>) -> Result<(), String> {
-//     let directory = std::path::Path::new(&directory);
-//     if !directory.exists() {
-//         fs::create_dir_all(directory).map_err(|e| format!("Failed to create directory: {}", e))?;
-//     }
-//     for file in files {
-//         let file = directory.join(file);
-//         if !file.exists() {
-//             fs::File::create(file).map_err(|e| format!("Failed to create file: {}", e))?;
-//         }
-//     }
-//     Ok(())
-// }
-
 #[cfg(target_os = "windows")]
 #[tauri::command]
 pub fn open_with_notepad(filepath: &str) -> Result<(), String> {

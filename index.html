@@ -1,106 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/assets/cover.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GalKeeper</title>
-    <style>
-      body {
-        overflow: hidden;
-        padding: 0;
-        margin: 0;
-      }
-      @keyframes rotate {
-        from { transform: rotate(-30deg); }
-        to { transform: rotate(30deg); }
-      }
-      .loading-spinner {
-        animation: rotate 2s linear infinite;
-      }
-      @keyframes maximize {
-        from { transform: scale(1); }
-        to { transform: scale(2); }
-        from { transform: scale(2); }
-        to { transform: scale(0.5); }
-      }
-      .maximize-animation {
-        animation: maximize 1.5s ease-in-out;
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/assets/cover.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GalKeeper</title>
+  <style>
+    body {
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+    }
+
+    .app-loading {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
+      transition: opacity 0.3s ease-in-out;
+      pointer-events: none;
+    }
+
+    .cover {
+      position: fixed;
+      inset: 0;
+      background: white;
+      clip-path: circle(150% at 50% 50%);
+    }
+
+    #loading-image {
+      width: 8rem;
+      height: 8rem;
+      margin-bottom: 2rem;
+      z-index: 999999;
+    }
+
+    .loading-image-animation {
+      animation:
+        rotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite,
+        scaleUp 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes rotate {
+
+      0%,
+      100% {
+        transform: rotate(-30deg);
       }
 
-      .app-loading {
-        position: fixed;
-        inset: 0;
-        z-index: 999999;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background: #ffffff;
-        transition: opacity 0.3s ease-in-out;
+      50% {
+        transform: rotate(30deg);
+      }
+    }
+
+    @keyframes scaleUp {
+      0% {
+        transform: scale(1);
       }
 
-      #loading-image {
-        width: 8rem;
-        height: 8rem;
-        margin-bottom:2rem;
+      100% {
+        transform: scale(2);
       }
-    </style>
-  </head>
+    }
 
-  <body>
-    <div id="root">
+    @keyframes shrink {
+      to {
+        clip-path: circle(0% at 50% 50%);
+      }
+    }
 
-    </div>
-    <div id="app-loading" class="app-loading">
-      <img id="loading-image" class="loading-spinner" src="/assets/cover.png" />
-      <div id="loading-text"></div>
-    </div>
-  </body>
+    .shrink-animation {
+      animation: shrink 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .text-animation {
+      color: #333;
+      z-index: 999999;
+    }
+
+    .text-animation span {
+      display: inline-block;
+      min-width: 1.2em;
+      animation: textWave 0.6s infinite alternate;
+    }
+
+    @keyframes textWave {
+      from {
+        transform: translateY(0);
+      }
+
+      to {
+        transform: translateY(-0.5em);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+  <div id="app-loading" class="app-loading">
+    <img id="loading-image" src="/assets/cover.png" />
+    <div id="loading-text" class="text-animation"></div>
+    <div class="cover"></div>
+  </div>
 
   <script>
-    (function() {
+    (function () {
       let isLoaded = false;
       const loadingElement = document.getElementById('app-loading')
       const textElement = document.getElementById('loading-text')
       const imageElement = document.getElementById('loading-image')
-      const audio = new Audio('/assets/launch.wav')
 
-      let animationList = [
-        '♪(^∇^*).',
-        'ゞq(≧▽≦q)..',
-        '(/▽＼)...',
-        '╰（‵□′）╯....',
-        '（；´д｀）.....'
-      ]
-
-      function textAnimation(num, timerId) {
-        textElement.textContent = animationList[num - 1]
+      function animateText(index = 0) {
         if (isLoaded) return
-        const newTimerId = setTimeout(() => {
-          clearTimeout(timerId)
-          textAnimation(num === 5 ? 1 : num + 1, newTimerId)
-        }, 600)
+        textElement.innerHTML = [
+          '♪(^∇^*)',
+          'ゞq(≧▽≦q)',
+          '(/▽＼)',
+          '╰（‵□′）╯',
+          '（；´д｀）'
+        ][index]
+          .split('').map(c => `<span>${c}</span>`).join('')
+        setTimeout(() => animateText((index + 1) % 5), 600)
       }
-      textAnimation(1)
+      animateText()
 
-      const timeoutId = setTimeout(() => {
-        animationList = animationList.map(() => '<( _ _ )> Loaded timeout')
-      }, 10000)
-
-      window.hideLoading = function() {
-        clearTimeout(timeoutId)
+      window.hideLoading = function () {
+        if (isLoaded) return
         isLoaded = true
-        audio.play()
-        imageElement.classList.add('maximize-animation')
-        setTimeout(() => {
-          loadingElement.classList.add('opacity-0', 'transition-opacity', 'duration-300')
-          loadingElement.classList.add('hidden')
-          loadingElement.classList.remove('app-loading')
-        }, 800)
+
+        textElement.style.display = 'none'
+        const cover = document.querySelector('.cover')
+        cover.classList.add('shrink-animation')
+        imageElement.classList.add('loading-image-animation')
+
+        cover.addEventListener('animationend', () => {
+          loadingElement.classList.add('opacity-0')
+          setTimeout(() => {
+            loadingElement.remove()
+          }, 300)
+        })
       }
     })()
   </script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

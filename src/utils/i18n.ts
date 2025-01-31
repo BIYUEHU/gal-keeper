@@ -12,7 +12,7 @@ i18n.use(enUS, 'en_US')
 i18n.use(zhTW, 'zh_TW')
 i18n.use(zhCN, 'zh_CN')
 
-i18n.set('zh_CN')
+i18n.set('ja_JP')
 
 export const t = i18n.t.bind(i18n)
 

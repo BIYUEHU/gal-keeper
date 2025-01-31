@@ -1,13 +1,12 @@
 import useStore from '@/store/'
 import type { RootState } from '@/store'
 import http, { createHttp } from './http'
-import type { GameData, GameWithLocalData, Timeline } from '@/types'
+import { cloudDataSchema, type GameData } from '@/types'
 import { SHARED_JSON_FILE } from '@/constant'
 import axios, { AxiosError } from 'axios'
-import { base64Decode, base64Encode } from '@/utils'
+import { base64Decode, base64Encode, showMinutes } from '@/utils'
 
 const githubHttp = createHttp()
-// const getSettingsField = useStore.getState().getSettingsField
 
 githubHttp.interceptors.request.use((config) => {
   const { githubToken } = useStore.getState().settings
@@ -61,7 +60,7 @@ export async function readFileFromGithub(file: string): Promise<any> {
     }
   } catch (error) {
     if (error instanceof AxiosError && error.response?.data.status === '404') {
-      await writeFileToGithub('Sync: Initial data', SHARED_JSON_FILE, { time: 0, data: [] }, true)
+      await writeFileToGithub('Sync: Initial data', SHARED_JSON_FILE, { deleteIds: [], data: [] }, true)
       return await readFileFromGithub(file)
     }
     throw error
@@ -78,126 +77,76 @@ export async function writeFileToGithub(message: string, file: string, content: 
 }
 
 export async function syncToGithub() {
-  return
-  // const { localChanges, time } = useStore.getState().sync
-  // // if (localChanges.length === 0) return
-  // const data = useSharedStore.getState().getAllGameData(true)
-  // const { time: cloudTime, data: cloudData }: { time: number; data: GameData[] } =
-  //   await readFileFromGithub(SHARED_JSON_FILE)
+  const {
+    sync: { deleteIds },
+    gameData: data
+  } = useStore.getState()
+  const { deleteIds: cloudDeltedIds, data: cloudData } = cloudDataSchema.parse(
+    await readFileFromGithub(SHARED_JSON_FILE)
+  )
 
-  // const [localAddIds, localUpdateIds, localRemoveIds, localTimelinesIds] = (
-  //   ['add', 'update', 'remove', 'timelines'] as const
-  // ).map((target) => localChanges.filter(({ type }) => type === target).map(({ id }) => id))
+  const newDeleteIds = Array.from(new Set([...deleteIds, ...cloudDeltedIds]))
 
-  // const newData = [
-  //   ...cloudData
-  //     // Remove deleted data
-  //     .filter((item) => !localRemoveIds.includes(item.id))
-  //     .map(
-  //       (item): GameData =>
-  //         // Update information of data (Exclude `playTimelines`)
-  //         localUpdateIds.includes(item.id)
-  //           ? { ...(data.find((local) => local.id === item.id) as GameData), playTimelines: item.playTimelines }
-  //           : item
-  //     )
-  //     .map((item) =>
-  //       // Add timelines to data
-  //       localTimelinesIds.includes(item.id)
-  //         ? {
-  //             ...item,
-  //             playTimelines: [
-  //               ...item.playTimelines,
-  //               ...(useSharedStore.getState().getGameData(item.id) as Required<GameWithLocalData>).playTimelines
-  //             ]
-  //           }
-  //         : item
-  //     ),
-  //   // Add new data
-  //   ...data.filter(({ id }) => localAddIds.includes(id))
-  // ]
+  const [dataIds, cloudDataIds] = [data, cloudData].map((arr) =>
+    arr.map(({ id }) => id).filter((id) => !newDeleteIds.includes(id))
+  )
 
-  // const [localIds, cloudIds] = [data, cloudData].map((items) => items.map(({ id }) => id))
-  // const cloudAddTitles = cloudData
-  //   .filter(({ id }) => !localIds.includes(id) && !localRemoveIds.includes(id))
-  //   .map(({ title }) => title)
-  // const cloudRemoveTitles = data
-  //   .filter(({ id }) => !cloudIds.includes(id) && !localAddIds.includes(id))
-  //   .map(({ title }) => title)
+  const newData = [
+    ...cloudData
+      .filter((item) => !deleteIds.includes(item.id))
+      .map(
+        (item): GameData =>
+          dataIds.includes(item.id)
+            ? ((target): GameData => ({
+                ...(target.updateDate > item.updateDate ? target : item),
+                playTimelines: [
+                  ...target.playTimelines,
+                  ...item.playTimelines.filter((timeline) => !target.playTimelines.some((t) => t[0] === timeline[0]))
+                ].sort((a, b) => a[0] - b[0])
+              }))(data.find((local) => local.id === item.id) as GameData)
+            : item
+      ),
+    ...data.filter(({ id }) => !cloudDataIds.includes(id) && !cloudDeltedIds.includes(id))
+  ]
 
-  // const syncTime = Date.now()
-  // const { addCloudChange } = useStore.getState()
-  // if (cloudAddTitles.length > 0) addCloudChange({ title: cloudAddTitles, type: 'add', time: syncTime })
-  // if (cloudRemoveTitles.length > 0) addCloudChange({ title: cloudRemoveTitles, type: 'remove', time: syncTime })
+  const [totalTime, cloudTotalTime] = [data, cloudData].map((arr) =>
+    arr.reduce((last, { playTimelines }) => last + playTimelines.reduce((sum, [, , time]) => sum + time, 0), 0)
+  )
 
-  // const content = (() => {
-  //   if (cloudTime === time && cloudTime === 0) return { time: syncTime, data: newData }
-
-  //   if (cloudTime > time) {
-  //     // Cloud and local happened changes, generate new timestamp
-  //     if (localAddIds.length > 0 || localUpdateIds.length > 0 || localRemoveIds.length > 0) {
-  //       return {
-  //         time: syncTime,
-  //         data: newData
-  //       }
-  //     }
-  //     // Cloud happened changes but local didn't, use cloud timestamp
-  //     return {
-  //       time: cloudTime,
-  //       data: newData
-  //     }
-  //   }
-
-  //   // Cloud and local happened changes, generate new timestamp
-  //   if (cloudAddTitles.length > 0 || cloudRemoveTitles.length > 0) {
-  //     return {
-  //       time: syncTime,
-  //       data: newData
-  //     }
-  //   }
-
-  //   // Local happened changes but cloud didn't, use local timestamp
-  //   return {
-  //     time: time,
-  //     data: newData
-  //   }
-  // })()
-
-  // await writeFileToGithub(
-  //   `sync: ${
-  //     [
-  //       localTimelinesIds.length > 0
-  //         ? `Play ${(() => {
-  //             const rawMinutes =
-  //               localChanges
-  //                 .filter(({ id, type }) => localTimelinesIds.includes(id) && type === 'timelines')
-  //                 .reduce((last, change) => {
-  //                   return last + (change as { data: Timeline }).data[2]
-  //                 }, 0) /
-  //               1000 /
-  //               60
-  //             const hours = Math.floor(rawMinutes / 60)
-  //             const minutes = Math.floor(rawMinutes % 60)
-  //             return hours === 0 ? `${minutes}m` : `${hours}h${minutes}m`
-  //           })()}`
-  //         : null,
-  //       ...[localAddIds, localUpdateIds, localRemoveIds].map(({ length }, index) =>
-  //         length > 0 ? `${['Add', 'Update', 'Remove'][index]} ${length} games` : null
-  //       )
-  //     ]
-  //       .filter((item) => item)
-  //       .join(', ')
-  //       .trim() || 'No changes'
-  //   }`,
-  //   SHARED_JSON_FILE,
-  //   content
-  // ).then(() => {
-  //   useStore.setState((state) => ({ sync: { ...state.sync, time: content.time, localChanges: [] } }))
-  //   useSharedStore.setState(() => ({ data: content.data }))
-  // })
-
-  // return {
-  //   time: content.time,
-  //   add: cloudAddTitles.length,
-  //   remove: cloudRemoveTitles.length
-  // }
+  await writeFileToGithub(
+    `sync: ${
+      [
+        totalTime > cloudTotalTime ? `Playtime +${showMinutes((totalTime - cloudTotalTime) / 1000)}` : null,
+        newData.length > cloudData.length ? `Add ${newData.length - cloudData.length} games` : null,
+        cloudDataIds.length < cloudData.length ? `Remove ${cloudData.length - cloudDataIds.length} games` : null,
+        ((count) => (count > 0 ? `Update ${count} games` : null))(
+          cloudData
+            .filter((item) => !deleteIds.includes(item.id))
+            .reduce(
+              (acc, cur) =>
+                acc +
+                (dataIds.includes(cur.id) &&
+                (data.find((local) => local.id === cur.id) as GameData).updateDate !== cur.updateDate
+                  ? 1
+                  : 0),
+              0
+            )
+        )
+      ]
+        .filter((item) => item)
+        .join(', ')
+        .trim() || 'No changes'
+    }`,
+    SHARED_JSON_FILE,
+    { deleteIds: newDeleteIds, data: newData }
+  ).then(() => {
+    useStore.setState((state) => ({
+      sync: {
+        ...state.sync,
+        time: Date.now(),
+        deleteIds: newDeleteIds
+      },
+      gameData: newData
+    }))
+  })
 }

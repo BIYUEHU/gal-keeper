@@ -11,24 +11,6 @@ import { CommandBar, type ICommandBarItemProps, IconButton } from '@fluentui/rea
 import React, { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 
-const DEFAULT_GROUPS: Group[] = [
-  {
-    id: DefaultGroup.DEVELOPER,
-    name: t`page.category.default.developer.title`,
-    categoryIds: []
-  },
-  {
-    id: DefaultGroup.RATING,
-    name: t`page.category.default.rating.title`,
-    categoryIds: []
-  },
-  {
-    id: DefaultGroup.PLAY_STATE,
-    name: t`page.category.default.playStatus.title`,
-    categoryIds: []
-  }
-]
-
 function isDefaultGroup(id: string): id is DefaultGroup {
   return ([DefaultGroup.DEVELOPER, DefaultGroup.RATING, DefaultGroup.PLAY_STATE] as string[]).includes(id)
 }
@@ -127,6 +109,24 @@ const Category: React.FC = () => {
       categories.filter((category) => currentGroups?.categoryIds.includes(category.id)),
     [categories, currentGroupId, allGames, currentGroups]
   )
+
+  const DEFAULT_GROUPS: Group[] = [
+    {
+      id: DefaultGroup.DEVELOPER,
+      name: t`page.category.default.developer.title`,
+      categoryIds: []
+    },
+    {
+      id: DefaultGroup.RATING,
+      name: t`page.category.default.rating.title`,
+      categoryIds: []
+    },
+    {
+      id: DefaultGroup.PLAY_STATE,
+      name: t`page.category.default.playStatus.title`,
+      categoryIds: []
+    }
+  ]
 
   if (!id) {
     const commandItems: ICommandBarItemProps[] = [

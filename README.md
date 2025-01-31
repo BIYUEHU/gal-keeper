@@ -4,7 +4,7 @@
 
   <div style="width:200px">
 
-   ![src-tauri/icons/nanno.png](src-tauri/icons/nanno.png)
+   [![src-tauri/icons/nanno.png](src-tauri/icons/nanno.png)](https://bgm.tv/character/22537)
 
   </div>
 
@@ -12,7 +12,7 @@
 
 # Nanno | GalKeeper
 
-**A visual novel management, statistics and cloud syncing tool built with Tauri and React.**
+**A lightweight and fast visual novel management for coders, statistics and cloud syncing tool built with Tauri and React**
 
 [![Build](https://github.com/BIYUEHU/gal-keeper/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/BIYUEHU/gal-keeper/actions/workflows/build.yml)
 ![License](https://img.shields.io/badge/license-BCU-deepskyblue)
@@ -23,17 +23,27 @@
 
 <!-- markdownlint-enable -->
 
+## Internationalization
+
+- English
+- 日本語
+- 繁体中文
+- 简体中文
+
 ## Stacks
 
 - React
 - FluentUI
 - UnoCSS
-- TauriV1.* (Fuck Electron, NW.js and TauriV2.\*)
-- Sled
+- Recharts
+- @kotori-bot/i18n, @kotori-bot/tools, @kotori-bot/logger
+- TauriV1 (Fuck Electron, NW.js and TauriV2)
+- LevelDB
+- Roga
 
 ## License
 
-The project is licensed under the [BCU](https://github.com/ICEAGENB/ban-chinaman-using) license.
+The project is licensed under the [BCU](https://github.com/ICEAGENB/ban-zhinese-using) license.
 
 ## Screenshots
 

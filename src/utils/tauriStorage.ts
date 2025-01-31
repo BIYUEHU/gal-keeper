@@ -2,17 +2,10 @@ import type { StateStorage } from 'zustand/middleware'
 import { appDataDir } from '@tauri-apps/api/path'
 import { invoke } from '@tauri-apps/api'
 import { dbLogger } from './logger'
-import events from './events'
-
-let isInitialized = false
 
 const tauriStorage: StateStorage = {
   async getItem(key) {
     try {
-      if (!isInitialized) {
-        setTimeout(() => events.emit('storageInitialized'), 200)
-        isInitialized = true
-      }
       const data = await invoke<string>('db_read_value', {
         directory: await appDataDir(),
         key

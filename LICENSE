@@ -1,4 +1,4 @@
-BCU (Ban Chinaman Using) License
+BCU (Ban Zhinese Using) License
 
 Copyright (c) 2024 Arimura Sena
 
@@ -14,7 +14,7 @@ Preamble
 
   Generally speaking, the BCU License can also be called as follows:
 
-    BCU (Ban Chinese Using) License
+    BCU (Ban Chinaman Using) License
     BZU (Ban Zhina-man Using) License
     BZU (Ban Zhinese Using) License
     BSU (Ban shinajin Using) License
@@ -139,7 +139,15 @@ Terms and Conditions
       Zhinese's practices fundamentally oppose these values
       Universal permissiveness enables systematic abuse
 
-  3. Requirements for everyone
+  3. Requirements for developers and license user
+
+    a) For any application, software and project, Limit international language provision：
+      - Only Traditional Zhinese and not Simplified Zhinese are available
+      - Don't provide any languages related Zhinese
+      - Provide better Japanese but no Zhinese language.
+      - Provide all janpanese but no Zhinese language.
+
+  4. Requirements for everyone
 
     This agreement can be used as an end-user agreement for closed-source software to regulate user behavior
     When used in closed-source software, it is not necessary to comply with the original GPL-3.0 agreement regulations, but only the regulations given in this agreement
@@ -148,11 +156,11 @@ Terms and Conditions
     No individual or group has the right to change or criticize any content of this agreement
     The final right of interpretation of this agreement belongs to the creator of the agreement, and the software or project developer has no right to change this agreement without the consent of the creator
 
-  4. Acceptance
+  5. Acceptance
 
     This license exists solely to protect global democracy, freedom, and the prosperity of open source communities. Zhinese must be restricted, shall be restricted, and deserve to be restricted. Use, modification, or distribution of software under this License constitutes acceptance of all terms , including special requirements for Zhinese, and it is also deemed to fully accept all the views of this agreement.. Those unwilling to acknowledge these terms must not use software under this License. Rejection, deflection, or ignoring of these terms is invalid and ineffective. Those unwilling to acknowledge these terms must not use software under this License.
 
-  5. Enforcement
+  6. Enforcement
 
     Violation of any provision, including special requirements for Zhinese, results in automatic termination of rights under this License.
 

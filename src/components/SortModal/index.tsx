@@ -12,20 +12,21 @@ interface SortModalProps {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
 }
-const dropdownOptions: { key: SortKeys; text: string }[] = [
-  { key: 'CreateDate', text: t`component.sortModal.sort.createDate` },
-  { key: 'Title', text: t`component.sortModal.sort.title` },
-  { key: 'LastPlay', text: t`component.sortModal.sort.lastPlay` },
-  { key: 'Developer', text: t`component.sortModal.sort.developer` },
-  { key: 'Rating', text: t`component.sortModal.sort.rating` },
-  { key: 'ReleaseDate', text: t`component.sortModal.sort.releaseDate` }
-]
 
 const SortModal: React.FC<SortModalProps> = ({ isOpen, setIsOpen }) => {
   const {
     updateSettings,
     settings: { sortPrimaryKey, sortIsPrimaryDescending }
   } = useStore((state) => state)
+
+  const dropdownOptions: { key: SortKeys; text: string }[] = [
+    { key: 'CreateDate', text: t`component.sortModal.sort.createDate` },
+    { key: 'Title', text: t`component.sortModal.sort.title` },
+    { key: 'LastPlay', text: t`component.sortModal.sort.lastPlay` },
+    { key: 'Developer', text: t`component.sortModal.sort.developer` },
+    { key: 'Rating', text: t`component.sortModal.sort.rating` },
+    { key: 'ReleaseDate', text: t`component.sortModal.sort.releaseDate` }
+  ]
 
   return (
     <Modal

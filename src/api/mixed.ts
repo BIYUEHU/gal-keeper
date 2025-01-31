@@ -6,7 +6,10 @@ export async function fetchFromMixed(
   name: string,
   [bgmId, vndbId]: [string?, string?] = []
 ): Promise<FetchGameData | null> {
-  const [bgmData, vndbData] = await Promise.all([fetchFromBangumi(name, bgmId), fetchFromVndb(name, vndbId)])
+  const [bgmData, vndbData] = await Promise.all([
+    fetchFromBangumi(name, bgmId).catch(() => null),
+    fetchFromVndb(name, vndbId)
+  ])
   if (!bgmData && !vndbData) return null
   return {
     bgmId: bgmData?.bgmId,

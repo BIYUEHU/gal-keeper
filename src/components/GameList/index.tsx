@@ -74,7 +74,7 @@ const GameList: React.FC<GameListProps> = ({ games, commandItems, children }) =>
           <Link
             key={game.id}
             to={`/details/${game.id}`}
-            className="ml-1 relative my-2 max-w-40 no-underline p-1 border-transparent box-border hover:border-solid hover:border-2 hover:border-gray-200 hover:bg-gray-50 hover:scale-105"
+            className="ml-1 relative my-2 max-w-40 no-underline p-1 border-transparent box-border hover:border-solid hover:border-2 hover:border-gray-200 hover:bg-gray-50"
           >
             <div className="cursor-pointer relative">
               <div className="aspect-[3/4] rounded-lg overflow-hidden bg-gray-100 relative">

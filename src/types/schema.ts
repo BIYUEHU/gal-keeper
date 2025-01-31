@@ -28,4 +28,11 @@ export const gameDataSchema = Tsu.Object({
 
 export const gameDataListSchema = Tsu.Array(gameDataSchema)
 
+export const cloudDataSchema = Tsu.Object({
+  deleteIds: Tsu.Array(Tsu.String()),
+  data: gameDataListSchema
+})
+
+export type CloudData = Tsu.infer<typeof cloudDataSchema>
+
 export type GameData = Tsu.infer<typeof gameDataSchema>

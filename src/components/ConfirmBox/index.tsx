@@ -9,13 +9,7 @@ interface ConfirmBoxProps {
   onConfirm?: () => void
 }
 
-const ConfirmBox: React.FC<ConfirmBoxProps> = ({
-  title = t`component.confirmBox.default.title`,
-  text = '',
-  isOpen,
-  setIsOpen,
-  onConfirm
-}) => {
+const ConfirmBox: React.FC<ConfirmBoxProps> = ({ title = '', text = '', isOpen, setIsOpen, onConfirm }) => {
   const handleConfirm = () => {
     setIsOpen(false)
     onConfirm?.()
@@ -32,13 +26,13 @@ const ConfirmBox: React.FC<ConfirmBoxProps> = ({
         onDismiss={handleCancel}
         dialogContentProps={{
           type: DialogType.normal,
-          title: title,
+          title: title || t`component.confirmBox.default.title`,
           subText: text
         }}
       >
         <DialogFooter>
-          <PrimaryButton text={t`component.confirmBox.button.confirm`} onClick={handleConfirm} />
-          <DefaultButton text={t`component.confirmBox.button.cancel`} onClick={handleCancel} />
+          <DefaultButton text={t`component.confirmBox.button.confirm`} onClick={handleConfirm} />
+          <PrimaryButton text={t`component.confirmBox.button.cancel`} onClick={handleCancel} />
         </DialogFooter>
       </Dialog>
     </>

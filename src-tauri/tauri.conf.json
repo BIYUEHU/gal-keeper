@@ -7,8 +7,8 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "gal-keeper",
-    "version": "0.1.0"
+    "productName": "Nanno",
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -52,7 +52,16 @@
         "icons/nanno.ico"
       ],
       "copyright": "© Copyright 2024 - 2025 Arimura Sena",
-      "category": "WordGame"
+      "category": "WordGame",
+      "windows": {
+        "wix": {
+          "language": "ja-JP"
+        },
+        "nsis": {
+          "license": "../LICENSE",
+          "installerIcon": "icons/nanno.ico"
+        }
+      }
     }
   }
 }

@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: Install frontend dependencies
+        run: npm install --frozen-lockfile
+
+      - name: Build project
+        run: npx pnpm tauri build
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'v*.*.*-*')}}
+          body: |
+            Please refer to [CHANGELOG.md](https://github.com/BIYUEHU/gal-keeper/blob/main/CHANGELOG.md) for details.
+          files: |
+            src-tauri/target/release/bundle/msi/Nanno*
+            src-tauri/target/release/bundle/nsis/Nanno*
+            LICENSE

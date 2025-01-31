@@ -29,7 +29,7 @@ interface UIContextType {
   setCurrentGroupId: (group: string) => void
 }
 
-const initialState: UIState = {
+const DEFAULT_STATE: UIState = {
   alert: {
     isOpen: false,
     text: '',
@@ -82,7 +82,7 @@ function uiReducer(state: UIState, action: UIAction): UIState {
 const UIContext = createContext<UIContextType | null>(null)
 
 export function UIProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(uiReducer, initialState)
+  const [state, dispatch] = useReducer(uiReducer, DEFAULT_STATE)
 
   const openAlert = (text: string, title?: string) => dispatch({ type: 'OPEN_ALERT', payload: { text, title } })
 

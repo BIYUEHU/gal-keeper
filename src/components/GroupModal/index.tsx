@@ -32,7 +32,6 @@ const GroupModal: React.FC<GroupModalProps> = ({ isOpen, setIsOpen, setData, gro
   }, [isOpen])
 
   const handleSubmit = async () => {
-    console.log(name, groupId)
     if (!name) return
     if (groupId) {
       addCategory(groupId, name)

@@ -13,7 +13,6 @@ Content-Type: application/json
     "fields": "id, title, image.url, released, titles.title, length_minutes, rating, screenshots.url, tags.name, developers.name, description, tags.rating, extlinks.name, extlinks.url"
 }
 
-
 ### Bangumi
 
 GET https://api.bgm.tv/search/subject/{{QUERY}} HTTP/1.1

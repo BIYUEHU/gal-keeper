@@ -1,15 +1,17 @@
 {
   "name": "gal-keeper",
   "private": true,
-  "version": "0.1.0",
-  "description": "A visual novel management, statistics and cloud syncing tool built with Tauri and React",
+  "version": "1.0.0",
+  "description": "A lightweight and fast visual novel management for coders, statistics and cloud syncing tool built with Tauri and React",
   "type": "module",
   "license": "BAN-ZHINESE-USING",
+  "author": "Arimura Sena <me@hotaru.icu>",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "keywords": [
     "visual novel",
@@ -38,6 +40,7 @@
     "@fluentui/react-icons": "^2.0.264",
     "@kotori-bot/i18n": "^1.3.2",
     "@kotori-bot/logger": "^1.3.2",
+    "@kotori-bot/tools": "^1.5.2",
     "@tauri-apps/api": "^1.6.0",
     "axios": "^1.7.9",
     "fluoro": "^1.1.2",
@@ -59,6 +62,7 @@
     "@types/recharts": "^1.8.29",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.20",
+    "conventional-changelog-cli": "^5.0.0",
     "globals": "^15.11.0",
     "postcss": "^8.4.47",
     "readline-sync": "^1.4.10",

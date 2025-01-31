@@ -1,11 +1,12 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { IS_TAURI, StoreKey } from '@/constant'
+import { APP_STORE_KEY, IS_TAURI } from '@/constant'
 import type { GameData, GameWithLocalData, FetchMethods, LocalData, SortKeys, Group, Category } from '@/types'
 import tauriStorage from '@/utils/tauriStorage'
 import events from '@/utils/events'
 
 export interface RootState {
+  _hasHydrated: boolean
   gameData: GameData[]
   localData: LocalData[]
   groups: Group[]
@@ -32,6 +33,7 @@ export interface RootState {
     maxTimelineDisplayCount: number
     autoSetGameTitle: boolean
     autoCacheImage: boolean
+    playLaunchVoice: boolean
     sortOnlyDisplayLocal: boolean
     sortPrimaryKey: SortKeys
     sortIsPrimaryDescending: boolean
@@ -58,7 +60,8 @@ type RootStateMethods = {
   removeCache(url: string): void
 }
 
-export const initialState: RootState = {
+export const DEFAULT_STATE: RootState = {
+  _hasHydrated: !IS_TAURI,
   gameData: [],
   localData: [],
   groups: [],
@@ -78,11 +81,12 @@ export const initialState: RootState = {
     githubPath: 'gal-keeper-data/',
     autoSyncMinutes: 10,
     theme: 'light',
-    language: 'zh_CN',
-    fetchMethods: 'vndb',
+    language: 'en_US',
+    fetchMethods: IS_TAURI ? 'mixed' : 'vndb',
     maxTimelineDisplayCount: 50,
     autoSetGameTitle: true,
     autoCacheImage: true,
+    playLaunchVoice: IS_TAURI,
     sortOnlyDisplayLocal: false,
     sortPrimaryKey: 'CreateDate',
     sortIsPrimaryDescending: true
@@ -92,7 +96,7 @@ export const initialState: RootState = {
 const useStore = create(
   persist<RootState & RootStateMethods>(
     (set, get) => ({
-      ...initialState,
+      ...DEFAULT_STATE,
       isRunningGame(id) {
         return (
           Date.now() / 1000 -
@@ -141,9 +145,13 @@ const useStore = create(
           gameData: state.gameData.map((item) =>
             item.id === data.id ? { ...game, updateDate: Date.now() / 1000 } : item
           ),
-          ...(local && IS_TAURI
-            ? { localData: state.localData.map((item) => (item.id === data.id ? { ...item, ...local } : item)) }
-            : {})
+          localData:
+            local && IS_TAURI
+              ? [
+                  ...state.localData.filter((item) => item.id !== data.id),
+                  { ...(state.localData.find((item) => item.id === data.id) ?? {}), ...local }
+                ]
+              : state.localData
         }))
         events.emit('updateGame', data.id)
       },
@@ -163,7 +171,7 @@ const useStore = create(
             : {}),
           sync: {
             ...state.sync,
-            deleteIds: onlyLocal ? [...state.sync.deleteIds, id] : state.sync.deleteIds
+            deleteIds: onlyLocal ? state.sync.deleteIds : [...state.sync.deleteIds, id]
           }
         }))
 
@@ -230,6 +238,12 @@ const useStore = create(
         }))
       },
       updateSettings(settings) {
+        if (settings.language && settings.language !== get().settings.language) {
+          setTimeout(() => {
+            location.href = '/'
+          }, 0)
+        }
+
         set((state) => ({
           settings: {
             ...state.settings,
@@ -257,8 +271,13 @@ const useStore = create(
       }
     }),
     {
-      name: StoreKey.APP,
-      storage: IS_TAURI ? createJSONStorage(() => tauriStorage) : createJSONStorage(() => localStorage)
+      name: APP_STORE_KEY,
+      storage: IS_TAURI ? createJSONStorage(() => tauriStorage) : createJSONStorage(() => localStorage),
+      onRehydrateStorage() {
+        return () => {
+          useStore.setState({ _hasHydrated: true })
+        }
+      }
     }
   )
 )

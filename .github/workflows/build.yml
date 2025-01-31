@@ -2,9 +2,13 @@ name: Build
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
+    tags:
+      - '!v*'
   pull_request:
-    branches: ["main"]
+    branches:
+      - main
 
 jobs:
   build:
@@ -36,7 +40,7 @@ jobs:
         run: npx pnpm tauri build
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-latest-gal-keeper
-          path: src-tauri/target/release/gal-keeper.exe
+          path: src-tauri/target/release/Nanno.exe

@@ -130,7 +130,7 @@ const Home: React.FC = () => {
         <Stack horizontal tokens={{ childrenGap: 16 }}>
           <Card className="flex-1 p-4">
             <Text variant="xLarge" className="block mb-4">{t`page.home.activity.recent`}</Text>
-            <Stack tokens={{ childrenGap: 8 }}>
+            <Stack tokens={{ childrenGap: 8 }} className="max-h-33vh overflow-auto">
               {stats.recentPlayed.map((game) => (
                 <Link
                   to={`/details/${game.id}`}
@@ -140,7 +140,7 @@ const Home: React.FC = () => {
                   <img src={getGameCover(game)} alt={game.title} className="w-10 h-10 object-cover rounded mr-3" />
                   <div>
                     <Text block>{game.title}</Text>
-                    <Text className="text-sm text-gray-500">{showTime(game.lastPlay ?? 0 / 1000)}</Text>
+                    <Text className="text-sm text-gray-500">{showTime(game.lastPlay / 1000)}</Text>
                   </div>
                 </Link>
               ))}
@@ -149,7 +149,7 @@ const Home: React.FC = () => {
 
           <Card className="flex-1 p-4">
             <Text variant="xLarge" className="block mb-4">{t`page.home.activity.latest`}</Text>
-            <Stack tokens={{ childrenGap: 8 }}>
+            <Stack tokens={{ childrenGap: 8 }} className="max-h-33vh overflow-auto">
               {stats.recentAdded.map((game) => (
                 <Link
                   to={`/details/${game.id}`}
@@ -168,7 +168,7 @@ const Home: React.FC = () => {
 
           <Card className="flex-1 p-4">
             <Text variant="xLarge" className="block mb-4">{t`page.home.activity.running`}</Text>
-            <Stack tokens={{ childrenGap: 8 }}>
+            <Stack tokens={{ childrenGap: 8 }} className="max-h-33vh overflow-auto">
               {stats.runningGames.length > 0 ? (
                 stats.runningGames.map((game) => (
                   <Link
@@ -191,7 +191,7 @@ const Home: React.FC = () => {
 
         <Card className="p-4">
           <Text variant="xLarge" className="block mb-4">{t`page.home.timeline.title`}</Text>
-          <Stack tokens={{ childrenGap: 12 }} className="max-h-100 overflow-auto">
+          <Stack tokens={{ childrenGap: 12 }} className="max-h-33vh overflow-auto">
             {timeline.map((event) => (
               <Link
                 to={`/details/${event.game.id}`}
