@@ -1,8 +1,9 @@
-# 0.1.0 (2025-01-31)
+# [1.0.0](https://github.com/biyuehu/gal-keeper/compare/7fbb956b3e059e10e8bec7b6b7387ee3b39c4b8d...v1.0.0) (2025-01-31)
 
 
 ### Bug Fixes
 
+* auto sync to github ([dafe850](https://github.com/biyuehu/gal-keeper/commit/dafe850987353726a9e0465d978ed8d708fc31fc))
 * data syncing and settings ([101ad8f](https://github.com/biyuehu/gal-keeper/commit/101ad8f821c75eacfa61cb689cd17e79028a60e9))
 
 
@@ -18,6 +19,7 @@
 * github api syncing ([761f310](https://github.com/biyuehu/gal-keeper/commit/761f31080038838e76dc6857ef7fc757b04edaea))
 * home page, i18n and fix some bugs ([8e0e863](https://github.com/biyuehu/gal-keeper/commit/8e0e8638c494d37cbf084c8a1f0e05a44ef2d909))
 * loading animation ([373a15c](https://github.com/biyuehu/gal-keeper/commit/373a15c579ea343e726fb62b8a8177388b65ed83))
+* update check, about page and auto sync ([6ab189d](https://github.com/biyuehu/gal-keeper/commit/6ab189dd186347ab1a96e2f80f399243a250c4dd))
 
 
 
