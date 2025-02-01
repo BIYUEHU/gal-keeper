@@ -1,5 +1,5 @@
 import type { FetchGameData } from '@/types'
-import { fetchFromBangumi } from './bgm'
+import { fetchFromBgm } from './bgm'
 import { fetchFromVndb } from './vndb'
 
 export async function fetchFromMixed(
@@ -7,7 +7,7 @@ export async function fetchFromMixed(
   [bgmId, vndbId]: [string?, string?] = []
 ): Promise<FetchGameData | null> {
   const [bgmData, vndbData] = await Promise.all([
-    fetchFromBangumi(name, bgmId).catch(() => null),
+    fetchFromBgm(name, bgmId).catch(() => null),
     fetchFromVndb(name, vndbId)
   ])
   if (!bgmData && !vndbData) return null

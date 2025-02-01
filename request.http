@@ -1,5 +1,5 @@
 @QUERY = narcissu
-@GITHUB_TOKEN = 
+@GITHUB_TOKEN =
 @GITHUB_REPO = BIYUEHU/galgame-data
 @GITHUB_PATH = gal-keeper-data/
 
@@ -12,6 +12,11 @@ Content-Type: application/json
     "filters": ["search", "=", "{{QUERY}}"],
     "fields": "id, title, image.url, released, titles.title, length_minutes, rating, screenshots.url, tags.name, developers.name, description, tags.rating, extlinks.name, extlinks.url"
 }
+
+### VNDB Auth Info
+
+GET https://api.vndb.org/kana/authinfo HTTP/1.1
+Authorization: token
 
 ### Bangumi
 

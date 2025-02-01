@@ -29,11 +29,7 @@ const AlertBox: React.FC = () => {
       styles={{ main: { maxHeight: '80%' } }}
     >
       <DialogFooter>
-        <DefaultButton
-          hidden={t`alert.title` === alert.title}
-          text={t`component.alertBox.button.copy`}
-          onClick={copy}
-        />
+        {alert.title !== t`alert.title` && <DefaultButton text={t`component.alertBox.button.copy`} onClick={copy} />}
         <PrimaryButton text={t`component.alertBox.button.sure`} onClick={closeAlert} />
       </DialogFooter>
     </Dialog>

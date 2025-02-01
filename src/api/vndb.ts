@@ -1,16 +1,25 @@
 import type { FetchGameData } from '@/types'
-import http from './http'
+import { createHttp } from './http'
+import useStore from '@/store'
 
-const VNDB_URL = 'https://api.vndb.org/kana/vn'
-
-const VNDB_HEADER = {
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json'
-  }
+interface VndbAuthInfo {
+  id: string
+  username: string
+  permissions: string[]
 }
 
-function generateVNDBBody(name: string, isId: boolean) {
+const vndbHttp = createHttp()
+
+vndbHttp.interceptors.request.use((config) => {
+  const { vndbToken } = useStore.getState().settings
+  if (vndbToken) config.headers.Authorization = `token ${vndbToken}`
+  config.headers.Accept = 'application/json'
+  config.headers['Content-Type'] = 'application/json'
+  config.baseURL = 'https://api.vndb.org/kana'
+  return config
+})
+
+function generateVndbBody(name: string, isId: boolean) {
   return {
     filters: isId ? ['id', '=', name] : ['search', '=', name],
     fields:
@@ -18,8 +27,12 @@ function generateVNDBBody(name: string, isId: boolean) {
   }
 }
 
+export async function getVndbAuthInfo(): Promise<VndbAuthInfo> {
+  return (await vndbHttp.get('/authinfo')).data
+}
+
 export async function fetchFromVndb(name: string, id?: string): Promise<FetchGameData | null> {
-  const data = (await http.post(VNDB_URL, generateVNDBBody(id || name, !!id), VNDB_HEADER)).data.results[0]
+  const data = (await vndbHttp.post('/vn', generateVndbBody(id || name, !!id))).data.results[0]
   if (!data) return null
 
   return {

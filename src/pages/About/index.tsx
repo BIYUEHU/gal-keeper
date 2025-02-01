@@ -87,6 +87,35 @@ const About: React.FC = () => {
       <Separator />
       <Stack horizontal className="my-4">
         <Text variant="xLarge" className="block mb-4">
+          FAQ
+        </Text>
+
+        <Stack tokens={{ childrenGap: 20 }}>
+          <br />
+          {t`page.about.faq.content`
+            .split('\n\n')
+            .map((str) => str.split('\n'))
+            .map(
+              (arr) =>
+                arr[0] && (
+                  <div key={arr[0]}>
+                    <Text variant="xLarge" className="font-bold">
+                      Q: {arr[0]}
+                    </Text>
+                    <br />
+                    <Text variant="large" className="font-semibold ml-5">
+                      A: {arr[1]}
+                    </Text>
+                    <br />
+                  </div>
+                )
+            )}
+        </Stack>
+      </Stack>
+
+      <Separator />
+      <Stack horizontal className="my-4">
+        <Text variant="xLarge" className="block mb-4">
           {t`page.about.changelog`}
         </Text>
 

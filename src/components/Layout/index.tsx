@@ -21,12 +21,13 @@ const Layout: React.FC<LayoutProps> = ({ title, outlet }) => {
 
   useEffect(() => {
     events.on('error', (data: LoggerData) => {
+      const msg = data.msg.substring(0, 600)
       if (data.label.length !== 0 && data.label[0] === 'HTTP') {
-        openAlert(data.msg, t`alert.title.error.http`)
+        openAlert(msg, t`alert.title.error.http`)
       } else if (data.level === LoggerLevel.FATAL) {
-        openAlert(data.msg, t`alert.title.error.fatal`)
+        openAlert(msg, t`alert.title.error.fatal`)
       } else {
-        openAlert(data.msg, t`alert.title.error`)
+        openAlert(msg, t`alert.title.error`)
       }
     })
   }, [openAlert])

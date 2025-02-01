@@ -1,7 +1,7 @@
 import type { FetchGameData, FetchMethods } from '@/types'
 import { fetchFromVndb } from './vndb'
 import { fetchFromMixed } from './mixed'
-import { fetchFromBangumi } from './bgm'
+import { fetchFromBgm } from './bgm'
 
 export async function fetchGameData(
   method: FetchMethods,
@@ -12,7 +12,7 @@ export async function fetchGameData(
     case 'vndb':
       return await fetchFromVndb(name, vndbId)
     case 'bgm':
-      return await fetchFromBangumi(name, bgmId)
+      return await fetchFromBgm(name, bgmId)
     case 'mixed':
       return await fetchFromMixed(name, [bgmId, vndbId])
   }

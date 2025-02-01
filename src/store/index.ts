@@ -17,16 +17,20 @@ export interface RootState {
     size: number
     visibility: string
     username: string
+    bgmUsername: string
+    vndbUsername: string
     avatar: string
   }
   cache: {
     [url: string]: string
   }
   settings: {
+    syncMode: 'github' | 'server'
     githubToken: string
     githubRepo: string
     githubPath: string
     bgmToken: string
+    vndbToken: string
     autoSyncMinutes: number
     theme: 'light' | 'dark'
     language: 'en_US' | 'zh_CN' | 'ja_JP' | 'zh_TW'
@@ -55,7 +59,8 @@ type RootStateMethods = {
   getGameData(id: string): GameWithLocalData | undefined
   importGameData(data: GameData[]): void
   getAllGameData<T extends boolean>(isPure: T): (true extends T ? GameData : GameWithLocalData)[]
-  updateSettings(settings: Partial<RootState['settings']>): void
+  updateSettings(settings: Partial<RootState['settings']>): [boolean, boolean, boolean]
+  updateSync(sync: Partial<RootState['sync']>): void
   addCache(url: string, file: string): void
   getCache(url: string): string | undefined
   removeCache(url: string): void
@@ -73,14 +78,18 @@ export const DEFAULT_STATE: RootState = {
     size: 0,
     visibility: '',
     username: '',
+    bgmUsername: '',
+    vndbUsername: '',
     avatar: ''
   },
   cache: {},
   settings: {
+    syncMode: 'github',
     githubToken: '',
     githubRepo: '',
     githubPath: 'gal-keeper-data/',
     bgmToken: '',
+    vndbToken: '',
     autoSyncMinutes: 10,
     theme: 'light',
     language: navigator.language.includes('ja')
@@ -252,10 +261,28 @@ const useStore = create(
           }, 0)
         }
 
+        const before = get().settings
+        const changeStatus: [boolean, boolean, boolean] = [
+          `${before.githubPath}${before.githubToken}${before.githubRepo}` !==
+            `${settings.githubPath}${settings.githubToken}${settings.githubRepo}`,
+          before.vndbToken !== settings.vndbToken,
+          before.bgmToken !== settings.bgmToken
+        ]
+
         set((state) => ({
           settings: {
             ...state.settings,
             ...settings
+          }
+        }))
+
+        return changeStatus
+      },
+      updateSync(sync) {
+        set((state) => ({
+          sync: {
+            ...state.sync,
+            ...sync
           }
         }))
       },

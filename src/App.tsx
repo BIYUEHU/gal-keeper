@@ -2,8 +2,8 @@ import { BrowserRouter, HashRouter, Route, Routes } from 'react-router-dom'
 import { FluentProvider, webLightTheme } from '@fluentui/react-components'
 import routes from '@/routes'
 import Layout from '@/components/Layout'
-import { UIProvider } from './contexts/UIContext'
-import { useEffect, useState } from 'react'
+import { UIProvider } from '@/contexts/UIContext'
+import { useEffect, useRef, useState } from 'react'
 import useStore from '@/store'
 import i18n, { f, t } from '@/utils/i18n'
 import { cacheImage, openUrl } from '@/utils'
@@ -12,17 +12,19 @@ import { IS_DEV, IS_TAURI } from '@/constant'
 import { version } from '@/../package.json'
 import axios from 'axios'
 import { listen } from '@tauri-apps/api/event'
-import { syncToGithub } from './api/github'
+import { syncToGithub } from '@/api/github'
 import { invoke } from '@tauri-apps/api'
 import { random } from '@kotori-bot/tools'
 
 const App: React.FC = () => {
-  const { _hasHydrated, settings, gameData } = useStore((state) => state)
+  const syncId = useRef(random.int(0, 1000000).toString())
+  const lastSyncNoticeTime = useRef(0)
+  const state = useStore((state) => state)
   const [initialized, setInitialized] = useState(false)
   const [latestVersion, setLatestVersion] = useState('')
 
   useEffect(() => {
-    if (!_hasHydrated) return
+    if (!state._hasHydrated || initialized) return
 
     axios
       .get('https://raw.githubusercontent.com/BIYUEHU/gal-keeper/refs/heads/main/package.json')
@@ -31,22 +33,37 @@ const App: React.FC = () => {
       })
       .catch(() => setLatestVersion('error'))
       .finally(() => {
-        i18n.set(settings.language)
-        gameData.map((game) => cacheImage(game).catch((e) => invokeLogger.error(e)))
+        i18n.set(state.settings.language)
+        state.gameData.map((game) => cacheImage(game).catch((e) => invokeLogger.error(e)))
 
         if (initialized) return
-        if (settings.playLaunchVoice && !latestVersion) new Audio('/assets/launch.wav').play()
+        if (state.settings.playLaunchVoice && !latestVersion) new Audio('/assets/launch.wav').play()
         ;(window as { hideLoading?: () => void }).hideLoading?.()
         setInitialized(true)
 
-        if (!IS_TAURI || !settings.autoSyncMinutes || settings.autoSyncMinutes <= 0) return
-        const id = random.int(0, 1000000).toString()
+        // useStore.setState({
+        //   ...DEFAULT_STATE,
+        //   ...state,
+        //   settings: {
+        //     ...DEFAULT_STATE.settings,
+        //     ...state.settings
+        //   },
+        //   sync: {
+        //     ...DEFAULT_STATE.sync,
+        //     ...state.sync
+        //   }
+        // })
+
+        if (!IS_TAURI || !state.settings.autoSyncMinutes || state.settings.autoSyncMinutes <= 0) return
         invoke('auto_sync', {
-          durationMinutes: settings.autoSyncMinutes,
-          id
+          durationMinutes: state.settings.autoSyncMinutes,
+          id: syncId.current
         }).catch((e) => invokeLogger.error(e))
         listen<string>('sync', ({ payload }) => {
-          if (id !== payload) return
+          if (syncId.current !== payload) return
+          if (Date.now() - lastSyncNoticeTime.current < 1000 * 10) return
+          if (lastSyncNoticeTime.current === 0 && IS_DEV) return
+          lastSyncNoticeTime.current = Date.now()
           const { githubToken, githubRepo, githubPath } = useStore.getState().settings
           if (!githubToken || !githubRepo || !githubPath) {
             logger.warn('auto-sync skipped due to missing settings.')
@@ -58,7 +75,7 @@ const App: React.FC = () => {
           })
         })
       })
-  }, [_hasHydrated, settings, gameData, initialized, latestVersion])
+  }, [state, initialized, latestVersion])
 
   if (!initialized) return null
 

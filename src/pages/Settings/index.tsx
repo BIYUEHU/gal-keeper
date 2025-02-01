@@ -1,4 +1,6 @@
+import { getBgmMe } from '@/api/bgm'
 import { getRepoInfo, syncToGithub } from '@/api/github'
+import { getVndbAuthInfo } from '@/api/vndb'
 import { IS_TAURI } from '@/constant'
 import { useUI } from '@/contexts/UIContext'
 import useStore, { type RootState, DEFAULT_STATE } from '@/store'
@@ -7,18 +9,21 @@ import { generateUuid, openUrl } from '@/utils'
 import { t } from '@/utils/i18n'
 import logger, { invokeLogger } from '@/utils/logger'
 import { Stack, TextField, ChoiceGroup, Toggle, Separator, DefaultButton, Text, PrimaryButton } from '@fluentui/react'
-import { Dropdown } from '@fluentui/react/lib/Dropdown'
-import { Spinner } from '@fluentui/react-components'
 import { dialog } from '@tauri-apps/api'
 import { readTextFile, writeBinaryFile } from '@tauri-apps/api/fs'
 import React, { useState } from 'react'
 
 const Settings: React.FC = () => {
-  const { updateSettings, importGameData } = useStore((state) => state)
-  const [settings, setSettings] = useState(useStore((state) => state.settings))
-  const [sync, setSync] = useState(useStore((state) => state.sync))
-  const { openAlert } = useUI()
-  const [isLoading, setIsLoading] = useState(false)
+  const {
+    updateSettings,
+    importGameData,
+    updateSync,
+    settings: settingsRaw,
+    sync: syncRaw
+  } = useStore((state) => state)
+  const [settings, setSettings] = useState(settingsRaw)
+  const [sync, setSync] = useState(syncRaw)
+  const { openAlert, openFullLoading } = useUI()
 
   const checkParams = () => settings.githubToken && settings.githubRepo && settings.githubPath
 
@@ -99,41 +104,27 @@ const Settings: React.FC = () => {
     }
   }
 
-  const handleTesting = async () => {
-    if (checkParams()) {
-      setIsLoading(true)
-      const data = await getRepoInfo().finally(() => {
-        setIsLoading(false)
-        setSync({ ...sync, username: '', avatar: '', size: 0, visibility: '' })
-      })
-      setSync({
-        ...sync,
-        username: data.owner.login,
-        avatar: data.owner.avatar_url,
-        size: data.size,
-        visibility: data.visibility
-      })
-    } else {
-      openAlert(t`page.settings.data.alert.paramsNeeded`)
-    }
-  }
-
   const handleSyncing = async () => {
     if (checkParams()) {
-      setIsLoading(true)
+      const close = openFullLoading()
       syncToGithub()
         .then(() => {
           openAlert(t`page.settings.data.alert.syncSuccess`)
           setSync(useStore.getState().sync)
         })
         .catch((e) => logger.error(e))
-        .finally(() => setIsLoading(false))
+        .finally(close)
     } else {
       openAlert(t`page.settings.data.alert.paramsNeeded`)
     }
   }
 
-  const dropdownOptions: { key: FetchMethods; text: string }[] = [
+  const syncModeOptions = [
+    { key: 'github', text: t`page.settings.data.syncMode.github`, checked: true },
+    { key: 'server', text: t`page.settings.data.syncMode.server`, disabled: true }
+  ]
+
+  const fetchMethodsOptions: { key: FetchMethods; text: string }[] = [
     { key: 'mixed', text: t`page.edit.dropdown.mixed` },
     { key: 'vndb', text: t`page.edit.dropdown.vndb` },
     { key: 'bgm', text: t`page.edit.dropdown.bgm` }
@@ -146,6 +137,42 @@ const Settings: React.FC = () => {
     }))
   }
 
+  const onSave = async () => {
+    const [changed1, changed2, changed3] = updateSettings(settings)
+    const close = openFullLoading()
+
+    const [repoInfo, vndbAuthInfo, bgmMe] = await Promise.all([
+      checkParams() && changed1 ? getRepoInfo().catch(() => null) : Promise.resolve(null),
+      settings.vndbToken && changed2 ? getVndbAuthInfo().catch(() => null) : Promise.resolve(null),
+      settings.bgmToken && changed3 ? getBgmMe().catch(() => null) : Promise.resolve(null)
+    ])
+    const data = {
+      ...(repoInfo
+        ? {
+            username: repoInfo.owner.login,
+            avatar: repoInfo.owner.avatar_url,
+            size: repoInfo.size,
+            visibility: repoInfo.visibility
+          }
+        : changed1
+          ? {
+              username: '',
+              avatar: '',
+              size: 0,
+              visibility: ''
+            }
+          : {}),
+      ...(vndbAuthInfo ? { vndbUsername: vndbAuthInfo.username } : changed2 ? { vndbUsername: '' } : {}),
+      ...(bgmMe ? { bgmUsername: bgmMe.nickname || bgmMe.username } : changed3 ? { bgmUsername: '' } : {})
+    }
+    setSync((state) => ({
+      ...state,
+      ...data
+    }))
+    updateSync(data)
+    close()
+  }
+
   return (
     <div className="overflow-auto px-4">
       <Stack
@@ -155,7 +182,7 @@ const Settings: React.FC = () => {
         className="p-4 border-2 border-solid border-gray-100 rounded-md"
       >
         <img
-          src={sync.avatar || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'}
+          src={sync.avatar || '/assets/avatar.jpg'}
           alt="User Avatar"
           className="w-16 h-16 rounded-full object-cover"
         />
@@ -166,6 +193,11 @@ const Settings: React.FC = () => {
           <Text variant="small" className="text-gray-500">
             {t`page.settings.profile.lastSync`}
             {sync.time ? new Date(sync.time).toLocaleString() : t`page.settings.profile.notSynced`}
+          </Text>
+          <Text variant="small" className="text-gray-500">
+            {t`page.settings.profile.vndb`}
+            {sync.vndbUsername || t`page.settings.profile.notLogged`} | {t`page.settings.profile.bgm`}
+            {sync.bgmUsername || t`page.settings.profile.notLogged`}
           </Text>
           <Stack horizontal tokens={{ childrenGap: 4 }}>
             <Text variant="small" className="text-gray-500">
@@ -201,10 +233,28 @@ const Settings: React.FC = () => {
           </Stack>
 
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-12">{t`page.settings.data.token`}</h3>
+            <h3 className="font-semibold">{t`page.settings.data.syncMode`}</h3>
+            <ChoiceGroup
+              options={syncModeOptions}
+              selectedKey={settings.syncMode}
+              styles={{
+                flexContainer: { display: 'flex', flexDirection: 'row' }
+              }}
+              className="children:children:children:mx-2"
+              onChange={(_, option) =>
+                setSettings((state) => ({
+                  ...state,
+                  syncMode: (option?.key as (typeof state)['syncMode']) ?? DEFAULT_STATE.settings.fetchMethods
+                }))
+              }
+            />
+          </Stack>
+
+          <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
+            <h3 className="font-semibold">{t`page.settings.data.token`}</h3>
             <TextField
               className="flex-grow-1"
-              value={settings.githubToken ?? ''}
+              value={settings.githubToken}
               type="password"
               onChange={(_, v) => setSettings((state) => ({ ...state, githubToken: v ?? '' }))}
               autoComplete="off"
@@ -218,29 +268,29 @@ const Settings: React.FC = () => {
           </Stack>
 
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-9">{t`page.settings.data.repo`}</h3>
+            <h3 className="font-semibold">{t`page.settings.data.repo`}</h3>
             <TextField
               className="flex-grow-1"
               placeholder={t`page.settings.data.repo.placeholder`}
-              value={settings.githubRepo ?? ''}
+              value={settings.githubRepo}
               onChange={(_, v) => setSettings((state) => ({ ...state, githubRepo: v ?? '' }))}
               autoComplete="off"
             />
           </Stack>
 
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-9">{t`page.settings.data.path`}</h3>
+            <h3 className="font-semibold">{t`page.settings.data.path`}</h3>
             <TextField
               className="flex-grow-1"
               placeholder={t`page.settings.data.path.placeholder`}
-              value={settings.githubPath ?? ''}
+              value={settings.githubPath}
               onChange={(_, v) => setSettings((state) => ({ ...state, githubPath: v ?? '' }))}
               autoComplete="off"
             />
           </Stack>
 
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-25">{t`page.settings.data.autoSync`}</h3>
+            <h3 className="font-semibold">{t`page.settings.data.autoSync`}</h3>
             <TextField
               type="number"
               value={settings.autoSyncMinutes.toString()}
@@ -254,11 +304,14 @@ const Settings: React.FC = () => {
           </Stack>
 
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-29">{t`page.settings.data.source`}</h3>
-            <Dropdown
-              options={dropdownOptions}
+            <h3 className="font-semibold">{t`page.settings.data.source`}</h3>
+            <ChoiceGroup
+              options={fetchMethodsOptions}
               selectedKey={settings.fetchMethods}
-              className="w-30"
+              styles={{
+                flexContainer: { display: 'flex', flexDirection: 'row' }
+              }}
+              className="children:children:children:mx-2"
               onChange={(_, option) =>
                 setSettings((state) => ({
                   ...state,
@@ -269,25 +322,43 @@ const Settings: React.FC = () => {
           </Stack>
 
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <DefaultButton text={t`page.settings.data.button.export`} onClick={handleExport} />
-            <DefaultButton text={t`page.settings.data.button.import`} onClick={handleImport} />
-            <DefaultButton text={t`page.settings.data.button.test`} onClick={handleTesting} />
-            <DefaultButton text={t`page.settings.data.button.sync`} onClick={handleSyncing} />
-            {isLoading && <Spinner />}
+            <h3 className="font-semibold">{t`page.settings.data.vndbToken`}</h3>
+            <TextField
+              className="flex-grow-1"
+              value={settings.vndbToken}
+              type="password"
+              onChange={(_, v) => setSettings((state) => ({ ...state, vndbToken: v ?? '' }))}
+              autoComplete="off"
+            />
+            <span
+              className="text-xs text-blue-400 hover:cursor-pointer"
+              onClick={() => openUrl('https://api.vndb.org/kana#user-authentication')}
+            >
+              {t`page.settings.data.token.get`}
+            </span>
           </Stack>
 
           <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
-            <h3 className="font-semibold w-12">{t`page.settings.data.token`}</h3>
+            <h3 className="font-semibold">{t`page.settings.data.bgmToken`}</h3>
             <TextField
               className="flex-grow-1"
-              value={settings.githubToken ?? ''}
+              value={settings.bgmToken}
               type="password"
-              onChange={(_, v) => setSettings((state) => ({ ...state, githubToken: v ?? '' }))}
+              onChange={(_, v) => setSettings((state) => ({ ...state, bgmToken: v ?? '' }))}
               autoComplete="off"
             />
-            <span className="text-xs text-blue-400 hover:cursor-pointer" onClick={() => openAlert('')}>
+            <span
+              className="text-xs text-blue-400 hover:cursor-pointer"
+              onClick={() => openUrl('https://next.bgm.tv/demo/access-token')}
+            >
               {t`page.settings.data.token.get`}
             </span>
+          </Stack>
+
+          <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
+            <DefaultButton text={t`page.settings.data.button.export`} onClick={handleExport} />
+            <DefaultButton text={t`page.settings.data.button.import`} onClick={handleImport} />
+            <DefaultButton text={t`page.settings.data.button.sync`} onClick={handleSyncing} />
           </Stack>
         </Stack>
         <Separator />
@@ -361,13 +432,12 @@ const Settings: React.FC = () => {
               />
               <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
                 <DefaultButton text={t`page.settings.details.button.cleanCache`} onClick={handleCleanCache} />
-                {isLoading && <Spinner />}
               </Stack>
             </React.Fragment>
           )}
         </Stack>
         <Separator />
-        <PrimaryButton text={t`page.settings.button.save`} onClick={() => updateSettings(settings)} />
+        <PrimaryButton text={t`page.settings.button.save`} onClick={onSave} />
       </Stack>
     </div>
   )
