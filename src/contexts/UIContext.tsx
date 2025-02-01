@@ -33,7 +33,7 @@ const DEFAULT_STATE: UIState = {
   alert: {
     isOpen: false,
     text: '',
-    title: t`alert.title`
+    title: ''
   },
   fullLoading: false,
   sidebarOpen: true,
@@ -84,7 +84,8 @@ const UIContext = createContext<UIContextType | null>(null)
 export function UIProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(uiReducer, DEFAULT_STATE)
 
-  const openAlert = (text: string, title?: string) => dispatch({ type: 'OPEN_ALERT', payload: { text, title } })
+  const openAlert = (text: string, title?: string) =>
+    dispatch({ type: 'OPEN_ALERT', payload: { text, title: title || t`alert.title` } })
 
   const closeAlert = () => dispatch({ type: 'CLOSE_ALERT' })
 

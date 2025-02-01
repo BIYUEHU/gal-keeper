@@ -26,6 +26,7 @@ export interface RootState {
     githubToken: string
     githubRepo: string
     githubPath: string
+    bgmToken: string
     autoSyncMinutes: number
     theme: 'light' | 'dark'
     language: 'en_US' | 'zh_CN' | 'ja_JP' | 'zh_TW'
@@ -79,9 +80,16 @@ export const DEFAULT_STATE: RootState = {
     githubToken: '',
     githubRepo: '',
     githubPath: 'gal-keeper-data/',
+    bgmToken: '',
     autoSyncMinutes: 10,
     theme: 'light',
-    language: 'en_US',
+    language: navigator.language.includes('ja')
+      ? 'ja_JP'
+      : ['zh-TW', 'zh-HK'].includes(navigator.language)
+        ? 'zh_TW'
+        : navigator.language.includes('zh')
+          ? 'zh_CN'
+          : 'en_US',
     fetchMethods: IS_TAURI ? 'mixed' : 'vndb',
     maxTimelineDisplayCount: 50,
     autoSetGameTitle: true,

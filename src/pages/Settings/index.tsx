@@ -275,6 +275,20 @@ const Settings: React.FC = () => {
             <DefaultButton text={t`page.settings.data.button.sync`} onClick={handleSyncing} />
             {isLoading && <Spinner />}
           </Stack>
+
+          <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
+            <h3 className="font-semibold w-12">{t`page.settings.data.token`}</h3>
+            <TextField
+              className="flex-grow-1"
+              value={settings.githubToken ?? ''}
+              type="password"
+              onChange={(_, v) => setSettings((state) => ({ ...state, githubToken: v ?? '' }))}
+              autoComplete="off"
+            />
+            <span className="text-xs text-blue-400 hover:cursor-pointer" onClick={() => openAlert('')}>
+              {t`page.settings.data.token.get`}
+            </span>
+          </Stack>
         </Stack>
         <Separator />
 

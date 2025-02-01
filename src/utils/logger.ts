@@ -3,7 +3,7 @@ import Logger, { ConsoleTransport, LoggerLevel } from '@kotori-bot/logger'
 import ErrorReporter from './ErrorReporter'
 
 const logger = new Logger({
-  level: IS_DEV ? LoggerLevel.DEBUG : LoggerLevel.SILENT,
+  level: IS_DEV ? LoggerLevel.DEBUG : LoggerLevel.INFO,
   transports: [
     new ConsoleTransport({ template: '<bold>%time%</bold> <italic>%level%</italic> %labels%: %msg%' }),
     new ErrorReporter()

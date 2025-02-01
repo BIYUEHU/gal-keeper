@@ -27,12 +27,12 @@ function parseChangelog(text: string) {
     .split('\n')
     .filter((line) => line.trim())
     .map((line) => {
-      const versionMatch = line.match(/^# (\d+\.\d+\.\d+) \((.+)\)$/)
+      const versionMatch = line.match(/^# \[(\d+\.\d+\.\d+)\](.+) \((.+)\)$/)
       const typeMatch = line.match(/^### (.+)$/)
       const commitMatch = line.match(/^\* (.+) \(\[(.+)\]\((.+)\)\)$/)
 
       if (versionMatch) {
-        currentLog = { version: versionMatch[1], date: versionMatch[2], types: [] }
+        currentLog = { version: versionMatch[1], date: versionMatch[3], types: [] }
         logs.push(currentLog)
       } else if (typeMatch) {
         currentLog?.types.push({ type: typeMatch[1], commits: [] })

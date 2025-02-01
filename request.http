@@ -18,6 +18,17 @@ Content-Type: application/json
 GET https://api.bgm.tv/search/subject/{{QUERY}} HTTP/1.1
 User-Agent: biyuehu/gal-keeper/0.1.0 (http://github.com/biyuehu/gal-keeper)
 
+### Bangumi User Info
+
+GET https://api.bgm.tv/v0/me HTTP/1.1
+User-Agent: biyuehu/gal-keeper/0.1.0 (http://github.com/biyuehu/gal-keeper)
+Authorization: Bearer
+
+### Bangumi Subject
+
+GET https://api.bgm.tv/v0/subjects/76912 HTTP/1.1
+User-Agent: biyuehu/gal-keeper/0.1.0 (http://github.com/biyuehu/gal-keeper)
+Authorization: Bearer
 
 ## Github Api
 

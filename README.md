@@ -32,7 +32,7 @@ The project name `Nanno` is from the main character [**南乃 ありす(Nanno Ar
 - English
 - 日本語
 - 繁体中文
-<!-- - 简体中文 -->
+- 简体中文
 
 ## Stacks
 
