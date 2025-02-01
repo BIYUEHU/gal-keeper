@@ -1,3 +1,17 @@
+## [1.0.1](https://github.com/biyuehu/gal-keeper/compare/v1.0.0...v1.0.1) (2025-02-01)
+
+
+### Bug Fixes
+
+* changelog display and parse ([74972ac](https://github.com/biyuehu/gal-keeper/commit/74972ac8b9ec3c8abd6353305abf75ffcf04c480))
+
+
+### Features
+
+* faq content and bgm, vndb token ([ec884f7](https://github.com/biyuehu/gal-keeper/commit/ec884f74a538ae91cfe605819338a7a29398a88a))
+
+
+
 # [1.0.0](https://github.com/biyuehu/gal-keeper/compare/7fbb956b3e059e10e8bec7b6b7387ee3b39c4b8d...v1.0.0) (2025-01-31)
 
 
