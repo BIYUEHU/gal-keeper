@@ -49,7 +49,6 @@ export async function readFileFromGithub(file: string): Promise<any> {
         headers: { Authorization: `token ${useStore.getState().settings.githubToken}` }
       })
     ).data
-    // TODO: here is a bug from github api
     const str = res.content
       ? base64Decode(res.content)
       : JSON.stringify((await http.get(res.download_url.split('?token=')[0])).data)

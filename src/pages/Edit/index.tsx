@@ -278,7 +278,6 @@ const Edit = () => {
                   autoComplete="off"
                 />
               </Stack>
-              {/* TODO: Sync guide text file */}
               <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center">
                 <h3 className="font-semibold w-17">{t`page.edit.field.guideFile`}</h3>
                 <TextField

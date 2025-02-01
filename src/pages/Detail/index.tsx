@@ -121,7 +121,6 @@ const Detail: React.FC = () => {
       iconProps: { iconName: 'CloudUpload' },
       disabled: !game.local?.savePath,
       onClick: () => {
-        // TODO: Implement backup
         // invokeSafe('backup', )
       }
     },

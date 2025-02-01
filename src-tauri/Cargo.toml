@@ -1,6 +1,6 @@
 [package]
 name = "gal-keeper"
-version = "1.0.0"
+version = "1.0.1"
 description = "A lightweight and fast visual novel management for coders, statistics and cloud syncing tool built with Tauri and React"
 authors = ["Arimura Sena"]
 edition = "2021"

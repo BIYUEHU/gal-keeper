@@ -49,6 +49,14 @@ The project name `Nanno` is from the main character [**南乃 ありす(Nanno Ar
 
 The project is licensed under the [BCU](https://github.com/ICEAGENB/ban-zhinese-using) license.
 
+## Todo
+
+- [ ] Custom server syncing, and server backend base on Haskell (Spock Framework and Persistent)
+- [ ] backup and restore game saves (cloud syncing)
+- [ ] Manage Vndb and Bangumi account game data by token (Eg. game progress, ratings, palytime, etc)
+- [ ] Sync the game guide file
+- [ ] Implement the application theme and custom theme color (base on game characters' main color)
+
 ## Screenshots
 
 <!-- markdownlint-disable -->

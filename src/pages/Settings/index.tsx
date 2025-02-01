@@ -366,7 +366,6 @@ const Settings: React.FC = () => {
         <Stack tokens={{ childrenGap: 4 }}>
           <h2 className="text-lg font-semibold">{t`page.settings.appearance.title`}</h2>
 
-          {/* TODO: Implement theme */}
           {/* <div>
             <h3 className="font-semibold w-12">{t`page.settings.appearance.theme`}</h3>
             <ChoiceGroup
