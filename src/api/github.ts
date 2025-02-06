@@ -112,9 +112,7 @@ export async function syncToGithub() {
     arr.reduce((last, { playTimelines }) => last + playTimelines.reduce((sum, [, , time]) => sum + time, 0), 0)
   )
 
-  await writeFileToGithub(
-    `sync: ${
-      [
+  const commitMsg = [
         totalTime > cloudTotalTime ? `Playtime +${showMinutes((totalTime - cloudTotalTime) / 1000)}` : null,
         newData.length > cloudData.length ? `Add ${newData.length - cloudData.length} games` : null,
         cloudDataIds.length < cloudData.length ? `Remove ${cloudData.length - cloudDataIds.length} games` : null,
@@ -134,8 +132,11 @@ export async function syncToGithub() {
       ]
         .filter((item) => item)
         .join(', ')
-        .trim() || 'No changes'
-    }`,
+        .trim();
+  if (!commitMsg) return
+
+  await writeFileToGithub(
+    `sync: ${commitMsg}`,
     SHARED_JSON_FILE,
     { deleteIds: newDeleteIds, data: newData }
   ).then(() => {
