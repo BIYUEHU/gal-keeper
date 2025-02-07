@@ -170,6 +170,7 @@ export default {
   'component.addModal.button.submit': '提交',
   'component.addModal.dialog.selectProgram': '選擇啓動程序',
   'component.addModal.dialog.filter.executable': '可執行文件',
+  'component.addModal.tips': '偵測到當前新增的遊戲可能已存在，請自行確認是否有重複',
   'component.groupModal.title.category': '添加分類',
   'component.groupModal.title.group': '添加分組',
   'component.groupModal.field.name': '名稱',

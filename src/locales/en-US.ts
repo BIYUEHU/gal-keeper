@@ -174,6 +174,7 @@ export default {
   'component.addModal.button.submit': 'Submit',
   'component.addModal.dialog.selectProgram': 'Select Launcher',
   'component.addModal.dialog.filter.executable': 'Executable Files',
+  'component.addModal.tips': 'The game you are adding may already exist, please confirm if there are duplicates',
   'component.groupModal.title.category': 'Add Category',
   'component.groupModal.title.group': 'Add Group',
   'component.groupModal.field.name': 'Name',

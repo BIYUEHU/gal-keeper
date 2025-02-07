@@ -1,0 +1,3 @@
+[submodule "migration"]
+	path = migration
+	url = git@github.com:BIYUEHU/nanno-migrator.git

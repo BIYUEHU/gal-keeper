@@ -26,12 +26,16 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!state._hasHydrated || initialized) return
 
-    axios
-      .get('https://raw.githubusercontent.com/BIYUEHU/gal-keeper/refs/heads/main/package.json')
+    Promise.race(
+      [
+        'https://cdn.jsdelivr.net/gh/biyuehu/gal-keeper/package.json',
+        'https://raw.githubusercontent.com/BIYUEHU/gal-keeper/refs/heads/main/package.json'
+      ].map((url) => axios.get(url).catch(() => null))
+    )
       .then((res) => {
+        if (!res) return setLatestVersion('error')
         if (res.data.version !== version) setLatestVersion(res.data.version)
       })
-      .catch(() => setLatestVersion('error'))
       .finally(() => {
         i18n.set(state.settings.language)
         state.gameData.map((game) => cacheImage(game).catch((e) => invokeLogger.error(e)))

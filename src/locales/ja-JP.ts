@@ -172,6 +172,7 @@ export default {
   'component.addModal.button.submit': '送信',
   'component.addModal.dialog.selectProgram': 'ランチャーを選択',
   'component.addModal.dialog.filter.executable': '実行可能ファイル',
+  'component.addModal.tips': '現在追加するゲームは既に存在する可能性があります。重複がないか確認してください。',
   'component.groupModal.title.category': 'カテゴリを追加',
   'component.groupModal.title.group': 'グループを追加',
   'component.groupModal.field.name': '名前',

@@ -22,7 +22,7 @@ interface AddModalProps {
 
 const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, setData }) => {
   const [formData, setFormData] = useState({ programFile: '', gameName: '' })
-  const { openFullLoading } = useUI()
+  const { openFullLoading, openAlert } = useUI()
 
   const {
     addGameData,
@@ -90,6 +90,7 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, setData }) => {
       title: fetchData?.title && autoSetGameTitle ? fetchData.title : formData.gameName
     }
     addGameData(game)
+    if (useStore.getState().gameData.some((item) => item.title)) openAlert(t`component.addModal.tips`)
     setData((state) => [...state, game])
     setIsOpen(false)
     close()
