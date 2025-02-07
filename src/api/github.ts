@@ -97,7 +97,8 @@ export async function syncToGithub() {
         (item): GameData =>
           dataIds.includes(item.id)
             ? ((target): GameData => ({
-                ...(target.updateDate > item.updateDate ? target : item),
+                ...(target.updateDate >= item.updateDate ? target : item),
+                lastPlay: Math.max(target.lastPlay, item.lastPlay),
                 playTimelines: [
                   ...target.playTimelines,
                   ...item.playTimelines.filter((timeline) => !target.playTimelines.some((t) => t[0] === timeline[0]))
@@ -113,40 +114,40 @@ export async function syncToGithub() {
   )
 
   const commitMsg = [
-        totalTime > cloudTotalTime ? `Playtime +${showMinutes((totalTime - cloudTotalTime) / 1000)}` : null,
-        newData.length > cloudData.length ? `Add ${newData.length - cloudData.length} games` : null,
-        cloudDataIds.length < cloudData.length ? `Remove ${cloudData.length - cloudDataIds.length} games` : null,
-        ((count) => (count > 0 ? `Update ${count} games` : null))(
-          cloudData
-            .filter((item) => !deleteIds.includes(item.id))
-            .reduce(
-              (acc, cur) =>
-                acc +
-                (dataIds.includes(cur.id) &&
-                (data.find((local) => local.id === cur.id) as GameData).updateDate !== cur.updateDate
-                  ? 1
-                  : 0),
-              0
-            )
+    totalTime > cloudTotalTime ? `Playtime +${showMinutes((totalTime - cloudTotalTime) / 60)}` : null,
+    newData.length > cloudData.length ? `Add ${newData.length - cloudData.length} games` : null,
+    cloudDataIds.length < cloudData.length ? `Remove ${cloudData.length - cloudDataIds.length} games` : null,
+    ((count) => (count > 0 ? `Update ${count} games` : null))(
+      cloudData
+        .filter((item) => !deleteIds.includes(item.id))
+        .reduce(
+          (acc, cur) =>
+            acc +
+            (dataIds.includes(cur.id) &&
+            (data.find((local) => local.id === cur.id) as GameData).updateDate !== cur.updateDate
+              ? 1
+              : 0),
+          0
         )
-      ]
-        .filter((item) => item)
-        .join(', ')
-        .trim();
-  if (!commitMsg) return
+    )
+  ]
+    .filter((item) => item)
+    .join(', ')
+    .trim()
 
-  await writeFileToGithub(
-    `sync: ${commitMsg}`,
-    SHARED_JSON_FILE,
-    { deleteIds: newDeleteIds, data: newData }
-  ).then(() => {
-    useStore.setState((state) => ({
-      sync: {
-        ...state.sync,
-        time: Date.now(),
-        deleteIds: newDeleteIds
-      },
-      gameData: newData
-    }))
-  })
+  if (!commitMsg) return false
+
+  await writeFileToGithub(`sync: ${commitMsg}`, SHARED_JSON_FILE, { deleteIds: newDeleteIds, data: newData }).then(
+    () => {
+      useStore.setState((state) => ({
+        sync: {
+          ...state.sync,
+          time: Date.now(),
+          deleteIds: newDeleteIds
+        },
+        gameData: newData
+      }))
+    }
+  )
+  return true
 }

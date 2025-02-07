@@ -100,6 +100,7 @@ export default {
   'page.settings.data.button.import': 'ゲームデータをインポート',
   'page.settings.data.button.sync': '手動同期',
   'page.settings.data.alert.syncSuccess': '同期成功',
+  'page.settings.data.alert.syncCancel': '同期キャンセル',
   'page.settings.appearance.title': '外観設定',
   'page.settings.appearance.theme': 'テーマ',
   'page.settings.appearance.theme.light': 'ライト',

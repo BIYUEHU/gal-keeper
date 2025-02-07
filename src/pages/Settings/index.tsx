@@ -108,9 +108,13 @@ const Settings: React.FC = () => {
     if (checkParams()) {
       const close = openFullLoading()
       syncToGithub()
-        .then(() => {
-          openAlert(t`page.settings.data.alert.syncSuccess`)
-          setSync(useStore.getState().sync)
+        .then((result) => {
+          if (result) {
+            openAlert(t`page.settings.data.alert.syncSuccess`)
+            setSync(useStore.getState().sync)
+          } else {
+            openAlert(t`page.settings.data.alert.syncCancel`)
+          }
         })
         .catch((e) => logger.error(e))
         .finally(close)

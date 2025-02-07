@@ -98,6 +98,7 @@ export default {
   'page.settings.data.button.import': '導入遊戲數據',
   'page.settings.data.button.sync': '手動同步',
   'page.settings.data.alert.syncSuccess': '同步成功',
+  'page.settings.data.alert.syncCancel': '同步取消',
   'page.settings.appearance.title': '外觀設置',
   'page.settings.appearance.theme': '主題',
   'page.settings.appearance.theme.light': '淺色',

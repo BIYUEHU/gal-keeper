@@ -102,6 +102,7 @@ export default {
   'page.settings.data.button.import': 'Import Game Data',
   'page.settings.data.button.sync': 'Manual Sync',
   'page.settings.data.alert.syncSuccess': 'Sync Successful',
+  'page.settings.data.alert.syncCancel': 'Not changed, cancel sync',
   'page.settings.appearance.title': 'Appearance Settings',
   'page.settings.appearance.theme': 'Theme',
   'page.settings.appearance.theme.light': 'Light',
