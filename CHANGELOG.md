@@ -1,3 +1,18 @@
+## [1.0.2](https://github.com/biyuehu/gal-keeper/compare/v1.0.1...v1.0.2) (2025-02-15)
+
+
+### Bug Fixes
+
+* sync lastPlay data ([d605ac6](https://github.com/biyuehu/gal-keeper/commit/d605ac6dc059bb87da70e9dcd38a0b05098d8a8a))
+
+
+### Features
+
+* modified not syncing at no changes ([6042ed4](https://github.com/biyuehu/gal-keeper/commit/6042ed487bbf5d8e846b6ed912ecf250b7c63584))
+* nanno migrator ([d5d591e](https://github.com/biyuehu/gal-keeper/commit/d5d591e06735a97969a98db73e8bb6e2d89c7f98))
+
+
+
 ## [1.0.1](https://github.com/biyuehu/gal-keeper/compare/v1.0.0...v1.0.1) (2025-02-01)
 
 

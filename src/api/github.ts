@@ -135,19 +135,23 @@ export async function syncToGithub() {
     .join(', ')
     .trim()
 
-  if (!commitMsg) return false
+  const updateLocal = () =>
+    useStore.setState((state) => ({
+      sync: {
+        ...state.sync,
+        time: Date.now(),
+        deleteIds: newDeleteIds
+      },
+      gameData: newData
+    }))
 
-  await writeFileToGithub(`sync: ${commitMsg}`, SHARED_JSON_FILE, { deleteIds: newDeleteIds, data: newData }).then(
-    () => {
-      useStore.setState((state) => ({
-        sync: {
-          ...state.sync,
-          time: Date.now(),
-          deleteIds: newDeleteIds
-        },
-        gameData: newData
-      }))
-    }
+  if (!commitMsg) {
+    updateLocal()
+    return true
+  }
+
+  await writeFileToGithub(`sync: ${commitMsg}`, SHARED_JSON_FILE, { deleteIds: newDeleteIds, data: newData }).then(() =>
+    updateLocal()
   )
   return true
 }

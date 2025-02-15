@@ -26,7 +26,7 @@ const Edit = () => {
   const navigate = useNavigate()
   const [editedGame, setEditedGame] = useState(game)
   const [fetchMethod, setFetchMethod] = useState<FetchMethods>(
-    editedGame.bgmId && editedGame.vndbId ? 'mixed' : editedGame.bgmId ? 'bgm' : 'vndb'
+    !editedGame.bgmId && editedGame.vndbId ? 'vndb' : !editedGame.vndbId && editedGame.bgmId ? 'bgm' : 'mixed'
   )
   const [isLoading, setIsLoading] = useState(false)
   const { openFullLoading } = useUI()

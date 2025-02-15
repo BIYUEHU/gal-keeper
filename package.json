@@ -1,7 +1,7 @@
 {
   "name": "gal-keeper",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A lightweight and fast visual novel management for coders, statistics and cloud syncing tool built with Tauri and React",
   "type": "module",
   "license": "BAN-ZHINESE-USING",

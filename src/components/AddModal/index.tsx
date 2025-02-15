@@ -89,8 +89,39 @@ const AddModal: React.FC<AddModalProps> = ({ isOpen, setIsOpen, setData }) => {
       ...fetchData,
       title: fetchData?.title && autoSetGameTitle ? fetchData.title : formData.gameName
     }
+
+    const tags = game.tags.join('|').replace(/ /g, '').toLowerCase()
+    if (
+      [
+        '国gal',
+        '国产',
+        '国产galgame',
+        '中国',
+        'china',
+        '国g',
+        '国人',
+        '中国风',
+        '国风',
+        '中国人',
+        '国产vn',
+        '国产gal',
+        '国v'
+      ].some((keyword) => tags.includes(keyword))
+    ) {
+      openAlert('抱歉，暫不支持添加該類遊戲')
+      setIsOpen(false)
+      close()
+      return
+    }
+
+    if (
+      useStore
+        .getState()
+        .gameData.some((item) => item.title.includes(formData.gameName) || item.title.includes(game.title))
+    ) {
+      openAlert(t`component.addModal.tips`)
+    }
     addGameData(game)
-    if (useStore.getState().gameData.some((item) => item.title)) openAlert(t`component.addModal.tips`)
     setData((state) => [...state, game])
     setIsOpen(false)
     close()
