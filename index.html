@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/assets/cover.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GalKeeper</title>
+  <style>
+    body {
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+    }
+
+    .app-loading {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
+      transition: opacity 0.3s ease-in-out;
+      pointer-events: none;
+    }
+
+    .cover {
+      position: fixed;
+      inset: 0;
+      background: white;
+      clip-path: circle(150% at 50% 50%);
+    }
+
+    #loading-image {
+      width: 8rem;
+      height: 8rem;
+      margin-bottom: 2rem;
+      z-index: 999999;
+    }
+
+    .loading-image-animation {
+      animation:
+        rotate 2s cubic-bezier(0.4, 0, 0.2, 1) infinite,
+        scaleUp 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes rotate {
+
+      0%,
+      100% {
+        transform: rotate(-30deg);
+      }
+
+      50% {
+        transform: rotate(30deg);
+      }
+    }
+
+    @keyframes scaleUp {
+      0% {
+        transform: scale(1);
+      }
+
+      100% {
+        transform: scale(2);
+      }
+    }
+
+    @keyframes shrink {
+      to {
+        clip-path: circle(0% at 50% 50%);
+      }
+    }
+
+    .shrink-animation {
+      animation: shrink 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .text-animation {
+      color: #333;
+      z-index: 999999;
+    }
+
+    .text-animation span {
+      display: inline-block;
+      min-width: 1.2em;
+      animation: textWave 0.6s infinite alternate;
+    }
+
+    @keyframes textWave {
+      from {
+        transform: translateY(0);
+      }
+
+      to {
+        transform: translateY(-0.5em);
+      }
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-EQsKx-Ck.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BpQQl89Z.css">
+</head>
+
+<body>
+  <div id="root"></div>
+  <div id="app-loading" class="app-loading">
+    <img id="loading-image" src="/assets/cover.png" />
+    <div id="loading-text" class="text-animation"></div>
+    <div class="cover"></div>
+  </div>
+
+  <script>
+    (function () {
+      let isLoaded = false;
+      const loadingElement = document.getElementById('app-loading')
+      const textElement = document.getElementById('loading-text')
+      const imageElement = document.getElementById('loading-image')
+
+      function animateText(index = 0) {
+        if (isLoaded) return
+        textElement.innerHTML = [
+          '♪(^∇^*)',
+          'ゞq(≧▽≦q)',
+          '(/▽＼)',
+          '╰（‵□′）╯',
+          '（；´д｀）'
+        ][index]
+          .split('').map(c => `<span>${c}</span>`).join('')
+        setTimeout(() => animateText((index + 1) % 5), 600)
+      }
+      animateText()
+
+      window.hideLoading = function () {
+        if (isLoaded) return
+        isLoaded = true
+
+        textElement.style.display = 'none'
+        const cover = document.querySelector('.cover')
+        cover.classList.add('shrink-animation')
+        imageElement.classList.add('loading-image-animation')
+
+        cover.addEventListener('animationend', () => {
+          loadingElement.classList.add('opacity-0')
+          setTimeout(() => {
+            loadingElement.remove()
+          }, 300)
+        })
+      }
+    })()
+  </script>
+</body>
+
+</html>
